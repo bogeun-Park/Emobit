@@ -14,7 +14,7 @@ function LoginForm(props) {
             return;
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/api/login/register_process`, { displayName, username, password })
+        axios.post(`${process.env.REACT_APP_API_URL}/login/register_process`, { displayName, username, password })
             .then(response => {
                 console.log('회원가입 성공:', response.data);
                 window.location.href = '/login/register/sucess';
