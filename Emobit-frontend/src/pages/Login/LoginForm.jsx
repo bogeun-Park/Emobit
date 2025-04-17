@@ -16,7 +16,7 @@ function LoginForm (props) {
 
         axios.post(`${process.env.REACT_APP_API_URL}/login`, { username, password })
             .then(response => {
-                console.log('로그인 성공:', response.data);
+                console.log('로그인 성공:', response);
                 navigate('/');
             })
             .catch(error => {
