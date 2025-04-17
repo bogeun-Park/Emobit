@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react
 import React, { useState, useEffect } from 'react';
 import routes from "./routes";
 import Layout from './components/Layout';
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
