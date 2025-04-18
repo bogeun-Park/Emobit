@@ -1,22 +1,12 @@
 import React from 'react';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function HomePage() {
-    const handleGetUser = () => {
-        axios.get(`${process.env.REACT_APP_API_URL}/login/auth`)
-            .then(response => {
-                console.log('User data:', response.data);
-            })
-            .catch(error => {
-                console.error('Failed to fetch user data:', error);
-            });
-    };
-
     return (
         <div>
             <h2>홈입니다!</h2>
 
-            <button onClick={handleGetUser}>Get User Info</button>
+            <Link to="/board">게시판</Link>
         </div>
     );
 }

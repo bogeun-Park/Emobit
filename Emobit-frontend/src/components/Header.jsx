@@ -7,16 +7,26 @@ import '../styles/Header.css'
 function Header() {
     const navigate = useNavigate();
 
-    function logout() {
+    function handlelogout() {
         axios.post(`${process.env.REACT_APP_API_URL}/logout`)
             .then(response => {
                 console.log(response);
-                navigate('/login');  // 로그인 페이지로 이동
+                navigate('/login');
             })
             .catch(error => {
                 console.error('Failed to fetch user data:', error);
             });
     }
+
+    const handleGetUser = () => {
+        axios.get(`${process.env.REACT_APP_API_URL}/login/auth`)
+            .then(response => {
+                console.log('User data:', response.data);
+            })
+            .catch(error => {
+                console.error('Failed to fetch user data:', error);
+            });
+    };
 
     return (
         <header>
@@ -29,7 +39,8 @@ function Header() {
 
             <nav>
                 <Link to="/login">로그인</Link>
-                <button onClick={logout}>로그아웃</button>
+                <button onClick={handlelogout}>로그아웃</button>
+                <button onClick={handleGetUser}>유저정보</button>
             </nav>
         </header>
     );
