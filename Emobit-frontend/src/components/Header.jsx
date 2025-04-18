@@ -7,7 +7,7 @@ import '../styles/Header.css'
 function Header() {
     const navigate = useNavigate();
 
-    function logout() {
+    function handlelogout() {
         axios.post(`${process.env.REACT_APP_API_URL}/logout`)
             .then(response => {
                 console.log(response);
@@ -39,7 +39,7 @@ function Header() {
 
             <nav>
                 <Link to="/login">로그인</Link>
-                <button onClick={logout}>로그아웃</button>
+                <button onClick={handlelogout}>로그아웃</button>
                 <button onClick={handleGetUser}>유저정보</button>
             </nav>
         </header>
