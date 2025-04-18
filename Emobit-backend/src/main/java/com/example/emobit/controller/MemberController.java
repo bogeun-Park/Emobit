@@ -1,8 +1,10 @@
 package com.example.emobit.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +22,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.emobit.domain.Member;
-import com.example.emobit.dto.MemberDto;
+import com.example.emobit.dto.MemberAuthDto;
+import com.example.emobit.dto.MemberLoginDto;
+import com.example.emobit.dto.MemberRegisterDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.security.Jwtutil;
 import com.example.emobit.service.MemberService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,8 +42,8 @@ public class MemberController {
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> loginJwt(@RequestBody Map<String, String> formData, HttpServletResponse response) {
-		var authToken = new UsernamePasswordAuthenticationToken(formData.get("username"), formData.get("password"));
+	public ResponseEntity<?> loginJwt(@RequestBody @Valid MemberLoginDto memberLoginDto, HttpServletResponse response) {
+		var authToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getUsername(), memberLoginDto.getPassword());
 		Authentication auth = authenticationManagerBuilder.getObject().authenticate(authToken);
 		SecurityContextHolder.getContext().setAuthentication(auth);		
 		
@@ -69,15 +75,15 @@ public class MemberController {
 	}
 	
 	@GetMapping("/login/auth")
-	public ResponseEntity<MemberDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
+	public ResponseEntity<MemberAuthDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
         if (customUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
                 
         Optional<Member> member = memberService.getIdMember(customUser.getId());
         if(member.isPresent()) {
-			MemberDto memberDto = memberService.getMemberDto(member.get());
-			return ResponseEntity.ok(memberDto);
+			MemberAuthDto memberAuthDto = memberService.getMemberDto(member.get());
+			return ResponseEntity.ok(memberAuthDto);
 		}
 		else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with ID " + member.get().getId() + " not found");
@@ -85,8 +91,8 @@ public class MemberController {
     }
 	
 	@PostMapping("/login/register_process")
-	public ResponseEntity<String> registerProcess(@RequestBody Map<String, String> formData) {
-	    memberService.saveMember(formData);
+	public ResponseEntity<?> registerProcess(@RequestBody @Valid MemberRegisterDto memberRegisterDto) {
+	    memberService.saveMember(memberRegisterDto);
 	    
 	    return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
 	}

@@ -1,13 +1,13 @@
 package com.example.emobit.service;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.emobit.domain.Member;
-import com.example.emobit.dto.MemberDto;
+import com.example.emobit.dto.MemberAuthDto;
+import com.example.emobit.dto.MemberRegisterDto;
 import com.example.emobit.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,10 @@ public class MemberService {
         return member;
     }
 	
-	public void saveMember(Map<String, String> formData) {
-        String displayName = formData.get("displayName");
-        String username = formData.get("username");
-        String password = formData.get("password");
+	public void saveMember(MemberRegisterDto memberRegisterDto) {
+		String displayName = memberRegisterDto.getDisplayName();
+	    String username = memberRegisterDto.getUsername();
+	    String password = memberRegisterDto.getPassword();
         
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
@@ -40,9 +40,9 @@ public class MemberService {
         memberRepository.save(member);
 	}
 	
-	public MemberDto getMemberDto(Member member) {
-		MemberDto memberDto = new MemberDto(member);
+	public MemberAuthDto getMemberDto(Member member) {
+		MemberAuthDto memberAuthDto = new MemberAuthDto(member);
 		
-		return memberDto;
+		return memberAuthDto;
 	}
 }
