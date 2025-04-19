@@ -18,14 +18,14 @@ const authSlice = createSlice({
         state.displayName = action.payload.displayName;
         state.username = action.payload.username;
         state.role = action.payload.role;
-      },
-      logout: (state) => {
-        state.isAuthenticated = false;
-        state.id = null;
-        state.displayName = null;
-        state.username = null;
-        state.role = null;
-      },
+    },
+    logout: (state) => {
+      state.isAuthenticated = false;
+      state.id = null;
+      state.displayName = null;
+      state.username = null;
+      state.role = null;
+    },
   }
 });
 
