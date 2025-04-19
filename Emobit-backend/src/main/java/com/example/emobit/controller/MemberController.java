@@ -77,7 +77,7 @@ public class MemberController {
 	@GetMapping("/login/auth")
 	public ResponseEntity<MemberAuthDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
         if (customUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        	return ResponseEntity.ok().build();
         }
                 
         Optional<Member> member = memberService.getIdMember(customUser.getId());
