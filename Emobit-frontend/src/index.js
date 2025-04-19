@@ -5,15 +5,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AxiosProvider } from './contexts/AxiosContext';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AxiosProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AxiosProvider>
+    <Provider store={store}>
+      <AxiosProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AxiosProvider>
+    </Provider>
   </React.StrictMode>
 );
 
