@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAxios } from '../../contexts/AxiosContext';
 
 function BoardCreate() {
+    const axios = useAxios();
+    const navigate = useNavigate();
+
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-
-    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        axios.get(`${process.env.REACT_APP_API_URL}/login/auth`)
+        axios.get('/login/auth')
             .then(response => {
                 const user = response.data;
 
                 if (user && user.id) {
-                    axios.post(`${process.env.REACT_APP_API_URL}/board/create_process`, {
+                    axios.post('/board/create_process', {
                         title: title,
                         content: content,
                         createdBy: user.id

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useAxios } from '../../contexts/AxiosContext';
 
 function LoginForm (props) {
+    const axios = useAxios();
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -14,7 +17,7 @@ function LoginForm (props) {
             return;
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/login`, { username, password })
+        axios.post('/login', { username, password })
             .then(response => {
                 console.log('로그인 성공:', response);
                 navigate('/');
@@ -23,8 +26,6 @@ function LoginForm (props) {
                 console.error('로그인 실패:', error);
             });
     };
-
-    const navigate = useNavigate();
 
     const handleRegisterClick = () => {
         navigate('/login/register');

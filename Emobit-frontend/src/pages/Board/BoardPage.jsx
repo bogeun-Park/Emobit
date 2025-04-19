@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { useAxios } from '../../contexts/AxiosContext';
 
 function BoardPage() {
+    const axios = useAxios();
+    
     const [boardList, setBoardList] = useState([]);
-
+    
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API_URL}/board`)
+        axios.get('/board')
             .then((res) => {
                 setBoardList(res.data);
             })

@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useAxios } from '../../contexts/AxiosContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm(props) {
+    const axios = useAxios();
+    const navigate = useNavigate();
+
     const [displayName, setDisplayName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,10 +18,10 @@ function LoginForm(props) {
             return;
         }
 
-        axios.post(`${process.env.REACT_APP_API_URL}/login/register_process`, { displayName, username, password })
+        axios.post('/login/register_process', { displayName, username, password })
             .then(response => {
                 console.log('회원가입 성공:', response.data);
-                window.location.href = '/login/register/sucess';
+                navigate('/login/register/sucess');
             })
             .catch(error => {
                 console.error('회원가입 실패:', error);

@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AxiosProvider } from './contexts/AxiosContext';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <AxiosProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AxiosProvider>
   </React.StrictMode>
 );
 
