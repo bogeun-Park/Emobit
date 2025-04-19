@@ -1,23 +1,17 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from 'react';
+import { Routes, Route } from "react-router-dom";
 import routes from "./routes";
 import Layout from './components/Layout';
-import axios from 'axios';
-
-axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
-          {routes.map((route, idx) => (
-            <Route key={idx} path={route.path} element={route.element} />
-          ))}
-        </Routes>
-      </Layout>
-    </Router>
+    <Layout>
+      <Routes>
+        {routes.map((route, idx) => (
+          <Route key={idx} path={route.path} element={route.element} />
+        ))}
+      </Routes>
+    </Layout>
   );
 }
 

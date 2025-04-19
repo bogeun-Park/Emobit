@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import '../styles/Header.css'
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/Header.css'
+import { useAxios } from '../contexts/AxiosContext';
 
 function Header() {
+    const axios = useAxios();
     const navigate = useNavigate();
 
     function handlelogout() {
-        axios.post(`${process.env.REACT_APP_API_URL}/logout`)
+        axios.post('/logout')
             .then(response => {
                 console.log(response);
                 navigate('/login');
@@ -19,7 +20,7 @@ function Header() {
     }
 
     const handleGetUser = () => {
-        axios.get(`${process.env.REACT_APP_API_URL}/login/auth`)
+        axios.get('/login/auth')
             .then(response => {
                 console.log('User data:', response.data);
             })
