@@ -1,35 +1,48 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { useDispatch } from 'react-redux';
+import { authAction } from '../../redux/Slice/authSlice';
 
 function LoginPage() {
     const axios = useAxios();
-        const navigate = useNavigate();
-    
-        const [username, setUsername] = useState('');
-        const [password, setPassword] = useState('');
-    
-        const handleSubmit = (e) => {
-            e.preventDefault();
-    
-            if (!username || !password) {
-                alert('아이디와 비밀번호를 입력하세요.');
-                return;
-            }
-    
-            axios.post('/login', { username, password })
-                .then(response => {
-                    console.log('로그인 성공:', response);
-                    navigate('/');
-                })
-                .catch(error => {
-                    console.error('로그인 실패:', error);
-                });
-        };
-    
-        const handleRegisterClick = () => {
-            navigate('/login/register');
-        };
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!username || !password) {
+            alert('아이디와 비밀번호를 입력하세요.');
+            return;
+        }
+
+        axios.post('/login', { username, password })
+            .then(response => {
+                console.log('로그인 성공:', response);
+                
+                axios.get('/login/auth')
+                    .then(authResponse => {
+                        const id = authResponse.data.id;
+                        const displayName = authResponse.data.displayName;
+                        const role = authResponse.data.role;
+
+                        dispatch(authAction.login({ username, id, displayName, role }));
+                    })
+
+                navigate('/');
+            })
+            .catch(error => {
+                console.error('로그인 실패:', error);
+            });
+    };
+
+    const handleRegisterClick = () => {
+        navigate('/login/register');
+    };
 
     return (
         <div>
