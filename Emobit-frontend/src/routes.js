@@ -4,7 +4,7 @@ import LoginPage from "./pages/Login/LoginPage";
 import RegisterPage from "./pages/Login/RegisterPage";
 import RegisterSucess from "./pages/Login/RegisterSucess";
 import BoardPage from "./pages/Board/BoardPage";
-import Create from "./pages/Board/Create";
+import BoardCreate from "./pages/Board/BoardCreate";
 
 const routes = [
     { path: "*", element: <NotFoundPage /> },
@@ -13,7 +13,7 @@ const routes = [
     { path: "/login/register", element: <RegisterPage /> },
     { path: "/login/register/sucess", element: <RegisterSucess /> },
     { path: "/board", element: <BoardPage /> },
-    { path: "/board/create", element: <Create /> }
+    { path: "/board/create", element: <BoardCreate /> }
 ];
 
 export default routes;
