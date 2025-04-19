@@ -3,15 +3,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../contexts/AxiosContext';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { authAction } from '../redux/Slice/authSlice';
 
 function Header() {
     const axios = useAxios();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     function handlelogout() {
         axios.post('/logout')
             .then(response => {
                 console.log(response);
+
+                dispatch(authAction.logout());
+
                 navigate('/login');
             })
             .catch(error => {
@@ -19,14 +26,9 @@ function Header() {
             });
     }
 
+    const auth = useSelector(state => state.auth);
     const handleGetUser = () => {
-        axios.get('/login/auth')
-            .then(response => {
-                console.log('User data:', response.data);
-            })
-            .catch(error => {
-                console.error('Failed to fetch user data:', error);
-            });
+        console.log(auth);
     };
 
     return (
