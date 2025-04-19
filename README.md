@@ -18,7 +18,7 @@ Emobit은 감정(Emotion)의 조각(Bit)들을 기록하고 공유하는 감성 
 ### Frontend
 - React
 - React Router
-- React-Redux
+- Redux Toolkit
 - Axios
 
 
