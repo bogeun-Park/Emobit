@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.emobit.domain.Board;
 import com.example.emobit.dto.BoardCreateDto;
+import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.repository.BoardRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,16 @@ public class BoardService {
 		return boardList;
 	}
 	
-	public void saveBoard(BoardCreateDto boardCreateDto) {
+	public Board getIdBoard(Long id) {
+		Board board = boardRepository.findById(id)
+						.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+		
+		return board;
+	}
+	
+	public void createBoard(Long createdBy, BoardCreateDto boardCreateDto) {
         String title = boardCreateDto.getTitle();
         String content = boardCreateDto.getContent();
-        String strCreatedBy = boardCreateDto.getCreatedBy();
-        
-        Long createdBy = null;
-        if (strCreatedBy != null && !strCreatedBy.isEmpty()) {
-        	createdBy = Long.parseLong(strCreatedBy);
-        }
 
         Board board = new Board();
         board.setTitle(title);
@@ -38,5 +40,18 @@ public class BoardService {
         board.setCreatedBy(createdBy);
 
         boardRepository.save(board);
+	}
+	
+	public void updateBoard(Long id, BoardUpdateDto boardUpdateDto) {
+		Board board = this.getIdBoard(id);
+		
+		board.setTitle(boardUpdateDto.getTitle());
+        board.setContent(boardUpdateDto.getContent());
+
+        boardRepository.save(board);
+	}
+	
+	public void deleteBoard(Long id) {
+		boardRepository.deleteById(id);
 	}
 }
