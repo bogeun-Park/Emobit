@@ -1,7 +1,5 @@
 package com.example.emobit.service;
 
-import java.util.Optional;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +16,14 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	
-	public Optional<Member> getIdMember(Long id) {
-    	Optional<Member> member = memberRepository.findById(id);
+	public Member getIdMember(Long id) {
+    	Member member = memberRepository.findById(id)
+    						.orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
     	
         return member;
     }
 	
-	public void saveMember(MemberRegisterDto memberRegisterDto) {
+	public void registerMember(MemberRegisterDto memberRegisterDto) {
 		String displayName = memberRegisterDto.getDisplayName();
 	    String username = memberRegisterDto.getUsername();
 	    String password = memberRegisterDto.getPassword();

@@ -1,10 +1,7 @@
 package com.example.emobit.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,13 +10,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.MemberAuthDto;
@@ -80,19 +75,15 @@ public class MemberController {
         	return ResponseEntity.ok().build();
         }
                 
-        Optional<Member> member = memberService.getIdMember(customUser.getId());
-        if(member.isPresent()) {
-			MemberAuthDto memberAuthDto = memberService.getMemberDto(member.get());
-			return ResponseEntity.ok(memberAuthDto);
-		}
-		else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with ID " + member.get().getId() + " not found");
-		} 
+        Member member = memberService.getIdMember(customUser.getId());
+		MemberAuthDto memberAuthDto = memberService.getMemberDto(member);
+		
+		return ResponseEntity.ok(memberAuthDto);
     }
 	
 	@PostMapping("/login/register_process")
 	public ResponseEntity<?> registerProcess(@RequestBody @Valid MemberRegisterDto memberRegisterDto) {
-	    memberService.saveMember(memberRegisterDto);
+	    memberService.registerMember(memberRegisterDto);
 	    
 	    return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
 	}
