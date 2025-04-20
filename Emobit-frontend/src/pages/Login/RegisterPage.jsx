@@ -35,32 +35,17 @@ function LoginPage() {
             <form onSubmit={handleSubmit}>
             <div>
                 <label htmlFor="displayName">이름</label>
-                <input
-                    name="displayName"
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                />
+                <input type="text" id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)}/>
             </div>
 
             <div>
                 <label htmlFor="username">아이디</label>
-                <input
-                    name="username"
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
             </div>
 
             <div>
                 <label htmlFor="password">비밀번호</label>
-                <input
-                    name="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
             </div>
 
             <p>

@@ -48,12 +48,12 @@ function BoardCreate() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="title">제목</label>
-                    <input type="text" id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} required/>
+                    <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
                 </div>
 
                 <div style={{ display: 'flex' }}>
                     <label htmlFor="content">내용</label>
-                    <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={8} required/>
+                    <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={8}/>
                 </div>
 
                 <button type="submit">생성</button>
