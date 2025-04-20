@@ -56,7 +56,7 @@ function BoardCreate() {
                     <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={8} required/>
                 </div>
 
-                <button type="submit">제출</button>
+                <button type="submit">생성</button>
             </form>
         </div>
     );
