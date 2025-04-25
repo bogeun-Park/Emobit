@@ -14,4 +14,6 @@ public class BoardCreateDto {
 	
 	@NotBlank(message = "Content name is required")
     String content;
+	
+	String imageUrl;
 }
