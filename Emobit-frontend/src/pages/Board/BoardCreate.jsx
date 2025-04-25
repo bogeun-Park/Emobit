@@ -31,7 +31,7 @@ function BoardCreate() {
                 let presignedUrl = '';
                 // Presigned URL 요청
                 try {
-                    const presignedRes = await axios.get(`/list/PresignedUrl?filename=${image.name}`);
+                    const presignedRes = await axios.get(`/board/PresignedUrl?filename=${image.name}`);
                     presignedUrl = presignedRes.data;
                 } catch (error) {
                     console.error('Presigned URL 요청 실패:', error);
