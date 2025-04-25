@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,9 @@ public class Board {
 	@Column(name = "CREATED_BY", nullable = false)
 	private Long createdBy;
 	
+	@Column(name = "IMAGEURL")
+	private String imageUrl;
+	
 	@Column(name = "VIEW_COUNT", nullable = false)
 	private int viewCount = 0;
 	
@@ -45,4 +49,12 @@ public class Board {
 	@UpdateTimestamp
 	@Column(name = "UPDATED_DAY")
 	private Date updatedDay;
+	
+	// 이미지 URL 기본값 설정
+    @PrePersist
+    public void prePersist() {
+        if (this.imageUrl == null || this.imageUrl.isEmpty()) {
+            this.imageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/defaultImage.png";
+        }
+    }
 }
