@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.Board;
@@ -19,6 +20,7 @@ import com.example.emobit.dto.BoardCreateDto;
 import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.BoardService;
+import com.example.emobit.service.OracleStorageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardController {
 	private final BoardService boardService;
+	private final OracleStorageService oracleStorageService;
 	
 	@GetMapping("/board")
 	public ResponseEntity<?> getBoard() {
@@ -91,4 +94,15 @@ public class BoardController {
 		
         return ResponseEntity.status(200).body("게시글이 성공적으로 삭제되었습니다.");
     }
+	
+	@GetMapping("/board/PresignedUrl")
+	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename) {
+	    String presignedUrl = oracleStorageService.createPresignedUrl(filename);
+	    
+	    if (presignedUrl != null) {
+	        return ResponseEntity.ok(presignedUrl);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Presigned URL 생성 실패");
+	    }
+	}
 }
