@@ -45,6 +45,7 @@ function BoardRead() {
 
     return (
         <div>
+            <img src={board.imageUrl} alt="" style={{ width: '300px', height: '300px', objectFit: 'cover' }}/>
             <h2>{board.title}</h2>
             <p>{board.content}</p>
 
