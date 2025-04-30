@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 	private final BoardRepository boardRepository;
 	private final OracleStorageService oracleStorageService;
+	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/defaultImage.png";
 	
 	public List<Board> getAllBoard() {
 		List<Board> boardList = boardRepository.findAll(Sort.by("id").ascending());
@@ -46,20 +47,34 @@ public class BoardService {
         boardRepository.save(board);
 	}
 	
+	@Transactional
 	public void updateBoard(Long id, BoardUpdateDto boardUpdateDto) {
 		Board board = this.getIdBoard(id);
+		String beforeImageUrl = boardUpdateDto.getBeforeImageUrl();
+		String afterImageUrl = boardUpdateDto.getAfterImageUrl();
 		
-		board.setTitle(boardUpdateDto.getTitle());
-        board.setContent(boardUpdateDto.getContent());
+		try {
+			board.setTitle(boardUpdateDto.getTitle());
+	        board.setContent(boardUpdateDto.getContent());
+	        board.setImageUrl(afterImageUrl);
 
-        boardRepository.save(board);
+	        boardRepository.save(board);
+		} catch(Exception e) {
+            throw new RuntimeException("게시판 수정 실패", e);
+        }
+		  
+		if (!beforeImageUrl.equals(defaultImageUrl)) {
+            boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
+            if (!bImageDeleted) {
+                throw new RuntimeException("이미지 삭제 실패");
+            }
+        }
 	}
 	
 	@Transactional
 	public void deleteBoard(Long id) {
 		Board board = this.getIdBoard(id); 
         String imageUrl = board.getImageUrl();
-        String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/defaultImage.png";
         
 		// 게시판 삭제 작업
         try {

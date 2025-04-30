@@ -14,4 +14,8 @@ public class BoardUpdateDto {
 	
 	@NotBlank(message = "Content name is required")
     String content;
+	
+	String beforeImageUrl;
+	
+	String afterImageUrl;
 }
