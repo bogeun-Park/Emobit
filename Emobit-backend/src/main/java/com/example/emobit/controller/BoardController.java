@@ -33,7 +33,7 @@ public class BoardController {
 	private final OracleStorageService oracleStorageService;
 	
 	@GetMapping("/board")
-	public ResponseEntity<?> getBoard() {
+	public ResponseEntity<?> getAllBoard() {
 		List<Board> boardList =  boardService.getAllBoard();
 		
 		return ResponseEntity.ok(boardList);
@@ -78,7 +78,7 @@ public class BoardController {
     }
 	
 	@DeleteMapping("/board/delete_process/{id}")
-    public ResponseEntity<String> deleteProcess(@PathVariable("id") Long id, 
+    public ResponseEntity<String> boardDeleteProcess(@PathVariable("id") Long id, 
     											@AuthenticationPrincipal CustomUser customUser) {
 		if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
