@@ -43,12 +43,12 @@ public class Board {
 	private int viewCount = 0;
 	
 	@CreationTimestamp
-	@Column(name = "CREATED_DAY", nullable = false, updatable = false)
-    private Date createdDay;
+	@Column(name = "CREATED_AT", nullable = false, updatable = false)
+    private Date createdAt;
 	
 	@UpdateTimestamp
-	@Column(name = "UPDATED_DAY")
-	private Date updatedDay;
+	@Column(name = "UPDATED_AT")
+	private Date updatedAt;
 	
 	// 이미지 URL 기본값 설정
     @PrePersist
