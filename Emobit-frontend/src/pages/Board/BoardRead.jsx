@@ -1,15 +1,74 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { useSelector } from 'react-redux';
 
 function BoardRead() {
     const axios = useAxios();
     const navigate = useNavigate();
+    const auth = useSelector(state => state.auth);
     
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState('');
+
+    const [commentEditId, setCommentEditId] = useState(null);
+    const [commentEditContent, setCommentEditContent] = useState('');
+    const startEditing = (comment) => {
+        setCommentEditId(comment.id);
+        setCommentEditContent(comment.content);
+    };
+
+    const cancelEditing = () => {
+        setCommentEditId(null);
+        setCommentEditContent('');
+    };
+
+    const submitEdit = () => {
+        const confirmed = window.confirm('댓글을 수정하시겠습니까?');
+        if (!confirmed) return;
+
+        axios.put(`/comments/update_process/${commentEditId}`, { 
+            content: commentEditContent,
+         })
+            .then(() => {
+                alert('댓글이 수정되었습니다!');
+                fetchComment();
+                cancelEditing();                
+            })
+            .catch(error => {
+                console.error('댓글 수정 실패:', error);
+
+                if (error.response && error.response.status === 401) {
+                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('댓글 작성 중 오류가 발생했습니다.');
+                }
+            })
+    };
+
+    const commentDelete = (id) => {
+        const confirmed = window.confirm('댓글을 삭제하시겠습니까?');
+        if (!confirmed) return;
+
+        axios.delete(`/comments/delete_process/${id}`)
+            .then(() => {
+                alert('댓글이 삭제되었습니다!');
+                fetchComment();
+            })
+            .catch((error) => {
+                console.error('댓글 삭제 실패:', error);
+
+                if (error.response && error.response.status === 401) {
+                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('댓글 삭제 중 오류가 발생했습니다.');
+                }
+            });
+    }
 
     const fetchBoard = async () => {
         try {
@@ -52,7 +111,7 @@ function BoardRead() {
                     alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
                     navigate('/login');
                 } else {
-                    alert('게시글 작성 중 오류가 발생했습니다.');
+                    alert('게시글 삭제 중 오류가 발생했습니다.');
                 }
             });
     };
@@ -119,8 +178,29 @@ function BoardRead() {
                 {comments.length > 0 ? (
                     comments.map((comment) => (
                         <li key={comment.id}>
-                            {comment.member.displayName}({comment.member.username}) {customDate(comment.createdAt)}<br/>
-                            {comment.content}                            
+                            {comment.member.displayName}({comment.member.username}) {customDate(comment.updatedAt)}
+                            <br/>
+
+                            {commentEditId === comment.id ? (
+                                <>
+                                    <textarea
+                                        value={commentEditContent}
+                                        onChange={(e) => setCommentEditContent(e.target.value)}
+                                    />
+                                    <button onClick={submitEdit}>저장</button>
+                                    <button onClick={cancelEditing}>취소</button>
+                                </>
+                            ) : (
+                                <>
+                                    {comment.content}
+                                    {auth.id === comment.member.id && (
+                                        <>
+                                            <button onClick={() => startEditing(comment)}>수정</button>
+                                            <button onClick={() => commentDelete(comment.id)}>삭제</button>
+                                        </>
+                                    )}
+                                </>
+                            )}                  
                         </li>
                     ))
                 ) : (
