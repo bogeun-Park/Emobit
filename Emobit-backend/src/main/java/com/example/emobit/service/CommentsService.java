@@ -8,6 +8,7 @@ import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.CommentsCreateDto;
+import com.example.emobit.dto.CommentsUpdateDto;
 import com.example.emobit.repository.CommentsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,14 @@ public class CommentsService {
 		return comment;
 	}
 	
-	public void createComments(Long createdBy, CommentsCreateDto commentsCreateDto) {
+	public Comments getIdComment(Long id) {
+		Comments comment = commentsRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+		
+		return comment;
+	}
+	
+	public void createComment(Long createdBy, CommentsCreateDto commentsCreateDto) {
 		String content = commentsCreateDto.getContent();
 		Long boardId = commentsCreateDto.getBoardId();
 		
@@ -38,5 +46,18 @@ public class CommentsService {
 		comment.setBoard(board);
 		
 		commentsRepository.save(comment);
+	}
+	
+	public void updateBoard(Long id, CommentsUpdateDto commentsUpdateDto) {
+		String content = commentsUpdateDto.getContent();
+		
+		Comments comment = this.getIdComment(id);
+		comment.setContent(content);
+		
+		commentsRepository.save(comment);
+	}
+	
+	public void deleteBoard(Long id) {
+		commentsRepository.deleteById(id);
 	}
 }
