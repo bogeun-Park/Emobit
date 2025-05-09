@@ -168,12 +168,13 @@ function BoardRead() {
             <h2>{board.title}</h2>
             <p>{board.content}</p>
 
-            <button onClick={() => navigate(`/board/update/${boardId}`)}>
-                수정
-            </button>
-            <button onClick={handleDelete}>삭제</button>
+            {auth.id === board.createdBy && (
+                <>
+                    <button onClick={() => navigate(`/board/update/${boardId}`)}>수정</button>
+                    <button onClick={handleDelete}>삭제</button>
+                </>
+            )}
 
-            <br /><br />
             <ul>
                 {comments.length > 0 ? (
                     comments.map((comment) => (
