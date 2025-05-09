@@ -25,7 +25,7 @@ function BoardRead() {
         setCommentEditContent('');
     };
 
-    const submitEdit = () => {
+    const handleUpdateComment = () => {
         const confirmed = window.confirm('댓글을 수정하시겠습니까?');
         if (!confirmed) return;
 
@@ -49,7 +49,7 @@ function BoardRead() {
             })
     };
 
-    const commentDelete = (id) => {
+    const handleDeleteComment = (id) => {
         const confirmed = window.confirm('댓글을 삭제하시겠습니까?');
         if (!confirmed) return;
 
@@ -116,7 +116,7 @@ function BoardRead() {
             });
     };
 
-    const handleSubmit = (e) => {
+    const handleCreateComment = (e) => {
         e.preventDefault();
 
         const confirmed = window.confirm('댓글을 등록하시겠습니까?');
@@ -184,11 +184,8 @@ function BoardRead() {
 
                             {commentEditId === comment.id ? (
                                 <>
-                                    <textarea
-                                        value={commentEditContent}
-                                        onChange={(e) => setCommentEditContent(e.target.value)}
-                                    />
-                                    <button onClick={submitEdit}>저장</button>
+                                    <textarea value={commentEditContent} onChange={(e) => setCommentEditContent(e.target.value)}/>
+                                    <button onClick={handleUpdateComment}>저장</button>
                                     <button onClick={cancelEditing}>취소</button>
                                 </>
                             ) : (
@@ -197,7 +194,7 @@ function BoardRead() {
                                     {auth.id === comment.member.id && (
                                         <>
                                             <button onClick={() => startEditing(comment)}>수정</button>
-                                            <button onClick={() => commentDelete(comment.id)}>삭제</button>
+                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
                                         </>
                                     )}
                                 </>
@@ -209,7 +206,7 @@ function BoardRead() {
                 )}
             </ul>
 
-            <form onSubmit={handleSubmit}>                
+            <form onSubmit={handleCreateComment}>                
                 <div style={{ display: 'flex' }}>
                     <label htmlFor="content">댓글</label>
                     <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={4} />
