@@ -19,12 +19,20 @@ public class Jwtutil {
 	static final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(
 	          "jwtpassword123jwtpassword123jwtpassword123jwtpassword123jwtpassword"));
 
+	public static String createAccessToken(Authentication auth) {
+	    return createToken(auth, 30 * 60 * 1000); // 30분
+	}
+
+	public static String createRefreshToken(Authentication auth) {
+	    return createToken(auth, 7 * 24 * 60 * 60 * 1000); // 7일
+	}
+
 	// JWT 만들어주는 함수
-	public static String createToken(Authentication auth) {
+	private static String createToken(Authentication auth, long expireTimeMillis) {
 		CustomUser user = (CustomUser) auth.getPrincipal();
 		String authorities = auth.getAuthorities().stream()
-							    .map(GrantedAuthority::getAuthority)  // GrantedAuthority에서 권한을 String으로 변환
-							    .collect(Collectors.joining(","));    // String으로 합침
+								.map(GrantedAuthority::getAuthority)  // GrantedAuthority에서 권한을 String으로 변환
+								.collect(Collectors.joining(","));    // String으로 합침
 		
 		String jwt = Jwts.builder()
 			.claim("id", user.getId().toString())
@@ -32,7 +40,7 @@ public class Jwtutil {
 			.claim("displayName", user.getDisplayName())
 			.claim("authorities", authorities)
 			.issuedAt(new Date(System.currentTimeMillis()))
-			.expiration(new Date(System.currentTimeMillis() + 30 * 60 * 1000)) //유효기간 30분
+			.expiration(new Date(System.currentTimeMillis() + expireTimeMillis))
 			.signWith(key)
 			.compact();
 		
