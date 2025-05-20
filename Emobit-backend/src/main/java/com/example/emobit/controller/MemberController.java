@@ -71,11 +71,19 @@ public class MemberController {
 	
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
-	    Cookie cookie = new Cookie("jwt", null);
-	    cookie.setMaxAge(0);
-	    cookie.setHttpOnly(true);
-	    cookie.setPath("/");
-	    response.addCookie(cookie);
+		// Access Token 삭제
+		Cookie accessCookie = new Cookie("jwt", null);
+		accessCookie.setMaxAge(0);
+		accessCookie.setHttpOnly(true);
+		accessCookie.setPath("/");
+		response.addCookie(accessCookie);
+	    
+	    // Refresh Token 삭제
+	    Cookie refreshCookie = new Cookie("refresh", null);
+	    refreshCookie.setMaxAge(0);
+	    refreshCookie.setHttpOnly(true);
+	    refreshCookie.setPath("/");
+	    response.addCookie(refreshCookie);
 	    
 	    SecurityContextHolder.clearContext();
 	    
