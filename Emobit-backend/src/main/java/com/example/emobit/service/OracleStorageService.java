@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -39,15 +40,20 @@ public class OracleStorageService {
     }
 
     // presigned URL 생성
-    public String createPresignedUrl(String objectName) {
+    public String createPresignedUrl(String originalFilename, String dir) {
     	try {
             // namespaceName을 가져옴
             String namespaceName = objectStorageClient.getNamespace(GetNamespaceRequest.builder().build()).getValue();
+            
+            // 고유 파일명 생성
+            String uuid = UUID.randomUUID().toString();
+            String ext = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+            String objectName = dir + "/" + uuid + "." + ext;
 
             // presigned URL 생성을 위한 요청 세부사항 설정
             CreatePreauthenticatedRequestDetails preauthenticatedRequestDetails =
                     CreatePreauthenticatedRequestDetails.builder()
-                            .name("example-par-name") // 이름 추가
+                    		.name("upload-" + uuid)
                             .accessType(CreatePreauthenticatedRequestDetails.AccessType.ObjectWrite) // ObjectWrite 작업
                             .timeExpires(Date.from(OffsetDateTime.now().plus(Duration.ofMinutes(3)).toInstant())) // 만료 시간 설정
                             .objectName(objectName)
@@ -84,12 +90,16 @@ public class OracleStorageService {
                 throw new IllegalArgumentException("잘못된 파일 URL입니다.");
             }
 
-            // 파일명만 추출
-            String objectName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-
             // 네임스페이스 가져오기
             String namespaceName = objectStorageClient.getNamespace(GetNamespaceRequest.builder().build()).getValue();
-
+            
+            // 삭제하려는 파일명 추출
+            String prefix = endpoint + namespaceName + "/b/" + bucketName + "/o/";
+            if (!fileUrl.startsWith(prefix)) {
+                throw new IllegalArgumentException("파일 URL이 네임스페이스와 버킷 이름을 포함하지 않습니다.");
+            }
+            String objectName = fileUrl.substring(prefix.length());
+            
             // 파일 삭제 요청
             DeleteObjectRequest request = DeleteObjectRequest.builder()
                     .namespaceName(namespaceName)

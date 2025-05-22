@@ -97,7 +97,7 @@ public class BoardController {
 	
 	@GetMapping("/board/PresignedUrl")
 	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename) {
-	    String presignedUrl = oracleStorageService.createPresignedUrl(filename);
+	    String presignedUrl = oracleStorageService.createPresignedUrl(filename, "board");
 	    
 	    if (presignedUrl != null) {
 	        return ResponseEntity.ok(presignedUrl);
