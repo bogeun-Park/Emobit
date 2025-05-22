@@ -54,7 +54,7 @@ public class Board {
     @PrePersist
     public void prePersist() {
         if (this.imageUrl == null || this.imageUrl.isEmpty()) {
-            this.imageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/defaultImage.png";
+            this.imageUrl = "https://axsd3bml0uow.objectstorage.ap-chuncheon-1.oci.customer-oci.com/n/axsd3bml0uow/b/EmobitBucket/o/board%2Fde7e0f0e-c177-4aba-8410-940eed5af456.png";
         }
     }
 }
