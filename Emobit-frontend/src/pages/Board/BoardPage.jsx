@@ -21,17 +21,15 @@ function BoardPage() {
         <div>
             <h2>게시판 페이지</h2>
 
-            <ul>
-                {boardList.length > 0 ? (
-                    boardList.map((board) => (
+            {boardList.length > 0 && (
+                <ul>
+                    {boardList.map((board) => (
                         <li key={board.id}>
                             <Link to={`/board/read/${board.id}`}>{board.title}</Link>
                         </li>
-                    ))
-                ) : (
-                    <li>게시글이 없습니다.</li>
-                )}
-            </ul>
+                    ))}
+                </ul>
+            )}
 
             <Link to="/board/create">게시판작성</Link>
         </div>
