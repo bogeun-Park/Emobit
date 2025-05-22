@@ -1,15 +1,21 @@
 package com.example.emobit.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
@@ -49,6 +55,11 @@ public class Board {
 	@UpdateTimestamp
 	@Column(name = "UPDATED_AT")
 	private Date updatedAt;
+	
+	@ToString.Exclude
+	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	private List<Comments> comments = new ArrayList<>();
 	
 	// 이미지 URL 기본값 설정
     @PrePersist
