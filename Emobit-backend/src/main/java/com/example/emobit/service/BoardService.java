@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 	private final BoardRepository boardRepository;
 	private final OracleStorageService oracleStorageService;
-	private final String defaultImageUrl = "https://axsd3bml0uow.objectstorage.ap-chuncheon-1.oci.customer-oci.com/n/axsd3bml0uow/b/EmobitBucket/o/board%2Fde7e0f0e-c177-4aba-8410-940eed5af456.png";
+	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
 	
 	public List<Board> getAllBoard() {
 		List<Board> boardList = boardRepository.findAll(Sort.by("id").ascending());
