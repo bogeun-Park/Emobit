@@ -22,15 +22,14 @@ function Header() {
     useEffect(() => {
         const curPath = location.pathname;
 
-        // 경로에 따라 menu 상태 업데이트
         if (curPath === '/') dispatch(menuAction.setActiveMenu('home'));
-        else if (curPath === '/search') dispatch(menuAction.setActiveMenu('search'));
-        else if (curPath === '/board') dispatch(menuAction.setActiveMenu('board'));
-        else if (curPath === '/message') dispatch(menuAction.setActiveMenu('message'));
-        else if (curPath === '/alarm') dispatch(menuAction.setActiveMenu('alarm'));
-        else if (curPath === '/board/create') dispatch(menuAction.setActiveMenu('create'));
-        else if (curPath === '/profile') dispatch(menuAction.setActiveMenu('profile'));
-        else if (curPath === '/login') dispatch(menuAction.setActiveMenu('login'));
+        else if (curPath.startsWith('/search')) dispatch(menuAction.setActiveMenu('search'));        
+        else if (curPath.startsWith('/board/create')) dispatch(menuAction.setActiveMenu('create'));  // 구체적인 경로를 먼저 설정
+        else if (curPath.startsWith('/board')) dispatch(menuAction.setActiveMenu('board'));
+        else if (curPath.startsWith('/message')) dispatch(menuAction.setActiveMenu('message'));
+        else if (curPath.startsWith('/alarm')) dispatch(menuAction.setActiveMenu('alarm'));
+        else if (curPath.startsWith('/profile')) dispatch(menuAction.setActiveMenu('profile'));
+        else if (curPath.startsWith('/login')) dispatch(menuAction.setActiveMenu('login'));
     }, [location.pathname, dispatch]);
 
     function handlelogout() {
@@ -40,49 +39,44 @@ function Header() {
 
                 dispatch(authAction.logout());
 
-                handleMenuClick('/login', 'login');
+                navigate('/login');
             })
             .catch(error => {
                 console.error('Failed to fetch user data:', error);
             });
     }
 
-    function handleMenuClick(path, action) {
-        dispatch(menuAction.setActiveMenu(action));
-        navigate(path);
-    }
-
     return (
         <aside className="sidebar">
-            <Link to="/" className="logo" onClick={() => handleMenuClick('/', 'home')}>
+            <Link to="/" className="logo" onClick={() => navigate('/')}>
                 Emobit
             </Link>
 
             <nav className="menu">
                 <div className="menu-top">
-                    <button className={active === 'home' ? 'active' : ''} onClick={() => handleMenuClick('/', 'home')}>
+                    <button className={active === 'home' ? 'active' : ''} onClick={() => navigate('/')}>
                         <Home size={menuImgSize} /> 홈
                     </button>
 
-                    <button className={active === 'search' ? 'active' : ''} onClick={() => handleMenuClick('/search', 'search')}>
+                    <button className={active === 'search' ? 'active' : ''} onClick={() => navigate('/search')}>
                         <Search size={menuImgSize} /> 검색
                     </button>
 
-                    <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board', 'board')}>
+                    <button className={active === 'board' ? 'active' : ''} onClick={() => navigate('/board')}>
                         <BookOpen size={menuImgSize} /> 일기
                     </button>
 
                     {auth.isAuthenticated && 
                         <>
-                            <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message', 'message')}>
+                            <button className={active === 'message' ? 'active' : ''} onClick={() => navigate('/message')}>
                                 <MessageCircle size={menuImgSize} /> 메시지
                             </button>
 
-                            <button className={active === 'alarm' ? 'active' : ''} onClick={() => handleMenuClick('/alarm', 'alarm')}>
+                            <button className={active === 'alarm' ? 'active' : ''} onClick={() => navigate('/alarm')}>
                                 <Bell size={menuImgSize} /> 알림
                             </button>
 
-                            <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create', 'create')}>
+                            <button className={active === 'create' ? 'active' : ''} onClick={() => navigate('/board/create')}>
                                 <PlusCircle size={menuImgSize} /> 작성하기
                             </button>
                         </>
@@ -91,12 +85,12 @@ function Header() {
 
                 <div className="menu-bottom">
                     {!auth.isAuthenticated ? (
-                        <button className={active === 'login' ? 'active' : ''} onClick={() => handleMenuClick('/login', 'login')}>
+                        <button className={active === 'login' ? 'active' : ''} onClick={() => navigate('/login')}>
                             로그인
                         </button>
                     ) : (
                         <>
-                            <button className={active === 'profile' ? 'active' : ''} onClick={() => handleMenuClick('/profile', 'profile')}>
+                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate('/profile')}>
                                 <User size={menuImgSize} /> 프로필
                             </button>
                             
