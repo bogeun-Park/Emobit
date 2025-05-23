@@ -1,0 +1,51 @@
+.logo {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.6rem;
+    color: #262626;
+    text-decoration: none; 
+    padding: 0.5rem;
+    font-weight: 300;
+    display: inline-block;
+    margin-bottom: 1.3rem;
+}
+
+.sidebar {
+    width: 244px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-right: 1px solid #ddd;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+}
+
+.menu-top, .menu-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu button {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #000000;
+    padding: 0.5rem;        
+    height: 47px;
+}
+
+.menu button:hover {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
