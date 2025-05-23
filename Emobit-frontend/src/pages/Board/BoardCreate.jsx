@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { menuAction } from '../../redux/Slice/menuSlice';
 import presignedUrlAxios from 'axios';
 
 function BoardCreate() {
     const axios = useAxios();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const auth = useSelector(state => state.auth);
 
     const [title, setTitle] = useState('');
@@ -60,6 +62,7 @@ function BoardCreate() {
             });
 
             alert('게시글이 성공적으로 작성되었습니다.');
+            dispatch(menuAction.setActiveMenu('board'));
             navigate('/board');
         } catch (error) {
             console.error('게시글 작성 중 에러 발생:', error);

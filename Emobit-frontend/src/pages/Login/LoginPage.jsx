@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useDispatch } from 'react-redux';
 import { authAction } from '../../redux/Slice/authSlice';
+import { menuAction } from '../../redux/Slice/menuSlice';
 
 function LoginPage() {
     const axios = useAxios();
@@ -33,6 +34,7 @@ function LoginPage() {
                         dispatch(authAction.login({ username, id, displayName, role }));
                     })
 
+                dispatch(menuAction.setActiveMenu('home'));
                 navigate('/');
             })
             .catch(error => {
