@@ -20,13 +20,13 @@ public class CommentsService {
 	private final MemberService memberService;
 	private final BoardService boardService;
 	
-	public List<Comments> findAllByBoardId(Long boardId) {
+	public List<Comments> getCommentByBoardId(Long boardId) {
 		List<Comments> comment = commentsRepository.customFindAllByBoardId(boardId);
 		
 		return comment;
 	}
 	
-	public Comments getIdComment(Long id) {
+	public Comments getCommentById(Long id) {
 		Comments comment = commentsRepository.findById(id)
 				.orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
 		
@@ -37,8 +37,8 @@ public class CommentsService {
 		String content = commentsCreateDto.getContent();
 		Long boardId = commentsCreateDto.getBoardId();
 		
-		Member member = memberService.getIdMember(createdBy);
-		Board board = boardService.getIdBoard(boardId);
+		Member member = memberService.getMemberById(createdBy);
+		Board board = boardService.getBoardById(boardId);
 		
 		Comments comment = new Comments();
 		comment.setContent(content);
@@ -51,7 +51,7 @@ public class CommentsService {
 	public void updateBoard(Long id, CommentsUpdateDto commentsUpdateDto) {
 		String content = commentsUpdateDto.getContent();
 		
-		Comments comment = this.getIdComment(id);
+		Comments comment = this.getCommentById(id);
 		comment.setContent(content);
 		
 		commentsRepository.save(comment);

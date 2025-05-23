@@ -34,7 +34,7 @@ public class BoardController {
 	
 	@GetMapping("/board")
 	public ResponseEntity<?> getAllBoard() {
-		List<Board> boardList =  boardService.getAllBoard();
+		List<Board> boardList =  boardService.getBoardAll();
 		
 		return ResponseEntity.ok(boardList);
 	}
@@ -53,7 +53,7 @@ public class BoardController {
 	
 	@GetMapping("/board/read/{id}")
 	public ResponseEntity<?> boardRead(@PathVariable("id") Long id) {
-		Board board = boardService.getIdBoard(id);
+		Board board = boardService.getBoardById(id);
 		
 		return ResponseEntity.ok(board);
 	}
@@ -66,7 +66,7 @@ public class BoardController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
 		
-		Board board = boardService.getIdBoard(id);
+		Board board = boardService.getBoardById(id);
 		
 	    if (!board.getCreatedBy().equals(customUser.getId())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
@@ -84,7 +84,7 @@ public class BoardController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
 		
-		Board board = boardService.getIdBoard(id);
+		Board board = boardService.getBoardById(id);
 		
 	    if (!board.getCreatedBy().equals(customUser.getId())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
