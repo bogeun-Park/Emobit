@@ -30,8 +30,6 @@ function BoardPage() {
                     ))}
                 </ul>
             )}
-
-            <Link to="/board/create">게시판작성</Link>
         </div>
     );
 }
