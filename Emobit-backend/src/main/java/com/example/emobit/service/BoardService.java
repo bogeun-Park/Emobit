@@ -20,13 +20,13 @@ public class BoardService {
 	private final OracleStorageService oracleStorageService;
 	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
 	
-	public List<Board> getAllBoard() {
+	public List<Board> getBoardAll() {
 		List<Board> boardList = boardRepository.findAll(Sort.by("id").ascending());
 		
 		return boardList;
 	}
 	
-	public Board getIdBoard(Long id) {
+	public Board getBoardById(Long id) {
 		Board board = boardRepository.findById(id)
 						.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 		
@@ -49,7 +49,7 @@ public class BoardService {
 	
 	@Transactional
 	public void updateBoard(Long id, BoardUpdateDto boardUpdateDto) {
-		Board board = this.getIdBoard(id);
+		Board board = this.getBoardById(id);
 		String beforeImageUrl = boardUpdateDto.getBeforeImageUrl();
 		String afterImageUrl = boardUpdateDto.getAfterImageUrl();
 		
@@ -73,7 +73,7 @@ public class BoardService {
 	
 	@Transactional
 	public void deleteBoard(Long id) {
-		Board board = this.getIdBoard(id); 
+		Board board = this.getBoardById(id); 
         String imageUrl = board.getImageUrl();
         
 		// 게시판 삭제 작업

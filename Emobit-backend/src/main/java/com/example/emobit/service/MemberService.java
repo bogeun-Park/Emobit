@@ -16,7 +16,7 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	
-	public Member getIdMember(Long id) {
+	public Member getMemberById(Long id) {
     	Member member = memberRepository.findById(id)
     						.orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
     	

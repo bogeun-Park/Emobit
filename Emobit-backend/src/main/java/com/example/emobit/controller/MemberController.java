@@ -96,7 +96,7 @@ public class MemberController {
         	return ResponseEntity.ok().build();
         }
                 
-        Member member = memberService.getIdMember(customUser.getId());
+        Member member = memberService.getMemberById(customUser.getId());
 		MemberAuthDto memberAuthDto = memberService.getMemberDto(member);
 		
 		return ResponseEntity.ok(memberAuthDto);

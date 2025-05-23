@@ -32,7 +32,7 @@ public class CommentController {
 	
 	@GetMapping("/comments/{boardId}")
 	public ResponseEntity<?> getComment(@PathVariable("boardId") Long boardId) {
-		List<Comments> comments = commentsService.findAllByBoardId(boardId);
+		List<Comments> comments = commentsService.getCommentByBoardId(boardId);
 		
 		return ResponseEntity.ok(comments);
 	}
@@ -57,7 +57,7 @@ public class CommentController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
 		
-		Comments comment = commentsService.getIdComment(id);
+		Comments comment = commentsService.getCommentById(id);
 		Member member = comment.getMember();
 		
 		if (!member.getId().equals(customUser.getId())) {
@@ -76,7 +76,7 @@ public class CommentController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
 		
-		Comments comment = commentsService.getIdComment(id);
+		Comments comment = commentsService.getCommentById(id);
 		Member member = comment.getMember();
 		
 		if (!member.getId().equals(customUser.getId())) {
