@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
-import { useDispatch } from 'react-redux';
-import { authAction } from '../../redux/Slice/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { authAction } from '../../redux/Slice/authSlice'
 
 function LoginPage() {
     const axios = useAxios();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const auth = useSelector(state => state.auth);
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        if (auth.isAuthenticated) {
+            navigate('/');
+        }
+    }, [auth, navigate]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
