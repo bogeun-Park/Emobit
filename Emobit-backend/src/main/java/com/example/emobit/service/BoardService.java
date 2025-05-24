@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.emobit.domain.Board;
+import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardCreateDto;
 import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.repository.BoardRepository;
@@ -17,11 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardService {
 	private final BoardRepository boardRepository;
+	private final MemberService memberService;
 	private final OracleStorageService oracleStorageService;
 	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
 	
 	public List<Board> getBoardAll() {
-		List<Board> boardList = boardRepository.findAll(Sort.by("id").ascending());
+		List<Board> boardList = boardRepository.findAll(Sort.by("id").descending());
 		
 		return boardList;
 	}
@@ -37,12 +39,13 @@ public class BoardService {
         String title = boardCreateDto.getTitle();
         String content = boardCreateDto.getContent();
         String imageUrl = boardCreateDto.getImageUrl();
-
+        Member member = memberService.getMemberById(createdBy);
+        
         Board board = new Board();
         board.setTitle(title);
         board.setContent(content);
         board.setImageUrl(imageUrl);
-        board.setCreatedBy(createdBy);
+        board.setMember(member);
 
         boardRepository.save(board);
 	}
