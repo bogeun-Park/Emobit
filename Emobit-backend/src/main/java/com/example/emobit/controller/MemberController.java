@@ -162,7 +162,7 @@ public class MemberController {
 	
 	@GetMapping("/myBoards/{createdBy}")
 	public ResponseEntity<?> getMyBoards(@PathVariable("createdBy") Long createdBy,
-										@AuthenticationPrincipal CustomUser customUser) {
+										 @AuthenticationPrincipal CustomUser customUser) {
 		if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
