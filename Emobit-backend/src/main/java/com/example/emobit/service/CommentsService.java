@@ -21,9 +21,9 @@ public class CommentsService {
 	private final BoardService boardService;
 	
 	public List<Comments> getCommentByBoardId(Long boardId) {
-		List<Comments> comment = commentsRepository.customFindAllByBoardId(boardId);
+		List<Comments> comments = commentsRepository.customFindAllByBoardId(boardId);
 		
-		return comment;
+		return comments;
 	}
 	
 	public Comments getCommentById(Long id) {

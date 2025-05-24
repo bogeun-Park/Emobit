@@ -1,6 +1,7 @@
 package com.example.emobit.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.CommentsCreateDto;
+import com.example.emobit.dto.CommentsDto;
 import com.example.emobit.dto.CommentsUpdateDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.CommentsService;
@@ -33,8 +35,11 @@ public class CommentController {
 	@GetMapping("/comments/{boardId}")
 	public ResponseEntity<?> getComment(@PathVariable("boardId") Long boardId) {
 		List<Comments> comments = commentsService.getCommentByBoardId(boardId);
+		List<CommentsDto> commentsDto = comments.stream()
+			.map(comment -> new CommentsDto(comment))
+			.collect(Collectors.toList());
 		
-		return ResponseEntity.ok(comments);
+		return ResponseEntity.ok(commentsDto);
 	}
 	
 	@PostMapping("/comments/create_process")
