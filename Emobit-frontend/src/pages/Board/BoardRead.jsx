@@ -178,7 +178,7 @@ function BoardRead() {
                 {comments.length > 0 ? (
                     comments.map((comment) => (
                         <li key={comment.id}>
-                            {comment.member.displayName}({comment.member.username}) {customDate(comment.updatedAt)}
+                            {comment.memberDisplayName}({comment.memberUsername}) {customDate(comment.updatedAt)}
                             <br/>
 
                             {commentEditId === comment.id ? (
@@ -190,7 +190,7 @@ function BoardRead() {
                             ) : (
                                 <>
                                     {comment.content}
-                                    {auth.id === comment.member.id && (
+                                    {auth.id === comment.memberId && (
                                         <>
                                             <button onClick={() => startEditing(comment)}>수정</button>
                                             <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
