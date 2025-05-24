@@ -1,12 +1,12 @@
 .logo {
-    font-family: 'Pacifico', cursive;
-    font-size: 1.6rem;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.8rem;
     color: #262626;
     text-decoration: none; 
-    padding: 1rem 0.5rem;
-    font-weight: 300;
+    padding: 1.3rem 0.5rem;
+    font-weight: 800;
     display: inline-block;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.rem;
 }
 
 .sidebar {
