@@ -7,14 +7,20 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
@@ -39,8 +45,11 @@ public class Board {
 	@Column(name = "CONTENT", columnDefinition = "CLOB", nullable = false)
 	private String content;
 	
-	@Column(name = "CREATED_BY", nullable = false)
-	private Long createdBy;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CREATED_BY", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@JsonBackReference  // member 자체 값을 안보내고 BoardDto에서 createdBy로 바꿔서 보냄
+	private Member member;
 	
 	@Column(name = "IMAGEURL")
 	private String imageUrl;
@@ -58,7 +67,7 @@ public class Board {
 	
 	@ToString.Exclude
 	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference  // 무한 순환 참조 방지 : comments는 json 데이터로 넘어감
+	@JsonBackReference  // 무한 순환 참조 방지 : comments는 json 데이터로 넘어감
 	private List<Comments> comments = new ArrayList<>();
 	
 	// 이미지 URL 기본값 설정

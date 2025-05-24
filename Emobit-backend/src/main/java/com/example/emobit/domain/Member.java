@@ -1,7 +1,12 @@
 package com.example.emobit.domain;
 
-import com.example.emobit.security.Role;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.example.emobit.security.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,6 +14,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,4 +44,10 @@ public class Member {
 	@Enumerated(EnumType.STRING)
     @Column(name = "ROLE")
     private Role role = Role.USER;
+	
+	@ToString.Exclude
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference
+	@OrderBy("id DESC")
+	private List<Board> boards = new ArrayList<>();
 }
