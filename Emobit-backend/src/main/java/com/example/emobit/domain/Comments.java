@@ -45,7 +45,7 @@ public class Comments {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BOARD_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	@JsonBackReference
+	@JsonBackReference  // 무한 순환 참조 방지 : board는 json데이터로 안 넘어감 
 	private Board board;
 	
 	@CreationTimestamp
