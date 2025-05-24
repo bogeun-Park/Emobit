@@ -6,7 +6,7 @@ import { useAxios } from '../contexts/AxiosContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
-import { Home, Search, BookOpen, MessageCircle, Bell, PlusCircle, User } from 'lucide-react';
+import { Home, Search, BookOpen, Send, Bell, PlusCircle, User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 function Header() {
@@ -69,7 +69,7 @@ function Header() {
                     {auth.isAuthenticated && 
                         <>
                             <button className={active === 'message' ? 'active' : ''} onClick={() => navigate('/message')}>
-                                <MessageCircle size={menuImgSize} /> 메시지
+                                <Send size={menuImgSize} /> 메시지
                             </button>
 
                             <button className={active === 'alarm' ? 'active' : ''} onClick={() => navigate('/alarm')}>

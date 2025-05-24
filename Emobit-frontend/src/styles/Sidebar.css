@@ -6,7 +6,7 @@
     padding: 1.3rem 0.5rem;
     font-weight: 800;
     display: inline-block;
-    margin-bottom: 0.rem;
+    margin-bottom: 0.5rem;
 }
 
 .sidebar {
@@ -41,7 +41,7 @@
     font-size: 1rem;
     cursor: pointer;
     color: #000000;
-    padding: 0.5rem;        
+    padding: 1.5rem 0.5rem;
     height: 47px;
 }
 
