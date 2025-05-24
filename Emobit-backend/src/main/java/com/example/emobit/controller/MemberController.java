@@ -2,6 +2,7 @@ package com.example.emobit.controller;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberLoginDto;
@@ -155,5 +158,22 @@ public class MemberController {
         body.put("token", newAccessToken);
 		
 		return ResponseEntity.ok(body);
+	}
+	
+	@GetMapping("/myBoards/{createdBy}")
+	public ResponseEntity<?> getMyBoards(@PathVariable("createdBy") Long createdBy,
+										@AuthenticationPrincipal CustomUser customUser) {
+		if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+		
+		if (!createdBy.equals(customUser.getId())) {
+	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자 권한이 없습니다.");
+	    }
+		
+		Member member = memberService.getMemberById(createdBy);
+		List<Board> myBoards = member.getBoards();
+		
+		return ResponseEntity.ok(myBoards);
 	}
 }
