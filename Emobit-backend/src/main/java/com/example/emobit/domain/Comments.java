@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ConstraintMode;
@@ -40,6 +41,7 @@ public class Comments {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CREATED_BY", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	@JsonManagedReference
 	private Member member;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
