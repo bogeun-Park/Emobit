@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.Board;
+import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardCreateDto;
+import com.example.emobit.dto.BoardDto;
 import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.BoardService;
@@ -35,8 +37,11 @@ public class BoardController {
 	@GetMapping("/board")
 	public ResponseEntity<?> getAllBoard() {
 		List<Board> boardList =  boardService.getBoardAll();
+		List<BoardDto> boardListDto = boardList.stream()
+		    .map(BoardDto::new)
+		    .toList();
 		
-		return ResponseEntity.ok(boardList);
+		return ResponseEntity.ok(boardListDto);
 	}
 	
 	@PostMapping("/board/create_process")
@@ -54,8 +59,9 @@ public class BoardController {
 	@GetMapping("/board/read/{id}")
 	public ResponseEntity<?> boardRead(@PathVariable("id") Long id) {
 		Board board = boardService.getBoardById(id);
+		BoardDto boardDto = new BoardDto(board);
 		
-		return ResponseEntity.ok(board);
+		return ResponseEntity.ok(boardDto);
 	}
 	
 	@PutMapping("/board/update_process/{id}")
@@ -67,8 +73,8 @@ public class BoardController {
 	    }
 		
 		Board board = boardService.getBoardById(id);
-		
-	    if (!board.getCreatedBy().equals(customUser.getId())) {
+		Member member = board.getMember();
+	    if (!member.getId().equals(customUser.getId())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
 	    }
 	    
@@ -85,8 +91,8 @@ public class BoardController {
 	    }
 		
 		Board board = boardService.getBoardById(id);
-		
-	    if (!board.getCreatedBy().equals(customUser.getId())) {
+		Member member = board.getMember();
+	    if (!member.getId().equals(customUser.getId())) {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
 	    }
 	    
