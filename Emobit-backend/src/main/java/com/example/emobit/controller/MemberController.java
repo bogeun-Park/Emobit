@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Member;
+import com.example.emobit.dto.BoardDto;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberLoginDto;
 import com.example.emobit.dto.MemberRegisterDto;
@@ -173,7 +174,10 @@ public class MemberController {
 		
 		Member member = memberService.getMemberById(createdBy);
 		List<Board> myBoards = member.getBoards();
+		List<BoardDto> boardListDto = myBoards.stream()
+		    .map(BoardDto::new)
+		    .toList();
 		
-		return ResponseEntity.ok(myBoards);
+		return ResponseEntity.ok(boardListDto);
 	}
 }
