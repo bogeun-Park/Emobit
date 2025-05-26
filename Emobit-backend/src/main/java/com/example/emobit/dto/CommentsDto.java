@@ -17,7 +17,7 @@ public class CommentsDto {
 	private Long boardId;
 	private Date createdAt;
 	private Date updatedAt;
-	private Long memberId;
+	private Long createdBy;
 	private String memberUsername;
 	private String memberDisplayName;
 	
@@ -27,7 +27,7 @@ public class CommentsDto {
 		this.boardId = comment.getBoard().getId();
 		this.createdAt = comment.getCreatedAt();
 		this.updatedAt = comment.getUpdatedAt();
-		this.memberId = comment.getMember().getId();
+		this.createdBy = comment.getMember().getId();
 		this.memberUsername = comment.getMember().getUsername();
 		this.memberDisplayName = comment.getMember().getDisplayName();
 	}
