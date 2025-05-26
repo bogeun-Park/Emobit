@@ -190,7 +190,7 @@ function BoardRead() {
                             ) : (
                                 <>
                                     {comment.content}
-                                    {auth.id === comment.memberId && (
+                                    {auth.id === comment.createdBy && (
                                         <>
                                             <button onClick={() => startEditing(comment)}>수정</button>
                                             <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
