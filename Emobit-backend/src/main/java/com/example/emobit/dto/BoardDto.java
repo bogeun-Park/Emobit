@@ -15,20 +15,24 @@ public class BoardDto {
 	private Long id;
 	private String title;
 	private String content;
-	private Long createdBy;
 	private String imageUrl;
 	private int viewCount;
     private Date createdAt;
 	private Date updatedAt;
+	private Long createdBy;
+	private String memberUsername;
+	private String memberDisplayName;
 	
 	public BoardDto(Board board) {
 		this.id = board.getId();
 		this.title = board.getTitle();
 		this.content = board.getContent();
-		this.createdBy = board.getMember().getId();
 		this.imageUrl = board.getImageUrl();
 		this.viewCount = board.getViewCount();
 		this.createdAt = board.getCreatedAt();
 		this.updatedAt = board.getUpdatedAt();
+		this.createdBy = board.getMember().getId();
+		this.memberUsername = board.getMember().getUsername();
+		this.memberDisplayName = board.getMember().getDisplayName();
 	}
 }
