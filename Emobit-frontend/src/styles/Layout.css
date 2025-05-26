@@ -1,0 +1,14 @@
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    padding-left: calc(var(--sidebar-width, 244px) + 20px); /* Sidebar 너비만큼 여백 줌 */
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+    transition: padding-left 0.3s ease;
+}
