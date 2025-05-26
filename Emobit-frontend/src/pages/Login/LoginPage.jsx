@@ -1,3 +1,4 @@
+import '../../styles/LoginPage.css';
 import React, { useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -52,7 +53,7 @@ function LoginPage() {
     };
 
     return (
-        <div>
+        <div className="login-container">
             <h2>로그인</h2>
             
             <form onSubmit={handleSubmit}>

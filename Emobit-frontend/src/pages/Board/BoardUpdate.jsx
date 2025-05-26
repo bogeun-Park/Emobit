@@ -1,3 +1,4 @@
+import '../../styles/BoardUpdate.css'
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -84,7 +85,7 @@ function BoardUpdate() {
     };
 
     return (
-        <div>
+        <div className="boardUpdate-container">
             <h2>게시글 수정</h2>
 
             <form onSubmit={handleSubmit}>

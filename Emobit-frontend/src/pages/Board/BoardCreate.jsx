@@ -1,3 +1,4 @@
+import '../../styles/BoardCreate.css'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -74,7 +75,7 @@ function BoardCreate() {
     };
 
     return (
-        <div>
+        <div className="boardCreate-container">
             <h2>게시판 작성</h2>
 
             <form onSubmit={handleSubmit}>

@@ -1,3 +1,4 @@
+import '../../styles/BoardRead.css'
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -162,7 +163,7 @@ function BoardRead() {
     if (!board) return null;
 
     return (
-        <div>
+        <div className="boardRead-container">
             <img src={board.imageUrl} alt="" style={{ width: '300px', height: '300px', objectFit: 'cover' }}/>
             <h2>{board.title}</h2>
             <p>{board.content}</p>
