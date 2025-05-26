@@ -1,3 +1,4 @@
+import '../../styles/ProfilePage.css';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -6,7 +7,6 @@ import { useAxios } from '../../contexts/AxiosContext';
 function ProfilePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
-        
     const [myBoards, setMyBoards] = useState([]);
 
     useEffect(() => {
@@ -22,18 +22,23 @@ function ProfilePage() {
     }, [auth]);
 
     return (
-        <div>
-            <h3>{auth.username}({auth.displayName})</h3>
+        <div className="profile-container">
+            <div className="profile-header">
+                <div className="profile-image" />
+                <div className="profile-info">
+                    <h2>{auth.displayName}</h2>
+                    <p>@{auth.username}</p>
+                    <p>게시물 {myBoards.length}</p>
+                </div>
+            </div>
 
-            {myBoards.length > 0 && (
-                <ul>
-                    {myBoards.map((board) => (
-                        <li key={board.id}>
-                            <Link to={`/board/read/${board.id}`}>{board.title}</Link>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <div className="post-grid">
+                {myBoards.map((board) => (
+                    <Link to={`/board/read/${board.id}`} key={board.id} className="post-item">
+                        <img src={board.imageUrl} alt={board.title}/>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 }
