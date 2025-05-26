@@ -1,15 +1,13 @@
 import '../styles/Sidebar.css'
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAxios } from '../contexts/AxiosContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
-import { Home, Search, BookOpen, Send, Bell, PlusCircle, User } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut } from 'lucide-react';
 
-function Header() {
+function Sidebar() {
     const axios = useAxios();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -32,6 +30,25 @@ function Header() {
         else if (curPath.startsWith('/login')) dispatch(menuAction.setActiveMenu('login'));
     }, [location.pathname, dispatch]);
 
+    useEffect(() => {
+        const sidebar = document.querySelector('.sidebar');
+        const updateSidebarWidth = () => {
+            const width = sidebar.offsetWidth;
+            document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
+        };
+
+        updateSidebarWidth();
+
+        const resizeObserver = new ResizeObserver(updateSidebarWidth);
+        resizeObserver.observe(sidebar);
+
+        window.addEventListener('resize', updateSidebarWidth);
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('resize', updateSidebarWidth);
+        };
+    }, []);
+
     function handlelogout() {
         axios.post('/logout')
             .then(response => {
@@ -49,35 +66,46 @@ function Header() {
     return (
         <aside className="sidebar">
             <Link to="/" className="logo" onClick={() => navigate('/')}>
-                Emobit
+                E<span className="menu-label">mobit</span>
             </Link>
 
             <nav className="menu">
                 <div className="menu-top">
                     <button className={active === 'home' ? 'active' : ''} onClick={() => navigate('/')}>
-                        <Home size={menuImgSize} /> 홈
+                        <Home size={menuImgSize} />
+                        <span className="menu-label">홈</span>
                     </button>
 
                     <button className={active === 'search' ? 'active' : ''} onClick={() => navigate('/search')}>
-                        <Search size={menuImgSize} /> 검색
+                        <Search size={menuImgSize} />
+                        <span className="menu-label">검색</span>
                     </button>
 
                     <button className={active === 'board' ? 'active' : ''} onClick={() => navigate('/board')}>
-                        <BookOpen size={menuImgSize} /> 일기
+                        <BookOpen size={menuImgSize} />
+                        <span className="menu-label">일기</span>
                     </button>
 
                     {auth.isAuthenticated && 
                         <>
                             <button className={active === 'message' ? 'active' : ''} onClick={() => navigate('/message')}>
-                                <Send size={menuImgSize} /> 메시지
+                                <Send size={menuImgSize} />
+                                <span className="menu-label">메시지</span>
                             </button>
 
                             <button className={active === 'alarm' ? 'active' : ''} onClick={() => navigate('/alarm')}>
-                                <Bell size={menuImgSize} /> 알림
+                                <Bell size={menuImgSize} />
+                                <span className="menu-label">알림</span>
                             </button>
 
                             <button className={active === 'create' ? 'active' : ''} onClick={() => navigate('/board/create')}>
-                                <PlusCircle size={menuImgSize} /> 작성하기
+                                <PlusCircle size={menuImgSize} />
+                                <span className="menu-label">작성하기</span>
+                            </button>
+
+                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate('/profile')}>
+                                <User size={menuImgSize} />
+                                <span className="menu-label">프로필</span>
                             </button>
                         </>
                     }
@@ -86,16 +114,14 @@ function Header() {
                 <div className="menu-bottom">
                     {!auth.isAuthenticated ? (
                         <button className={active === 'login' ? 'active' : ''} onClick={() => navigate('/login')}>
-                            로그인
+                            <LogIn size={menuImgSize} />
+                            <span className="menu-label">로그인</span>
                         </button>
                     ) : (
-                        <>
-                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate('/profile')}>
-                                <User size={menuImgSize} /> 프로필
-                            </button>
-                            
-                            <button onClick={handlelogout}>로그아웃</button>
-                        </>
+                        <button onClick={handlelogout}>
+                            <LogOut size={menuImgSize} />
+                            <span className="menu-label">로그아웃</span>
+                        </button>
                     )}
                 </div>
             </nav>
@@ -103,4 +129,4 @@ function Header() {
     );
 }
 
-export default Header;
+export default Sidebar;

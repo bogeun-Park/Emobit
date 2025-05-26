@@ -3,13 +3,14 @@
     font-size: 1.8rem;
     color: #262626;
     text-decoration: none; 
-    padding: 1.3rem 0.5rem;
+    padding: 1.3rem 0.7rem;
     font-weight: 800;
     display: inline-block;
     margin-bottom: 0.5rem;
 }
 
 .sidebar {
+    position: fixed;
     width: 244px;
     height: 100vh;
     display: flex;
@@ -57,4 +58,18 @@
 .menu button.active svg {
     stroke: #000;
     stroke-width: 2.5;
+}
+
+@media (max-width: 1264px) {
+    .sidebar {
+        width: 74px;
+    }
+
+    .menu-label {
+        display: none;
+    }
+
+    .menu button {
+        justify-content: center;
+    }
 }
