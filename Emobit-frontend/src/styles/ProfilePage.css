@@ -3,7 +3,6 @@
     margin: 0 auto;
     padding: 1.5rem;
     font-family: sans-serif;
-    padding-left: var(--sidebar-width, 244px);
 }
 
 .profile-header {

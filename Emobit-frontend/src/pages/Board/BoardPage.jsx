@@ -1,4 +1,3 @@
-import '../../styles/BoardPage.css'
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -19,7 +18,7 @@ function BoardPage() {
     }, []);
 
     return (
-        <div className="board-container">
+        <div>
             <h2>게시판 페이지</h2>
 
             {boardList.length > 0 && (

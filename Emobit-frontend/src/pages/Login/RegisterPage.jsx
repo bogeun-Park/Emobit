@@ -1,4 +1,3 @@
-import '../../styles/RegisterPage.css'
 import React, { useState } from 'react';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useNavigate } from 'react-router-dom';
@@ -30,7 +29,7 @@ function LoginPage() {
     };
 
     return (
-        <div className="register-container">
+        <div>
             <h2>회원가입</h2>
             
             <form onSubmit={handleSubmit}>
