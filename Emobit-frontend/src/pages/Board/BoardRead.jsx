@@ -165,7 +165,8 @@ function BoardRead() {
         <div>
             <p>
                 <span>{board.memberUsername}</span>
-                <span>({board.memberDisplayName})</span>                
+                <span>({board.memberDisplayName})</span>
+                <span>조회수 : {board.viewCount}</span>            
             </p>
             
             <img src={board.imageUrl} alt="" style={{ width: '300px', height: '300px', objectFit: 'cover' }}/>
