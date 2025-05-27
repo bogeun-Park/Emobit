@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+.board-container {
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.board-title {
+    font-family: 'Gowun Dodum', sans-serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.board-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+}
+
+.board-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.2s ease;
+    position: relative;
+}
+
+.board-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.board-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.board-card-info {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.4rem;
+}
+
+.board-card-info span:not(:last-child)::after {
+    content: ' · ';
+    margin: 0 0.3rem;
+}
+
+.board-viewCount {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #000;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.board-empty {
+    font-size: 1rem;
+    color: #999;
+    text-align: center;
+    padding: 2rem 0;
+}

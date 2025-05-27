@@ -1,6 +1,8 @@
+import '../../styles/BoardPage.css';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { Eye } from 'lucide-react';
 
 function BoardPage() {
     const axios = useAxios();
@@ -18,23 +20,25 @@ function BoardPage() {
     }, []);
 
     return (
-        <div>
-            <h2>게시판 페이지</h2>
+        <div className="board-container">
+            <h2 className="board-title">Open Diary</h2>
 
-            {boardList.length > 0 && (
-                <ul>
-                    {boardList.map((board) => (
-                        <li key={board.id}>
-                            <Link to={`/board/read/${board.id}`}>{board.title}</Link>
-                            <div>
-                                <span>{board.memberUsername}</span>
-                                <span>({board.memberDisplayName})</span>
-                                <span>조회수 : {board.viewCount}</span>
+            <div className="board-list">
+                {boardList.length > 0 ? (
+                    boardList.map((board) => (
+                        <Link to={`/board/read/${board.id}`} key={board.id} className="board-card">
+                            <h3 className="board-card-title">{board.title}</h3>
+                            <div className="board-card-info">
+                                <span className="board-username">@{board.memberUsername}</span>
+                                <span className="board-displayName">({board.memberDisplayName})</span>
                             </div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                            <span className="board-viewCount"><Eye size={13} />{board.viewCount}</span>
+                        </Link>
+                    ))
+                ) : (
+                    <p className="board-empty">게시글이 없습니다.</p>
+                )}
+            </div>
         </div>
     );
 }
