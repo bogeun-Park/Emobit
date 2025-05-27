@@ -9,11 +9,11 @@ function BoardPage() {
     
     useEffect(() => {
         axios.get('/board')
-            .then((res) => {
-                setBoardList(res.data);
+            .then((response) => {
+                setBoardList(response.data);
             })
-            .catch((err) => {
-                console.error('게시판 목록 불러오기 실패:', err);
+            .catch((error) => {
+                console.error('게시판 목록 불러오기 실패:', error);
             });
     }, []);
 
@@ -26,6 +26,11 @@ function BoardPage() {
                     {boardList.map((board) => (
                         <li key={board.id}>
                             <Link to={`/board/read/${board.id}`}>{board.title}</Link>
+                            <div>
+                                <span>{board.memberUsername}</span>
+                                <span>({board.memberDisplayName})</span>
+                                <span>조회수 : {board.viewCount}</span>
+                            </div>
                         </li>
                     ))}
                 </ul>
