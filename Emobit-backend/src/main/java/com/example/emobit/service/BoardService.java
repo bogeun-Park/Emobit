@@ -94,4 +94,9 @@ public class BoardService {
             }
         }
 	}
+	
+	@Transactional
+	public void increaseViewCount(Long id) {
+		boardRepository.incrementViewCount(id);
+	}
 }

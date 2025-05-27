@@ -58,6 +58,8 @@ public class BoardController {
 	
 	@GetMapping("/board/read/{id}")
 	public ResponseEntity<?> boardRead(@PathVariable("id") Long id) {
+		boardService.increaseViewCount(id);
+		
 		Board board = boardService.getBoardById(id);
 		BoardDto boardDto = new BoardDto(board);
 		
