@@ -44,7 +44,7 @@ public class CommentController {
 	
 	@PostMapping("/comments/create_process")
 	public ResponseEntity<?> commentCreateProcess(@RequestBody @Valid CommentsCreateDto commentsCreateDto,
-												@AuthenticationPrincipal CustomUser customUser) {
+												  @AuthenticationPrincipal CustomUser customUser) {
 		if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
@@ -56,8 +56,8 @@ public class CommentController {
 	
 	@PutMapping("/comments/update_process/{id}")
 	public ResponseEntity<String> commentUpdateProcess(@PathVariable("id") Long id,
-													 @RequestBody @Valid CommentsUpdateDto commentsUpdateDto,
-													 @AuthenticationPrincipal CustomUser customUser) {
+													   @RequestBody @Valid CommentsUpdateDto commentsUpdateDto,
+													   @AuthenticationPrincipal CustomUser customUser) {
 		if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
