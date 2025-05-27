@@ -163,6 +163,12 @@ function BoardRead() {
 
     return (
         <div>
+            <p>
+                <span>{board.memberUsername}</span>
+                <span>({board.memberDisplayName})</span>
+                <span>조회수 : {board.viewCount}</span>
+            </p>
+            
             <img src={board.imageUrl} alt="" style={{ width: '300px', height: '300px', objectFit: 'cover' }}/>
             <h2>{board.title}</h2>
             <p>{board.content}</p>
