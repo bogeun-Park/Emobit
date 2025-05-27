@@ -28,15 +28,15 @@ dependencies {
 	// 자동 빌드
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	
-	// oracle, jpa
+	// oracle jpa
 	implementation 'com.oracle.database.jdbc:ojdbc11:21.9.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     
-	// lombok(생산성 향상)
+	// lombok
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	
-	// spring security(회원 기능 구현)
+	// spring security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
 	
@@ -55,6 +55,9 @@ dependencies {
 	
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {
