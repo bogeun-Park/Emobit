@@ -24,6 +24,7 @@ import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.BoardService;
 import com.example.emobit.service.OracleStorageService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -57,8 +58,10 @@ public class BoardController {
 	}
 	
 	@GetMapping("/board/read/{id}")
-	public ResponseEntity<?> boardRead(@PathVariable("id") Long id) {
-		boardService.increaseViewCount(id);
+	public ResponseEntity<?> boardRead(@PathVariable("id") Long id,
+									   @AuthenticationPrincipal CustomUser customUser,
+									   HttpServletRequest request) {
+		boardService.increaseViewCount(id, customUser, request);
 		
 		Board board = boardService.getBoardById(id);
 		BoardDto boardDto = new BoardDto(board);

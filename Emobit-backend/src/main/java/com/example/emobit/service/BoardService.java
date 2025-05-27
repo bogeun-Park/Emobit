@@ -1,8 +1,10 @@
 package com.example.emobit.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,7 +13,10 @@ import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardCreateDto;
 import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.repository.BoardRepository;
+import com.example.emobit.security.CustomUser;
+import com.example.emobit.util.IpUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,6 +25,7 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 	private final MemberService memberService;
 	private final OracleStorageService oracleStorageService;
+	private final StringRedisTemplate redisTemplate;
 	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
 	
 	public List<Board> getBoardAll() {
@@ -96,7 +102,22 @@ public class BoardService {
 	}
 	
 	@Transactional
-	public void increaseViewCount(Long id) {
-		boardRepository.incrementViewCount(id);
+	public void increaseViewCount(Long id, CustomUser customUser, HttpServletRequest request) {
+		String key;
+
+	    if (customUser != null) {
+	        // 로그인한 사용자면 userId 기준
+	        Long userId = customUser.getId();
+	        key = "viewed::" + id + "::user::" + userId;
+	    } else {
+	        // 비로그인 사용자면 IP 기준
+	        String userIp = IpUtil.getClientIp(request);
+	        key = "viewed::" + id + "::ip::" + userIp;
+	    }
+
+	    if (!redisTemplate.hasKey(key)) {
+	        boardRepository.incrementViewCount(id);
+	        redisTemplate.opsForValue().set(key, "1", 10, TimeUnit.MINUTES);  // 조회수 종복 방지 10분
+	    }
 	}
 }
