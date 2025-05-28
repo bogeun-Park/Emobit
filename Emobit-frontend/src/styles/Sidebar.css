@@ -3,7 +3,7 @@
     font-size: 1.8rem;
     color: #262626;
     text-decoration: none; 
-    padding: 1.3rem 0.7rem;
+    padding: 1.3rem 0.6rem;
     font-weight: 800;
     display: inline-block;
     margin-bottom: 0.5rem;
@@ -42,7 +42,7 @@
     font-size: 1rem;
     cursor: pointer;
     color: #000000;
-    padding: 1.5rem 0.5rem;
+    padding: 1.5rem 0.4rem;
     height: 47px;
 }
 
@@ -62,7 +62,7 @@
 
 @media (max-width: 1264px) {
     .sidebar {
-        width: 74px;
+        width: 72px;
     }
 
     .menu-label {
