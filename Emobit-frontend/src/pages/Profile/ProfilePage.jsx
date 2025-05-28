@@ -1,16 +1,22 @@
 import '../../styles/ProfilePage.css';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
 
 function ProfilePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
+    const navigate = useNavigate();  
+
     const [myBoards, setMyBoards] = useState([]);
 
     useEffect(() => {
-        if (!auth.id) return;
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
 
         axios.get(`/myBoards/${auth.id}`)
             .then((response) => {
