@@ -18,9 +18,10 @@ export const AuthProvider = ({ children }) => {
             const displayName = response.data.displayName;
             const username = response.data.username;
             const role = response.data.role;
+            const imageUrl = response.data.imageUrl;
             
             if (id){
-                dispatch(authAction.login({ username, id, displayName, role }));
+              dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
             }
         })
         .catch(error => {
