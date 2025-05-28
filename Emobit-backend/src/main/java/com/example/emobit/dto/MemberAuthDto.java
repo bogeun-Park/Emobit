@@ -16,6 +16,7 @@ public class MemberAuthDto {
 	private Long id;
 	private String displayName;
 	private String username;
+	private String imageUrl;
 	
 	@Enumerated(EnumType.STRING)
 	private Role role;
@@ -24,6 +25,7 @@ public class MemberAuthDto {
 		this.id = member.getId();
 		this.displayName = member.getDisplayName();
 		this.username = member.getUsername();
+		this.imageUrl = member.getImageUrl();
 		this.role = member.getRole();
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.emobit.security.Role;
+import com.example.emobit.util.Constant;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -40,6 +41,9 @@ public class Member {
 	
 	@Column(name = "PASSWORD", nullable = false)
 	private String password;
+	
+	@Column(name = "IMAGEURL")
+	private String imageUrl = Constant.MEMBER_DEFAULT_IMG_URL;
 	
 	@Enumerated(EnumType.STRING)
     @Column(name = "ROLE")
