@@ -36,8 +36,9 @@ function LoginPage() {
                         const id = authResponse.data.id;
                         const displayName = authResponse.data.displayName;
                         const role = authResponse.data.role;
+                        const imageUrl = authResponse.data.imageUrl;
 
-                        dispatch(authAction.login({ username, id, displayName, role }));
+                        dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
                     })
 
                 navigate('/');
