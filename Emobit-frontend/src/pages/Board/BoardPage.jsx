@@ -33,6 +33,7 @@ function BoardPage() {
                                 <span className="board-displayName">({board.memberDisplayName})</span>
                             </div>
                             <span className="board-viewCount"><Eye size={13} />{board.viewCount}</span>
+                            <span className="board-createdAt">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                         </Link>
                     ))
                 ) : (

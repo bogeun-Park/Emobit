@@ -19,7 +19,7 @@
 .board-card {
     background-color: #fff;
     border-radius: 12px;
-    padding: 1.2rem 1.5rem;
+    padding: 1.2rem 1.5rem 0.7rem 1.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     text-decoration: none;
     color: inherit;
@@ -51,7 +51,7 @@
 .board-viewCount {
     position: absolute;
     top: 1rem;
-    right: 1rem;
+    right: 1.2rem;
     color: #000;
     font-size: 0.85rem;
     display: flex;
@@ -64,4 +64,11 @@
     color: #999;
     text-align: center;
     padding: 2rem 0;
+}
+
+.board-createdAt {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.2rem;
+    font-size: 0.8rem;
 }
