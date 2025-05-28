@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.example.emobit.util.Constant;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -74,7 +75,7 @@ public class Board {
     @PrePersist
     public void prePersist() {
         if (this.imageUrl == null || this.imageUrl.isEmpty()) {
-            this.imageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
+            this.imageUrl = Constant.BOARD_DEFAULT_IMG_URL;
         }
     }
 }

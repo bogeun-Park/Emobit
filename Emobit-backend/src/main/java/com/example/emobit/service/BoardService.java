@@ -14,6 +14,7 @@ import com.example.emobit.dto.BoardCreateDto;
 import com.example.emobit.dto.BoardUpdateDto;
 import com.example.emobit.repository.BoardRepository;
 import com.example.emobit.security.CustomUser;
+import com.example.emobit.util.Constant;
 import com.example.emobit.util.IpUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +27,6 @@ public class BoardService {
 	private final MemberService memberService;
 	private final OracleStorageService oracleStorageService;
 	private final StringRedisTemplate redisTemplate;
-	private final String defaultImageUrl = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axsd3bml0uow/b/EmobitBucket/o/board/8225153c-f63a-4f04-8767-15a20c7d5163.png";
 	
 	public List<Board> getBoardAll() {
 		List<Board> boardList = boardRepository.findAll(Sort.by("id").descending());
@@ -72,7 +72,7 @@ public class BoardService {
             throw new RuntimeException("게시판 수정 실패", e);
         }
 		  
-		if (!beforeImageUrl.equals(defaultImageUrl)) {
+		if (!beforeImageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL)) {
             boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
             if (!bImageDeleted) {
                 throw new RuntimeException("이미지 삭제 실패");
@@ -93,7 +93,7 @@ public class BoardService {
         }
 		
         // 이미지 삭제 작업
-        if (!imageUrl.equals(defaultImageUrl)) {
+        if (!imageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL)) {
             boolean imageDeleted = oracleStorageService.deleteObject(imageUrl);
             if (!imageDeleted) {
                 throw new RuntimeException("이미지 삭제 실패");
