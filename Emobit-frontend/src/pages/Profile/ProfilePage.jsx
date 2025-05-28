@@ -1,20 +1,17 @@
 import '../../styles/ProfilePage.css';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
 
 function ProfilePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
-    const navigate = useNavigate();  
 
     const [myBoards, setMyBoards] = useState([]);
 
     useEffect(() => {
         if (!auth.isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            navigate('/login');
             return;
         }
 
@@ -30,13 +27,15 @@ function ProfilePage() {
     return (
         <div className="profile-container">
             <div className="profile-header">
-                <div className="profile-image" />
+                <img src={auth.imageUrl} alt="" className="profile-image" />
                 <div className="profile-info">
                     <h2>{auth.displayName}</h2>
                     <p>@{auth.username}</p>
                     <p>게시물 {myBoards.length}</p>
                 </div>
             </div>
+
+            <hr className="profile-divider" />
 
             <div className="post-grid">
                 {myBoards.map((board) => (
