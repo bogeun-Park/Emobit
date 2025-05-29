@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberRegisterDto;
+import com.example.emobit.exception.MemberNotFoundException;
 import com.example.emobit.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class MemberService {
 	
 	public Member getMemberById(Long id) {
     	Member member = memberRepository.findById(id)
-    						.orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+    						.orElseThrow(() -> new MemberNotFoundException("회원 정보를 찾을 수 없습니다."));
     	
         return member;
     }
