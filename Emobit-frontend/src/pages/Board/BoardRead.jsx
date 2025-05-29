@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
+import NotFoundPage from '../NotFound/NotFoundPage';
 
 function BoardRead() {
     const axios = useAxios();
@@ -12,6 +13,7 @@ function BoardRead() {
     const [board, setBoard] = useState(null);
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState('');
+    const [notFound, setNotFound] = useState(false);
 
     const [commentEditId, setCommentEditId] = useState(null);
     const [commentEditContent, setCommentEditContent] = useState('');
@@ -74,9 +76,14 @@ function BoardRead() {
         try {
             const response = await axios.get(`/board/read/${boardId}`);
             setBoard(response.data);
+            setNotFound(false);
         } catch (error) {
-            console.error('게시글을 가져오는 데 실패했습니다:', error);
-            navigate('/board');
+            if (error.response && error.response.status === 404) {
+                setNotFound(true);
+            } else {
+                alert('게시글 조회 중 오류가 발생했습니다.');
+                navigate('/board');
+              }
         }
     };
 
@@ -158,6 +165,10 @@ function BoardRead() {
 
         return `${formattedDate} ${formattedTime}`;
     };
+
+    if (notFound) {
+        return <NotFoundPage />;
+    }
 
     if (!board) return null;
 
