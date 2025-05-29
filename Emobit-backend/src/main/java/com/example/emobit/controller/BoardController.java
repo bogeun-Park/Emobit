@@ -61,10 +61,10 @@ public class BoardController {
 	public ResponseEntity<?> boardRead(@PathVariable("id") Long id,
 									   @AuthenticationPrincipal CustomUser customUser,
 									   HttpServletRequest request) {
-		boardService.increaseViewCount(id, customUser, request);
-		
 		Board board = boardService.getBoardById(id);
 		BoardDto boardDto = new BoardDto(board);
+		
+		boardService.increaseViewCount(id, customUser, request);
 		
 		return ResponseEntity.ok(boardDto);
 	}
