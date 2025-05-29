@@ -20,15 +20,26 @@ function Sidebar() {
     useEffect(() => {
         const curPath = location.pathname;
 
-        if (curPath === '/') dispatch(menuAction.setActiveMenu('home'));
-        else if (curPath.startsWith('/search')) dispatch(menuAction.setActiveMenu('search'));        
-        else if (curPath.startsWith('/board/create')) dispatch(menuAction.setActiveMenu('create'));  // 구체적인 경로를 먼저 설정
-        else if (curPath.startsWith('/board')) dispatch(menuAction.setActiveMenu('board'));
-        else if (curPath.startsWith('/message')) dispatch(menuAction.setActiveMenu('message'));
-        else if (curPath.startsWith('/alarm')) dispatch(menuAction.setActiveMenu('alarm'));
-        else if (curPath.startsWith('/profile')) dispatch(menuAction.setActiveMenu('profile'));
-        else if (curPath.startsWith('/login')) dispatch(menuAction.setActiveMenu('login'));
-    }, [location.pathname, dispatch]);
+        if (curPath === '/') {
+            dispatch(menuAction.setActiveMenu('home'));
+        } else if (curPath === '/search') {
+            dispatch(menuAction.setActiveMenu('search'));
+        } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath)) {
+            dispatch(menuAction.setActiveMenu('board'));
+        } else if (curPath === '/message') {
+            dispatch(menuAction.setActiveMenu('message'));
+        } else if (curPath === '/alarm') {
+            dispatch(menuAction.setActiveMenu('alarm'));
+        } else if (curPath === '/board/create') {
+            dispatch(menuAction.setActiveMenu('create'));
+        } else if (auth.username && curPath === `/${auth.username}`) {
+            dispatch(menuAction.setActiveMenu('profile'));
+        } else if (curPath === '/login') {
+            dispatch(menuAction.setActiveMenu('login'));
+        } else {
+            dispatch(menuAction.setActiveMenu(''));
+        }
+    }, [location.pathname, dispatch, auth]);
 
     useEffect(() => {
         const sidebar = document.querySelector('.sidebar');
@@ -103,7 +114,7 @@ function Sidebar() {
                                 <span className="menu-label">작성하기</span>
                             </button>
 
-                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate('/profile')}>
+                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate(`/${auth.username}`)}>
                                 <User size={menuImgSize} />
                                 <span className="menu-label">프로필</span>
                             </button>
