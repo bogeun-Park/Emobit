@@ -12,6 +12,7 @@ import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardCreateDto;
 import com.example.emobit.dto.BoardUpdateDto;
+import com.example.emobit.exception.BoardNotFoundException;
 import com.example.emobit.repository.BoardRepository;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.util.Constant;
@@ -36,7 +37,7 @@ public class BoardService {
 	
 	public Board getBoardById(Long id) {
 		Board board = boardRepository.findById(id)
-						.orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+						.orElseThrow(() -> new BoardNotFoundException("게시글을 찾을 수 없습니다."));
 		
 		return board;
 	}

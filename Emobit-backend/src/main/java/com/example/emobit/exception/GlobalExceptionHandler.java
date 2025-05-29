@@ -19,4 +19,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errors);
     }
+	
+	@ExceptionHandler(BoardException.class)
+	public ResponseEntity<String> handleBoardException(BoardException e) {
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+	
+	@ExceptionHandler(MemberException.class)
+	public ResponseEntity<String> handleMemberException(MemberException e) {
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
 }
