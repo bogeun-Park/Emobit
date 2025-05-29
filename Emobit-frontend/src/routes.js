@@ -19,7 +19,7 @@ const routes = [
     { path: "/board/create", element: <BoardCreate /> },
     { path: "/board/read/:boardId", element: <BoardRead /> },
     { path: "/board/update/:boardId", element: <BoardUpdate /> },
-    { path: "/profile", element: <ProfilePage /> },
+    { path: "/:username", element: <ProfilePage /> },
 ];
 
 export default routes;
