@@ -25,6 +25,7 @@ import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardDto;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberLoginDto;
+import com.example.emobit.dto.MemberProfileDto;
 import com.example.emobit.dto.MemberRegisterDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.security.Jwtutil;
@@ -161,23 +162,17 @@ public class MemberController {
 		return ResponseEntity.ok(body);
 	}
 	
-	@GetMapping("/myBoards/{createdBy}")
-	public ResponseEntity<?> getMyBoards(@PathVariable("createdBy") Long createdBy,
-										 @AuthenticationPrincipal CustomUser customUser) {
-		if (customUser == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-	    }
-		
-		if (!createdBy.equals(customUser.getId())) {
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("사용자 권한이 없습니다.");
-	    }
-		
-		Member member = memberService.getMemberById(createdBy);
-		List<Board> myBoards = member.getBoards();
-		List<BoardDto> boardListDto = myBoards.stream()
+	@GetMapping("/profile/{username}")
+	public ResponseEntity<?> getMyBoards(@PathVariable("username") String username,
+										 @AuthenticationPrincipal CustomUser customUser) {		
+		Member member = memberService.getMemberByUsername(username);
+		List<Board> boardList = member.getBoards();
+		List<BoardDto> boardListDto = boardList.stream()
 		    .map(BoardDto::new)
 		    .toList();
 		
-		return ResponseEntity.ok(boardListDto);
+		MemberProfileDto memberProfileDto = new MemberProfileDto(member, boardListDto);
+		
+		return ResponseEntity.ok(memberProfileDto);
 	}
 }
