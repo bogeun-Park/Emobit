@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 	}
 	
 	@ExceptionHandler(MemberException.class)
-	public ResponseEntity<String> handleMemberException(BoardException e) {
+	public ResponseEntity<String> handleMemberException(MemberException e) {
 	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
 	}
 }
