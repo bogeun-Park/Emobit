@@ -24,6 +24,13 @@ public class MemberService {
         return member;
     }
 	
+	public Member getMemberByUsername(String username) {
+		Member member = memberRepository.findByUsername(username)
+		        			.orElseThrow(() -> new MemberNotFoundException("회원 정보를 찾을 수 없습니다."));
+				
+	    return member;
+	}
+	
 	public void registerMember(MemberRegisterDto memberRegisterDto) {
 		String displayName = memberRegisterDto.getDisplayName();
 	    String username = memberRegisterDto.getUsername();
