@@ -73,10 +73,10 @@ public class BoardService {
             throw new RuntimeException("게시판 수정 실패", e);
         }
 		  
-		if (!beforeImageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL)) {
-            boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
+		if (!beforeImageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL) && !beforeImageUrl.equals(afterImageUrl)) {
+			boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
             if (!bImageDeleted) {
-                throw new RuntimeException("이미지 삭제 실패");
+            	throw new RuntimeException("이미지 삭제 실패");
             }
         }
 	}
