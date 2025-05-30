@@ -1,0 +1,227 @@
+.board-read-container {
+    display: flex;
+    flex-direction: row;
+    padding-top: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: calc(100vh - 20px);
+    background: #fff;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.board-left {
+    flex: 0 1 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.board-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.board-right {
+    flex: 0 1 40%;
+    min-width: 450px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    background: #fff;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.board-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.board-buttons {
+    margin-top: 0px;
+}
+
+.board-buttons button {
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.content-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0 1rem 1.5rem 1rem;
+    min-height: 0;
+    list-style: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;/* IE 10+ */
+}
+
+.content-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.content-item {
+    padding-top: 1.5rem;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.comment-time {
+    font-size: 0.75rem;
+    color: #999;
+    margin-left: 0.5rem;
+}
+
+.comment-content {
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    margin-top: 0.2rem;
+}
+
+.comment-form {
+    padding: 0 1rem;
+    border-top: 1px solid #eee;
+    background: #fff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-form textarea {
+    flex: 1;
+    width: auto;
+    resize: none;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    min-height: 40px;
+}
+
+.comment-form textarea:focus {
+    outline: none;
+}
+
+.comment-form button {
+    margin-top: 0.5rem;
+    background: none;
+    border: none;
+    color: #3897f0;
+    font-weight: 500;
+    padding: 0;
+    font-size: 1rem;
+    border-radius: 0;
+    cursor: default;
+}
+
+.comment-form button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.comment-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.comment-buttons button {
+    cursor: pointer; 
+}
+
+.comment-edit-area textarea {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 800px) {
+    .board-read-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .board-left, .board-right {
+        width: 100%;
+        height: auto;
+        min-width: 0;
+    }
+
+    .board-left img {
+        width: 100%;
+        height: auto;
+        max-height: 300px;
+    }
+
+    .board-right {
+        min-width: unset;
+    }
+}
+
+.board-extra-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 1px solid #eee;
+    box-sizing: border-box;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.left-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.like-send-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.like-button, .send-button {
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.created-at {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #999;
+    user-select: none;
+}
+
+.right-side {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.view-count {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.85rem;
+    user-select: none;
+}

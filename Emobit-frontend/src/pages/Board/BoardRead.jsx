@@ -1,13 +1,15 @@
+import '../../styles/BoardReadPage.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
+import { Heart, Send, Eye } from 'lucide-react';
 
 function BoardRead() {
     const axios = useAxios();
     const navigate = useNavigate();
-    const auth = useSelector(state => state.auth);
+    const auth = useSelector(state => state.auth);    
     
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
@@ -158,7 +160,7 @@ function BoardRead() {
         const timeOptions = {
             hour: '2-digit',
             minute: '2-digit',
-            second: '2-digit',
+            // second: '2-digit',
             hour12: false // 24시간 형식
         };
         const formattedTime = new Intl.DateTimeFormat('ko-KR', timeOptions).format(date).replace(':', ':');  // "16:11:34"
@@ -173,64 +175,96 @@ function BoardRead() {
     if (!board) return null;
 
     return (
-        <div>
-            <p>
-                <span>{board.memberUsername}</span>
-                <span>({board.memberDisplayName})</span>
-                <span>조회수 : {board.viewCount}</span>            
-            </p>
-            
-            <img src={board.imageUrl} alt="" style={{ width: '300px', height: '300px', objectFit: 'cover' }}/>
-            <h2>{board.title}</h2>
-            <p>{board.content}</p>
+        <div className="board-read-container">
+            <div className="board-left">
+                <img src={board.imageUrl} alt={board.title} />
+            </div>
 
-            {auth.id === board.createdBy && (
-                <>
-                    <button onClick={() => navigate(`/board/update/${boardId}`)}>수정</button>
-                    <button onClick={handleDelete}>삭제</button>
-                </>
-            )}
+            <div className="board-right">
+                <div className="board-header">
+                    <span>{board.memberUsername}</span>
 
-            <ul>
-                {comments.length > 0 ? (
-                    comments.map((comment) => (
-                        <li key={comment.id}>
-                            {comment.memberDisplayName}({comment.memberUsername}) {customDate(comment.updatedAt)}
-                            <br/>
-
-                            {commentEditId === comment.id ? (
-                                <>
-                                    <textarea value={commentEditContent} onChange={(e) => setCommentEditContent(e.target.value)}/>
-                                    <button onClick={handleUpdateComment}>저장</button>
-                                    <button onClick={cancelEditing}>취소</button>
-                                </>
-                            ) : (
-                                <>
-                                    {comment.content}
-                                    {auth.id === comment.createdBy && (
-                                        <>
-                                            <button onClick={() => startEditing(comment)}>수정</button>
-                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
-                                        </>
-                                    )}
-                                </>
-                            )}                  
-                        </li>
-                    ))
-                ) : (
-                    <li>댓글이 없습니다.</li>
-                )}
-            </ul>
-
-            <form onSubmit={handleCreateComment}>                
-                <div style={{ display: 'flex' }}>
-                    <label htmlFor="content">댓글</label>
-                    <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={4} />
+                    {auth.id === board.createdBy && (
+                        <div className="board-buttons">
+                            <button onClick={() => navigate(`/board/update/${boardId}`)}>수정</button>
+                            <button onClick={handleDelete}>삭제</button>
+                        </div>
+                    )}
                 </div>
 
-                <button type="submit">등록</button>
-            </form>
+                <ul className="content-list">
+                    <li className="content-item">
+                        <div className="content-header">
+                            <div className="content-user">
+                                <span>{board.memberUsername}</span>
+                            </div>
+                        </div>
+
+                        <div>{board.content}</div>
+                    </li>
+
+                    {comments.length > 0 ? (
+                        comments.map((comment) => (
+                            <li key={comment.id} className="content-item">
+                                <div className="content-header">
+                                    <div className="content-user">
+                                        <span>{comment.memberUsername}</span>
+                                        <span className="comment-time">{customDate(comment.updatedAt)}</span>
+                                    </div>
+
+                                    {auth.id === comment.createdBy && (
+                                        <div className="comment-buttons">
+                                            {commentEditId === comment.id ? (
+                                                <>
+                                                    <button onClick={handleUpdateComment}>저장</button>
+                                                    <button onClick={cancelEditing}>취소</button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button onClick={() => startEditing(comment)}>수정</button>
+                                                    <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {commentEditId === comment.id ? (
+                                    <div className="comment-edit-area">
+                                        <textarea value={commentEditContent} onChange={(e) => setCommentEditContent(e.target.value)} rows={3} />
+                                    </div>
+                                ) : (
+                                    <div className="comment-content">{comment.content}</div>
+                                )}
+                            </li>
+                          
+                        ))
+                    ) : (
+                        <li></li>
+                    )}
+                </ul>
+
+                <div className="board-extra-info">
+                    <div className="left-side">
+                        <div className="like-send-buttons">
+                            <button type="button" className="like-button"><Heart size={24} /></button>
+                            <button type="button" className="send-button"><Send size={24} /></button>
+                        </div>
+                        <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
+                    </div>
+                    <div className="right-side">
+                        <span className="view-count"><Eye size={13} />{board.viewCount}</span>
+                    </div>
+                </div>
+
+                
+                <form className="comment-form" onSubmit={handleCreateComment}>
+                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="댓글 달기..."/>
+                    <button type="submit">등록</button>
+                </form>
+            </div>
         </div>
+
     );
 }
 
