@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.emobit.security.Role;
 import com.example.emobit.util.Constant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -54,4 +55,9 @@ public class Member {
 	@JsonManagedReference
 	@OrderBy("id DESC")
 	private List<Board> boards = new ArrayList<>();
+	
+	@ToString.Exclude
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonBackReference
+	private List<Comments> comments = new ArrayList<>();
 }
