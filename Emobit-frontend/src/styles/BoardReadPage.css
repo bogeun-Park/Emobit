@@ -61,7 +61,7 @@
     flex: 1;
     overflow-y: auto;
     margin: 0;
-    padding: 0 1rem 1.5rem 1rem;
+    padding: 0 0 1.5rem 0;
     min-height: 0;
     list-style: none;
     scrollbar-width: none; /* Firefox */
@@ -73,7 +73,7 @@
 }
 
 .content-item {
-    padding-top: 1.5rem;
+    padding: 1.5rem 1rem 0 1rem;
 }
 
 .content-header {
@@ -108,12 +108,11 @@
 }
 
 .comment-form textarea {
+    font-size: 0.9rem;
     flex: 1;
     width: auto;
     resize: none;
     border: none;
-    border-radius: 4px;
-    font-size: 1rem;
     box-sizing: border-box;
     min-height: 40px;
 }
@@ -150,7 +149,18 @@
 
 .comment-edit-area textarea {
     width: 100%;
-    margin-bottom: 5px;
+    white-space: pre-wrap;
+    flex: 1;
+    font-size: 0.9rem;
+    resize: none;   
+    box-sizing: border-box;
+    min-height: 40px;
+    border: 1px solid #ccc;
+}
+
+.comment-edit-area textarea:focus {
+    outline: none;
+    border: 1px solid #ccc;
 }
 
 @media (max-width: 800px) {

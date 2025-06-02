@@ -200,7 +200,7 @@ function BoardRead() {
                             </div>
                         </div>
 
-                        <div>{board.content}</div>
+                        <div className="comment-content">{board.content}</div>
                     </li>
 
                     {comments.length > 0 ? (
