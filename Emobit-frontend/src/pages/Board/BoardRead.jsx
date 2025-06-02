@@ -182,7 +182,10 @@ function BoardRead() {
 
             <div className="board-right">
                 <div className="board-header">
-                    <span>{board.memberUsername}</span>
+                    <div className="board-user-header">
+                        <img src={board.memberImageUrl} alt="" className="content-user-image" />
+                        <span>{board.memberUsername}</span>
+                    </div>
 
                     {auth.id === board.createdBy && (
                         <div className="board-buttons">
@@ -194,55 +197,67 @@ function BoardRead() {
 
                 <ul className="content-list">
                     <li className="content-item">
-                        <div className="content-header">
-                            <div className="content-user">
-                                <span>{board.memberUsername}</span>
+                        <div className="content-user-info">
+                            <img src={board.memberImageUrl} alt="" className="content-user-image" />
+                            <div className="content-main">
+                                <div className="content-header">
+                                    <span className="content-username">{board.memberUsername}</span>
+                                </div>
+
+                                <div className="content-text">{board.content}</div>
                             </div>
                         </div>
-
-                        <div className="comment-content">{board.content}</div>
                     </li>
-
+                    
                     {comments.length > 0 ? (
                         comments.map((comment) => (
                             <li key={comment.id} className="content-item">
-                                <div className="content-header">
-                                    <div className="content-user">
-                                        <span>{comment.memberUsername}</span>
-                                        <span className="comment-time">{customDate(comment.updatedAt)}</span>
-                                    </div>
+                                <div className="content-user-info">
+                                    <img src={comment.memberImageUrl} alt="" className="content-user-image" />
+                                    <div className="content-main">
+                                        <div className="content-header">
+                                            <div className="content-info">
+                                                <span className="content-username">{comment.memberUsername}</span>
+                                                <span className="content-time">{customDate(comment.updatedAt)}</span>
+                                                {comment.updatedAt !== comment.createdAt && <span className="edited-label"> (수정됨)</span>}
+                                            </div>
 
-                                    {auth.id === comment.createdBy && (
-                                        <div className="comment-buttons">
-                                            {commentEditId === comment.id ? (
-                                                <>
-                                                    <button onClick={handleUpdateComment}>저장</button>
-                                                    <button onClick={cancelEditing}>취소</button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button onClick={() => startEditing(comment)}>수정</button>
-                                                    <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
-                                                </>
+                                            {auth.id === comment.createdBy && (
+                                                <div className="board-buttons">
+                                                    {commentEditId === comment.id ? (
+                                                        <>
+                                                            <button onClick={handleUpdateComment}>저장</button>
+                                                            <button onClick={cancelEditing}>취소</button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button onClick={() => startEditing(comment)}>수정</button>
+                                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
-                                    )}
-                                </div>
-
-                                {commentEditId === comment.id ? (
-                                    <div className="comment-edit-area">
-                                        <textarea value={commentEditContent} onChange={(e) => setCommentEditContent(e.target.value)} rows={3} />
+                                        {commentEditId === comment.id ? (
+                                            <div className="comment-edit-area">
+                                                <textarea
+                                                    value={commentEditContent}
+                                                    onChange={(e) => setCommentEditContent(e.target.value)}
+                                                    rows={3}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="content-text">{comment.content}</div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div className="comment-content">{comment.content}</div>
-                                )}
+                                </div>
                             </li>
-                          
                         ))
                     ) : (
                         <li></li>
                     )}
                 </ul>
+
 
                 <div className="board-extra-info">
                     <div className="left-side">
@@ -264,7 +279,6 @@ function BoardRead() {
                 </form>
             </div>
         </div>
-
     );
 }
 

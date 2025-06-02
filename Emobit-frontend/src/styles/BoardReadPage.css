@@ -37,6 +37,12 @@
     box-sizing: border-box;
 }
 
+.board-user-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
 .board-header {
     padding: 1rem;
     border-bottom: 1px solid #eee;
@@ -61,7 +67,7 @@
     flex: 1;
     overflow-y: auto;
     margin: 0;
-    padding: 0 0 1.5rem 0;
+    padding: 0 0 1.3rem 0;
     min-height: 0;
     list-style: none;
     scrollbar-width: none; /* Firefox */
@@ -73,7 +79,7 @@
 }
 
 .content-item {
-    padding: 1.5rem 1rem 0 1rem;
+    padding: 1.3rem 1rem 0 1rem;
 }
 
 .content-header {
@@ -82,19 +88,83 @@
     align-items: center;
     font-weight: 600;
     font-size: 0.9rem;
-    margin-bottom: 0.2rem;
 }
 
-.comment-time {
+.content-user-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 500%;
+    background-color: #ddd;
+    object-fit: cover;
+}
+
+.content-user-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+}
+
+.content-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.content-username {
+    font-weight: 600;
+}
+
+.content-time {
     font-size: 0.75rem;
     color: #999;
-    margin-left: 0.5rem;
 }
 
-.comment-content {
+.edited-label {
+    font-size: 0.7rem;
+    color: #999;
+    line-height: 1;
+}
+
+.content-text {
+    margin-top: 0.2rem;
     font-size: 0.9rem;
     white-space: pre-wrap;
-    margin-top: 0.2rem;
+}
+
+.board-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+}
+
+.board-buttons button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #3897f0;
+    font-size: 0.8rem;
+    padding: 2px 4px;
+}
+
+.comment-edit-area textarea {
+    width: 100%;
+    resize: none;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    padding: 4px;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+.comment-edit-area textarea:focus {
+    outline: none;
+    border-color: #aaa;
 }
 
 .comment-form {
@@ -136,31 +206,6 @@
 .comment-form button:hover {
     text-decoration: underline;
     cursor: pointer;
-}
-
-.comment-buttons {
-    display: flex;
-    gap: 5px;
-}
-
-.comment-buttons button {
-    cursor: pointer; 
-}
-
-.comment-edit-area textarea {
-    width: 100%;
-    white-space: pre-wrap;
-    flex: 1;
-    font-size: 0.9rem;
-    resize: none;   
-    box-sizing: border-box;
-    min-height: 40px;
-    border: 1px solid #ccc;
-}
-
-.comment-edit-area textarea:focus {
-    outline: none;
-    border: 1px solid #ccc;
 }
 
 @media (max-width: 800px) {
