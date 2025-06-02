@@ -22,6 +22,7 @@ public class BoardDto {
 	private Long createdBy;
 	private String memberUsername;
 	private String memberDisplayName;
+	private String memberImageUrl;
 	
 	public BoardDto(Board board) {
 		this.id = board.getId();
@@ -34,5 +35,6 @@ public class BoardDto {
 		this.createdBy = board.getMember().getId();
 		this.memberUsername = board.getMember().getUsername();
 		this.memberDisplayName = board.getMember().getDisplayName();
+		this.memberImageUrl = board.getMember().getImageUrl();
 	}
 }

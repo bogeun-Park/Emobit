@@ -20,6 +20,7 @@ public class CommentsDto {
 	private Long createdBy;
 	private String memberUsername;
 	private String memberDisplayName;
+	private String memberImageUrl;
 	
 	public CommentsDto(Comments comment) {
 		this.id = comment.getId();
@@ -30,5 +31,6 @@ public class CommentsDto {
 		this.createdBy = comment.getMember().getId();
 		this.memberUsername = comment.getMember().getUsername();
 		this.memberDisplayName = comment.getMember().getDisplayName();
+		this.memberImageUrl = comment.getMember().getImageUrl();
 	}
 }
