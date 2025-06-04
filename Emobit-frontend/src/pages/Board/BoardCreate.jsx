@@ -24,11 +24,9 @@ function BoardCreate() {
         }
 
         setImage(file);
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => setPreview(reader.result);
-            reader.readAsDataURL(file);
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => setPreview(reader.result);
+        reader.readAsDataURL(file);
     };
 
     const handleInputContent = (e) => {
