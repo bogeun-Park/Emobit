@@ -1,3 +1,4 @@
+import '../../styles/BoardCreate.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -6,12 +7,35 @@ import presignedUrlAxios from 'axios';
 
 function BoardCreate() {
     const axios = useAxios();
-    const navigate = useNavigate();    
+    const navigate = useNavigate();
     const auth = useSelector(state => state.auth);
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
+    const [preview, setPreview] = useState(null);
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+
+        // 사용자가 파일 선택을 취소한 경우 아무 처리도 하지 않음
+        if (!file) {         
+            return;
+        }
+
+        setImage(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => setPreview(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleInputContent = (e) => {
+        if (e.target.value.length <= 2000) {
+            setContent(e.target.value);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -28,29 +52,14 @@ function BoardCreate() {
         let imageUrl = '';
         try {
             if (image) {
-                let presignedUrl = '';
-                // Presigned URL 요청
-                try {
-                    const presignedRes = await axios.get(`/board/PresignedUrl?filename=${image.name}`);
-                    presignedUrl = presignedRes.data;
-                } catch (error) {
-                    console.error('Presigned URL 요청 실패:', error);
-                    return;
-                }
+                const presignedRes = await axios.get(`/board/PresignedUrl?filename=${image.name}`);
+                const presignedUrl = presignedRes.data;
 
-                // Object Storage에 이미지 업로드
-                try {
-                    await presignedUrlAxios.put(presignedUrl, image, {
-                        headers: {
-                            'Content-Type': image.type
-                        },
-                    });
+                await presignedUrlAxios.put(presignedUrl, image, {
+                    headers: { 'Content-Type': image.type },
+                });
 
-                    imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
-                } catch (error) {
-                    console.error('오브젝트 스토리지 업로드 실패:', error);
-                    return;
-                }
+                imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
             }
 
             await axios.post('/board/create_process', {
@@ -62,8 +71,7 @@ function BoardCreate() {
             alert('게시글이 성공적으로 작성되었습니다.');
             navigate('/board');
         } catch (error) {
-            console.error('게시글 작성 중 에러 발생:', error);
-
+            console.error('에러 발생:', error);
             if (error.response?.status === 401) {
                 alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
                 navigate('/login');
@@ -74,28 +82,45 @@ function BoardCreate() {
     };
 
     return (
-        <div>
-            <h2>게시판 작성</h2>
+        <div className="board-create-container">
+            <form onSubmit={handleSubmit} className="board-create-form">
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="title">제목</label>
-                    <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)}/>
+                <div className="form-header">
+                    <span className="create-title">Diary 작성</span>
+                    <button type="submit" className="submit-button-header">공유하기</button>
                 </div>
 
-                <div style={{ display: 'flex' }}>
-                    <label htmlFor="content">내용</label>
-                    <textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} rows={8}/>
-                </div>
+                <input type="text" className="input-title" placeholder="제목을 입력하세요" value={title} onChange={(e) => setTitle(e.target.value)}/>
 
-                <div>
-                    <label htmlFor="fileInput"></label>
-                    <input type="file" id="fileInput" onChange={(e) => setImage(e.target.files[0])} />
-                </div>
+                <div className="form-content-wrapper">
+                    <div className="image-upload-box" onClick={() => document.getElementById('fileInput').click()}>
+                        {preview ? (
+                            <img src={preview} alt="미리보기" />
+                        ) : (
+                            <span className="image-placeholder">이미지를 클릭하여 등록</span>
+                        )}
+                    </div>
 
-                <button type="submit">저장</button>
+                    <div className="form-input-area">
+                        <div className="user-info">
+                            <img src={auth.imageUrl || '/default-profile.png'} alt="" className="content-user-image"/>
+                            <span className="username">{auth.username || '사용자'}</span>
+                        </div>
+
+                        <textarea className="input-content" value={content} onChange={handleInputContent}/>
+                        <div className="content-length">{content.length} / 2000</div>
+
+                        <div className="upload-action-row" style={{ display: 'none' }}>
+                            <input type="file" id="fileInput" accept="image/*" 
+                                onChange={handleImageChange}
+                                onClick={(e) => { e.target.value = null; }} 
+                            />
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
+
     );
 }
 
