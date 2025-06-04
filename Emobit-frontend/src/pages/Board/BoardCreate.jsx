@@ -1,4 +1,4 @@
-import '../../styles/BoardCreate.css';
+import '../../styles/BoardCreateUpdate.css';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
@@ -73,11 +73,11 @@ function BoardCreate() {
     };
 
     return (
-        <div className="board-create-container">
-            <form onSubmit={handleSubmit} className="board-create-form">
+        <div className="board-create-update-container">
+            <form onSubmit={handleSubmit} className="board-create-update-form">
 
                 <div className="form-header">
-                    <span className="create-title">Diary 작성</span>
+                    <span className="create-update-title">Diary 작성</span>
                     <button type="submit" className="submit-button-header">공유하기</button>
                 </div>
 
@@ -94,7 +94,7 @@ function BoardCreate() {
 
                     <div className="form-input-area">
                         <div className="user-info">
-                            <img src={auth.imageUrl || '/default-profile.png'} alt="" className="content-user-image"/>
+                            <img src={auth.imageUrl} alt="" className="content-user-image"/>
                             <span className="username">{auth.username}</span>
                         </div>
 
