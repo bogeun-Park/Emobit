@@ -52,9 +52,11 @@ function BoardCreate() {
         let imageUrl = '';
         try {
             if (image) {
+                // Presigned URL 요청
                 const presignedRes = await axios.get(`/board/PresignedUrl?filename=${image.name}`);
                 const presignedUrl = presignedRes.data;
 
+                // Object Storage에 이미지 업로드
                 await presignedUrlAxios.put(presignedUrl, image, {
                     headers: { 'Content-Type': image.type },
                 });
