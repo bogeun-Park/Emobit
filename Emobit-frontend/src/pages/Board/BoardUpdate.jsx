@@ -48,6 +48,12 @@ function BoardUpdate() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
         const confirmed = window.confirm('게시글을 수정하시겠습니까?');
         if (!confirmed) return;
 
@@ -95,7 +101,7 @@ function BoardUpdate() {
                     <button type="submit" className="submit-button-header">저장</button>
                 </div>
 
-                <input type="text" className="input-title" placeholder="제목을 입력하세요" value={board.title} onChange={handleChange} />
+                <input type="text" id="title" className="input-title" placeholder="제목을 입력하세요" value={board.title} onChange={handleChange} />
 
                 <div className="form-content-wrapper">
 
@@ -113,7 +119,7 @@ function BoardUpdate() {
                             <span className="username">{auth.username || '사용자'}</span>
                         </div>
 
-                        <textarea className="input-content" value={board.content} onChange={handleChange} maxLength={2000} placeholder="내용을 입력하세요"/>
+                        <textarea id="content" className="input-content" value={board.content} onChange={handleChange} maxLength={2000} placeholder="내용을 입력하세요"/>
                         <div className="content-length">{board.content.length} / 2000</div>
 
                         <div className="upload-action-row" style={{ display: 'none' }}>
