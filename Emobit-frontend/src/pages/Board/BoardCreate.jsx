@@ -18,21 +18,12 @@ function BoardCreate() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
 
-        // 사용자가 파일 선택을 취소한 경우 아무 처리도 하지 않음
-        if (!file) {         
-            return;
-        }
+        if (!file) return;  // 사용자가 파일 선택을 취소한 경우 아무 처리도 하지 않음
 
         setImage(file);
         const reader = new FileReader();
         reader.onloadend = () => setPreview(reader.result);
         reader.readAsDataURL(file);
-    };
-
-    const handleInputContent = (e) => {
-        if (e.target.value.length <= 2000) {
-            setContent(e.target.value);
-        }
     };
 
     const handleSubmit = async (e) => {
@@ -104,10 +95,10 @@ function BoardCreate() {
                     <div className="form-input-area">
                         <div className="user-info">
                             <img src={auth.imageUrl || '/default-profile.png'} alt="" className="content-user-image"/>
-                            <span className="username">{auth.username || '사용자'}</span>
+                            <span className="username">{auth.username}</span>
                         </div>
 
-                        <textarea className="input-content" value={content} onChange={handleInputContent}/>
+                        <textarea className="input-content" value={content} maxLength={2000} onChange={(e) => setContent(e.target.value)}/>
                         <div className="content-length">{content.length} / 2000</div>
 
                         <div className="upload-action-row" style={{ display: 'none' }}>
