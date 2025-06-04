@@ -12,9 +12,9 @@ import ProfilePage from "./pages/Profile/ProfilePage";
 const routes = [
     { path: "*", element: <NotFoundPage /> },
     { path: "/", element: <HomePage /> },
-    { path: "/login", element: <LoginPage /> },
-    { path: "/login/register", element: <RegisterPage /> },
-    { path: "/login/register/sucess", element: <RegisterSucess /> },
+    { path: "/login", element: <LoginPage />, withLayout: false },
+    { path: "/login/register", element: <RegisterPage />, withLayout: false },
+    { path: "/login/register/sucess", element: <RegisterSucess />, withLayout: false },
     { path: "/board", element: <BoardPage /> },
     { path: "/board/create", element: <BoardCreate /> },
     { path: "/board/read/:boardId", element: <BoardRead /> },
