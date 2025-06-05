@@ -14,7 +14,7 @@ const routes = [
     { path: "/", element: <HomePage /> },
     { path: "/login", element: <LoginPage />, withLayout: false },
     { path: "/login/register", element: <RegisterPage />, withLayout: false },
-    { path: "/login/register/sucess", element: <RegisterSucess />, withLayout: false },
+    { path: "/login/register/success", element: <RegisterSucess />, withLayout: false },
     { path: "/board", element: <BoardPage /> },
     { path: "/board/create", element: <BoardCreate /> },
     { path: "/board/read/:boardId", element: <BoardRead /> },
