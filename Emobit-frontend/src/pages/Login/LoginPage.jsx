@@ -48,16 +48,16 @@ function LoginPage() {
     };
 
     return (
-        <div className="login-container">
-            <div className="login-box">
+        <div className="login-Register-container">
+            <div className="login-Register-box">
                 <div className="logo-wrapper" onClick={() => navigate('/')}>
                     <span className="logo-text">Emobit</span>
                 </div>
 
-                <form onSubmit={handleSubmit} className="login-form">
+                <form onSubmit={handleSubmit} className="login-Register-form">
                     <input type="text" placeholder="아이디" value={username} onChange={(e) => setUsername(e.target.value)}/>
                     <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                    <button type="submit" className="login-button">로그인</button>
+                    <button type="submit" className="login-Register-button">로그인</button>
                 </form>
 
                 <div className="divider">
@@ -70,7 +70,7 @@ function LoginPage() {
                     <button onClick={() => alert("비밀번호 재설정 기능 준비 중입니다.")}>비밀번호를 잊으셨나요?</button>
                 </div>
 
-                <div className="register-link">
+                <div className="login-register-link">
                     <span>계정이 없으신가요?</span>
                     <button onClick={handleRegisterClick}>가입하기</button>
                 </div>
