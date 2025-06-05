@@ -1,11 +1,11 @@
-.login-container {
+.login-Register-container {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.login-box {
+.login-Register-box {
     width: 300px;
     padding: 2rem;
     background-color: #fff;
@@ -19,7 +19,7 @@
     justify-content: center;
     gap: 10px;
     cursor: pointer;
-    margin-bottom: 2rem;
+    margin-bottom: 0.7rem;
 }
 
 .logo-text {
@@ -29,26 +29,34 @@
     color: #262626;
 }
 
-.login-form {
+.signup-message {
+    font-size: 1rem;
+    color: #737373;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+.login-Register-form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.login-form input {
-    padding: 0.8rem;
+.login-Register-form input {
+    padding: 0.7rem;
     font-size: 1rem;
     border: 1px solid #ddd;
     border-radius: 6px;
     background-color: #fafafa;
 }
 
-.login-form input:focus {
+.login-Register-form input:focus {
     outline: none;
     border-color: #aaa;
 }
 
-.login-button {
+.login-Register-button {
     background-color: #0095f6;
     color: white;
     padding: 0.6rem;
@@ -59,7 +67,7 @@
     transition: background-color 0.2s;
 }
 
-.login-button:hover {
+.login-Register-button:hover {
     background-color: #007cd6;
 }
 
@@ -69,7 +77,7 @@
     color: #262626;
 }
 
-.register-link button {
+.login-register-link button {
     background: none;
     border: none;
     color: #0095f6;

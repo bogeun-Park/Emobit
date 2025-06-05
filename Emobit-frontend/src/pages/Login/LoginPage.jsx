@@ -1,4 +1,4 @@
-import '../../styles/LoginPage.css';
+import '../../styles/LoginRegisterPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';

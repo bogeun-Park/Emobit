@@ -1,8 +1,9 @@
+import '../../styles/LoginRegisterPage.css';
 import React, { useState } from 'react';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useNavigate } from 'react-router-dom';
 
-function LoginPage() {
+function RegisterPage() {
     const axios = useAxios();
     const navigate = useNavigate();
 
@@ -13,47 +14,53 @@ function LoginPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!username || !password) {
-            alert('아이디와 비밀번호를 입력하세요.');
+        if (!displayName || !username || !password) {
+            alert('모든 항목을 입력하세요.');
             return;
         }
 
         axios.post('/login/register_process', { displayName, username, password })
             .then(response => {
                 console.log('회원가입 성공:', response.data);
-                navigate('/login/register/sucess');
+                navigate('/login/register/success');
             })
             .catch(error => {
                 console.error('회원가입 실패:', error);
+                alert('회원가입에 실패했습니다.');
             });
     };
 
     return (
-        <div>
-            <h2>회원가입</h2>
-            
-            <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="displayName">이름</label>
-                <input type="text" id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)}/>
-            </div>
+        <div className="login-Register-container">
+            <div className="login-Register-box">
+                <div className="logo-wrapper" onClick={() => navigate('/')}>
+                    <span className="logo-text">Emobit</span>
+                </div>
 
-            <div>
-                <label htmlFor="username">아이디</label>
-                <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
-            </div>
+                <div className="signup-message">
+                    친구들과 다이어리를 공유, 소통하려면 가입하세요.
+                </div>
 
-            <div>
-                <label htmlFor="password">비밀번호</label>
-                <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </div>
+                <form onSubmit={handleSubmit} className="login-Register-form">
+                    <input type="text" placeholder="아이디" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <input type="text" placeholder="성명" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                    <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button type="submit" className="login-Register-button">가입하기</button>
+                </form>
 
-            <p>
-                <button type="submit">가입하기</button>
-            </p>
-        </form>
+                <div className="divider">
+                    <div className="line"></div>
+                    <span className="or-text">또는</span>
+                    <div className="line"></div>
+                </div>
+
+                <div className="login-register-link">
+                    <span>이미 계정이 있으신가요?</span>
+                    <button onClick={() => navigate('/login')}>로그인</button>
+                </div>
+            </div>
         </div>
     );
 }
 
-export default LoginPage;
+export default RegisterPage;
