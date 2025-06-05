@@ -1,0 +1,35 @@
+.register-success-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.register-success-container h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.register-success-container p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.login-redirect-button {
+    background-color: #0095f6;
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-redirect-button:hover {
+    background-color: #007cd6;
+}
