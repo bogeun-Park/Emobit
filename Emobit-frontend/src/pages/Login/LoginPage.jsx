@@ -1,8 +1,9 @@
-import React, { useState, useEffect  } from 'react';
+import '../../styles/LoginPage.css';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { authAction } from '../../redux/Slice/authSlice'
+import { authAction } from '../../redux/Slice/authSlice';
 
 function LoginPage() {
     const axios = useAxios();
@@ -29,22 +30,16 @@ function LoginPage() {
 
         axios.post('/login', { username, password })
             .then(response => {
-                console.log('로그인 성공:', response);
-                
-                axios.get('/login/auth')
-                    .then(authResponse => {
-                        const id = authResponse.data.id;
-                        const displayName = authResponse.data.displayName;
-                        const role = authResponse.data.role;
-                        const imageUrl = authResponse.data.imageUrl;
-
-                        dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
-                    })
+                axios.get('/login/auth').then(authResponse => {
+                    const { id, displayName, role, imageUrl } = authResponse.data;
+                    dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
+                });
 
                 navigate('/');
             })
             .catch(error => {
                 console.error('로그인 실패:', error);
+                alert('로그인 정보가 잘못되었습니다.');
             });
     };
 
@@ -53,25 +48,33 @@ function LoginPage() {
     };
 
     return (
-        <div>
-            <h2>로그인</h2>
-            
-            <form onSubmit={handleSubmit}>
-            <div>
-                <label htmlFor="username">아이디</label>
-                <input type="text" id="username"  value={username} onChange={(e) => setUsername(e.target.value)}/>
-            </div>
+        <div className="login-container">
+            <div className="login-box">
+                <div className="logo-wrapper" onClick={() => navigate('/')}>
+                    <span className="logo-text">Emobit</span>
+                </div>
 
-            <div>
-                <label htmlFor="password">비밀번호</label>
-                <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-            </div>
+                <form onSubmit={handleSubmit} className="login-form">
+                    <input type="text" placeholder="아이디" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    <button type="submit" className="login-button">로그인</button>
+                </form>
 
-            <p>
-                <button type="button" onClick={handleRegisterClick}>SignUp</button>
-                <button type="submit">Login</button>
-            </p>
-        </form>
+                <div className="divider">
+                    <div className="line"></div>
+                    <span className="or-text">또는</span>
+                    <div className="line"></div>
+                </div>
+
+                <div className="forgot-password">
+                    <button onClick={() => alert("비밀번호 재설정 기능 준비 중입니다.")}>비밀번호를 잊으셨나요?</button>
+                </div>
+
+                <div className="register-link">
+                    <span>계정이 없으신가요?</span>
+                    <button onClick={handleRegisterClick}>가입하기</button>
+                </div>
+            </div>
         </div>
     );
 }
