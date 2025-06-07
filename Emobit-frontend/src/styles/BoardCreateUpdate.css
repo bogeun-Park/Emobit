@@ -158,11 +158,13 @@
         width: 100%;
         height: auto;
         aspect-ratio: 4 / 3;
+        min-width: 0;
     }
 
     .form-input-area {
         width: 100%;
         height: auto;
+        min-width: 0;
     }
 
     .input-content {
