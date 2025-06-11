@@ -10,4 +10,5 @@ import com.example.emobit.domain.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long>{
 	Optional<Member> findByUsername(String username);  // Derived query methods
+	boolean existsByUsername(String username);
 }
