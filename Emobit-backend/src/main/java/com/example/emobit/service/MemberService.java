@@ -47,6 +47,12 @@ public class MemberService {
         memberRepository.save(member);
 	}
 	
+	public boolean existsByUsername(String username) {
+		boolean bexists = memberRepository.existsByUsername(username);
+		
+		return bexists;
+	}
+	
 	public MemberAuthDto getMemberDto(Member member) {
 		MemberAuthDto memberAuthDto = new MemberAuthDto(member);
 		

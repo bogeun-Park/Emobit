@@ -74,46 +74,6 @@ public class MemberController {
 		return ResponseEntity.ok(body);
 	}
 	
-	@PostMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletResponse response) {
-		// Access Token 삭제
-		Cookie accessCookie = new Cookie("jwt", null);
-		accessCookie.setMaxAge(0);
-		accessCookie.setHttpOnly(true);
-		accessCookie.setPath("/");
-		response.addCookie(accessCookie);
-	    
-	    // Refresh Token 삭제
-	    Cookie refreshCookie = new Cookie("refresh", null);
-	    refreshCookie.setMaxAge(0);
-	    refreshCookie.setHttpOnly(true);
-	    refreshCookie.setPath("/");
-	    response.addCookie(refreshCookie);
-	    
-	    SecurityContextHolder.clearContext();
-	    
-	    return ResponseEntity.ok("로그아웃 성공");
-	}
-	
-	@GetMapping("/login/auth")
-	public ResponseEntity<MemberAuthDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
-        if (customUser == null) {
-        	return ResponseEntity.ok().build();
-        }
-                
-        Member member = memberService.getMemberById(customUser.getId());
-		MemberAuthDto memberAuthDto = memberService.getMemberDto(member);
-		
-		return ResponseEntity.ok(memberAuthDto);
-    }
-	
-	@PostMapping("/login/register_process")
-	public ResponseEntity<?> registerProcess(@RequestBody @Valid MemberRegisterDto memberRegisterDto) {
-	    memberService.registerMember(memberRegisterDto);
-	    
-	    return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
-	}
-	
 	@GetMapping("/refresh")
 	public ResponseEntity<?> refreshJwt(HttpServletRequest request, HttpServletResponse response) {
 	    String refreshToken = null;
@@ -160,6 +120,53 @@ public class MemberController {
         body.put("token", newAccessToken);
 		
 		return ResponseEntity.ok(body);
+	}
+	
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletResponse response) {
+		// Access Token 삭제
+		Cookie accessCookie = new Cookie("jwt", null);
+		accessCookie.setMaxAge(0);
+		accessCookie.setHttpOnly(true);
+		accessCookie.setPath("/");
+		response.addCookie(accessCookie);
+	    
+	    // Refresh Token 삭제
+	    Cookie refreshCookie = new Cookie("refresh", null);
+	    refreshCookie.setMaxAge(0);
+	    refreshCookie.setHttpOnly(true);
+	    refreshCookie.setPath("/");
+	    response.addCookie(refreshCookie);
+	    
+	    SecurityContextHolder.clearContext();
+	    
+	    return ResponseEntity.ok("로그아웃 성공");
+	}
+	
+	@GetMapping("/login/auth")
+	public ResponseEntity<MemberAuthDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
+        if (customUser == null) {
+        	return ResponseEntity.ok().build();
+        }
+                
+        Member member = memberService.getMemberById(customUser.getId());
+		MemberAuthDto memberAuthDto = memberService.getMemberDto(member);
+		
+		return ResponseEntity.ok(memberAuthDto);
+    }
+	
+	@PostMapping("/register_process")
+	public ResponseEntity<?> registerProcess(@RequestBody @Valid MemberRegisterDto memberRegisterDto) {
+	    memberService.registerMember(memberRegisterDto);
+	    
+	    return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
+	}
+	
+	@GetMapping("/register/check_username/{username}")
+	public ResponseEntity<?> checkUsername(@PathVariable("username") String username) {
+		boolean bexists = memberService.existsByUsername(username);
+		
+		return ResponseEntity.ok(!bexists);
 	}
 	
 	@GetMapping("/profile/{username}")
