@@ -10,18 +10,79 @@ function RegisterPage() {
     const [displayName, setDisplayName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+
+    const [usernameError, setUsernameError] = useState('');
+    const [passwordMatchMessage, setPasswordMatchMessage] = useState('');
+
+    const checkUsernameAvailability = () => {
+        if (!username.trim()) {
+            setUsernameError('');
+            return;
+        }
+
+        axios.get(`/register/check_username/${username}`)
+            .then(response => {
+                if (response.data) {
+                    setUsernameError('');
+                } else {
+                    setUsernameError('사용 불가능한 아이디입니다.');
+                }
+            })
+            .catch(error => {
+                console.error('아이디 중복 확인 실패:', error);
+                setUsernameError('아이디 확인 중 오류 발생');
+            });
+    };
+
+    const handlePasswordChange = (e) => {
+        const newPassword = e.target.value;
+        setPassword(newPassword);
+        updatePasswordMatchMessage(newPassword, confirmPassword);
+    };
+
+    const handleConfirmPasswordChange = (e) => {
+        const newConfirm = e.target.value;
+        setConfirmPassword(newConfirm);
+        updatePasswordMatchMessage(password, newConfirm);
+    };
+
+    const updatePasswordMatchMessage = (pw1, pw2) => {
+        if (!pw1 || !pw2) {
+            setPasswordMatchMessage('');
+            return;
+        }
+
+        if (pw1 === pw2) {
+            setPasswordMatchMessage('비밀번호가 일치합니다.');
+        } else {
+            setPasswordMatchMessage('비밀번호가 일치하지 않습니다.');
+        }
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!displayName || !username || !password) {
-            alert('모든 항목을 입력하세요.');
+        if (!displayName || !username || !password || !confirmPassword) {
+            alert('모든 항목을 입력해 주세요.');
             return;
         }
 
-        axios.post('/login/register_process', { displayName, username, password })
-            .then(response => {
-                console.log('회원가입 성공:', response.data);
+        if (usernameError) {
+            alert('아이디를 다시 확인하세요.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        const confirmed = window.confirm('가입하시겠습니까?');
+        if (!confirmed) return;
+
+        axios.post('/register_process', { displayName, username, password })
+            .then(response => {                
                 navigate('/login/register/success');
             })
             .catch(error => {
@@ -42,9 +103,27 @@ function RegisterPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-Register-form">
-                    <input type="text" placeholder="아이디" value={username} onChange={(e) => setUsername(e.target.value)} />
-                    <input type="text" placeholder="성명" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-                    <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input type="text" placeholder="아이디" value={username} 
+                        onChange={(e) => {
+                            setUsername(e.target.value);
+                            setUsernameError('');
+                        }}
+                        onBlur={checkUsernameAvailability}
+                    />
+                    {usernameError && (
+                        <div className="form-message error">{usernameError}</div>
+                    )}
+
+                    <input type="text" placeholder="성명" value={displayName} onChange={(e) => setDisplayName(e.target.value)}/>
+                    <input type="password" placeholder="비밀번호" value={password} onChange={handlePasswordChange}/>
+
+                    <input type="password" placeholder="비밀번호 확인" value={confirmPassword} onChange={handleConfirmPasswordChange}/>
+                    {passwordMatchMessage && (
+                        <div className={`form-message ${password === confirmPassword ? 'success' : 'error'}`}>
+                            {passwordMatchMessage}
+                        </div>
+                    )}
+
                     <button type="submit" className="login-Register-button">가입하기</button>
                 </form>
 
