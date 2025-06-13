@@ -39,9 +39,11 @@ function ProfilePage() {
             <div className="profile-header">
                 <img src={member.imageUrl} alt="" className="profile-image" />
                 <div className="profile-info">
-                    <h2>{member.displayName}</h2>
-                    <p>@{member.username}</p>
-                    <p>게시물 {boards.length}</p>
+                    <p className="profile-info-username">{member.username}</p>
+                    <p className="profile-info-stats">
+                        <div>게시물 <span className='profile-info-board-count'>{boards.length}</span></div>
+                    </p>
+                    <p className="profile-info-displayName">{member.displayName}</p>
                 </div>
             </div>
 

@@ -21,14 +21,38 @@
     object-fit: cover;
 }
 
-.profile-info h2 {
-    margin: 0;
-    font-size: 24px;
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    justify-content: center;
 }
 
-.profile-info p {
-    margin: 4px 0;
-    color: #555;
+.profile-info-username {
+    font-size: 24px;
+    font-weight: 500;
+    color: black;
+    margin: 0;
+}
+
+.profile-info-stats {
+    font-size: 16px;
+    color: #737373;
+    margin: 0;
+}
+
+.profile-info-board-count {
+    font-size: 16px;
+    color: black;
+    font-weight: 600;
+    margin: 0;
+}
+
+.profile-info-displayName {
+    font-size: 14px;
+    color: black;
+    font-weight: 600;
+    margin: 0;
 }
 
 .post-grid {
