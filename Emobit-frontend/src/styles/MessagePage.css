@@ -1,0 +1,83 @@
+/* 전체 컨테이너 */
+.message-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+    font-family: sans-serif;
+    margin: 0 -20px -20px -20px;
+}
+
+/* 채팅 목록 */
+.chat-list {
+    width: 400px;
+    border-right: 1px solid #ccc;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.chat-list ul {
+    list-style: none;
+}
+
+.chat-list li {
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.chat-list li.active {
+    background-color: #eee;
+    font-weight: bold;
+}
+
+/* 채팅 창 */
+.chat-window {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+/* 메시지 영역 */
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+/* 메시지 스타일 */
+.my-message {
+    text-align: right;
+    margin: 0.5rem 0;
+    color: blue;
+}
+
+.their-message {
+    text-align: left;
+    margin: 0.5rem 0;
+    color: black;
+}
+
+/* 입력창 */
+.chat-input {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.chat-input button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.select-message {
+    font-size: 1.1rem;
+    color: gray;
+}
