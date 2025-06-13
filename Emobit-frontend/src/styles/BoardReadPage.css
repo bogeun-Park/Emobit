@@ -89,6 +89,10 @@
     font-size: 0.9rem;
 }
 
+.content-user-image, .content-username {
+    cursor: pointer;
+}
+
 .content-user-image {
     width: 32px;
     height: 32px;

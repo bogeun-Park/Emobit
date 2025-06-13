@@ -168,6 +168,10 @@ function BoardRead() {
         return `${formattedDate} ${formattedTime}`;
     };
 
+    const handleMoveProfile = (username) => {
+        navigate(`/${username}`);
+    };
+
     if (notFound) {
         return <NotFoundPage />;
     }
@@ -183,8 +187,8 @@ function BoardRead() {
             <div className="board-right">
                 <div className="board-header">
                     <div className="board-user-header">
-                        <img src={board.memberImageUrl} alt="" className="content-user-image" />
-                        <span>{board.memberUsername}</span>
+                        <img className="content-user-image" src={board.memberImageUrl} alt="" onClick={() => handleMoveProfile(board.memberUsername)}/>
+                        <span className="content-username" onClick={() => handleMoveProfile(board.memberUsername)}>{board.memberUsername}</span>
                     </div>
 
                     {auth.id === board.createdBy && (
@@ -198,10 +202,10 @@ function BoardRead() {
                 <ul className="content-list">
                     <li className="content-item">
                         <div className="content-user-info">
-                            <img src={board.memberImageUrl} alt="" className="content-user-image" />
+                            <img className="content-user-image" src={board.memberImageUrl} alt="" onClick={() => handleMoveProfile(board.memberUsername)} />
                             <div className="content-main">
                                 <div className="content-header">
-                                    <span className="content-username">{board.memberUsername}</span>
+                                    <span className="content-username" onClick={() => handleMoveProfile(board.memberUsername)}>{board.memberUsername}</span>
                                 </div>
 
                                 <div className="content-text">{board.content}</div>
@@ -213,11 +217,11 @@ function BoardRead() {
                         comments.map((comment) => (
                             <li key={comment.id} className="content-item">
                                 <div className="content-user-info">
-                                    <img src={comment.memberImageUrl} alt="" className="content-user-image" />
+                                    <img className="content-user-image" src={comment.memberImageUrl} alt="" onClick={() => handleMoveProfile(comment.memberUsername)} />
                                     <div className="content-main">
                                         <div className="content-header">
                                             <div className="content-info">
-                                                <span className="content-username">{comment.memberUsername}</span>
+                                                <span className="content-username" onClick={() => handleMoveProfile(comment.memberUsername)}>{comment.memberUsername}</span>
                                                 <span className="content-time">{customDate(comment.updatedAt)}</span>
                                                 {comment.updatedAt !== comment.createdAt && <span className="edited-label"> (수정됨)</span>}
                                             </div>
