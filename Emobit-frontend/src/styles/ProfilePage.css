@@ -21,6 +21,10 @@
     object-fit: cover;
 }
 
+.profile-image.clickable {
+    cursor: pointer;
+}
+
 .profile-info {
     display: flex;
     flex-direction: column;
