@@ -16,8 +16,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.Board;
@@ -30,6 +32,7 @@ import com.example.emobit.dto.MemberRegisterDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.security.Jwtutil;
 import com.example.emobit.service.MemberService;
+import com.example.emobit.service.OracleStorageService;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
@@ -44,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberController {
 	private final MemberService memberService;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final OracleStorageService oracleStorageService;
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> loginJwt(@RequestBody @Valid MemberLoginDto memberLoginDto, HttpServletResponse response) {
@@ -181,5 +185,34 @@ public class MemberController {
 		MemberProfileDto memberProfileDto = new MemberProfileDto(member, boardListDto);
 		
 		return ResponseEntity.ok(memberProfileDto);
+	}
+	
+	@GetMapping("/member/PresignedUrl")
+	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename) {
+	    String presignedUrl = oracleStorageService.createPresignedUrl(filename, "member");
+	    
+	    if (presignedUrl != null) {
+	        return ResponseEntity.ok(presignedUrl);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Presigned URL 생성 실패");
+	    }
+	}
+	
+	@PutMapping("/member/imageUrl_update/{id}")
+	public ResponseEntity<?> imageUrlUpdate(@PathVariable("id") Long id,
+											@RequestParam("imageUrl") String imageUrl,
+			 								@AuthenticationPrincipal CustomUser customUser) {
+		if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+		
+		Member member = memberService.getMemberById(id);
+		if (!member.getId().equals(customUser.getId())) {
+	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
+	    }
+		
+		memberService.updateImageUrl(member, imageUrl);
+		
+		return ResponseEntity.ok("프로필 이미지가 변경되었습니다.");
 	}
 }
