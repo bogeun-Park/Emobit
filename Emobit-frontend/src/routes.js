@@ -8,6 +8,7 @@ import BoardCreate from "./pages/Board/BoardCreate";
 import BoardRead from "./pages/Board/BoardRead";
 import BoardUpdate from "./pages/Board/BoardUpdate";
 import ProfilePage from "./pages/Profile/ProfilePage";
+import MessagePage from "./pages/Message/MessagePage";
 
 const routes = [
     { path: "*", element: <NotFoundPage /> },
@@ -19,6 +20,7 @@ const routes = [
     { path: "/board/create", element: <BoardCreate /> },
     { path: "/board/read/:boardId", element: <BoardRead /> },
     { path: "/board/update/:boardId", element: <BoardUpdate /> },
+    { path: "/message", element: <MessagePage /> },
     { path: "/:username", element: <ProfilePage /> },
 ];
 
