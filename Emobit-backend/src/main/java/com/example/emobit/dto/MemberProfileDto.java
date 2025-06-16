@@ -2,8 +2,6 @@ package com.example.emobit.dto;
 
 import java.util.List;
 
-import com.example.emobit.domain.Member;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
