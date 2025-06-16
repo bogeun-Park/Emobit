@@ -12,10 +12,10 @@ import lombok.ToString;
 @Setter
 @ToString
 public class MemberProfileDto {
-	private Member member;
+	private MemberAuthDto member;
     private List<BoardDto> boards;
 
-    public MemberProfileDto(Member member, List<BoardDto> boards) {
+    public MemberProfileDto(MemberAuthDto member, List<BoardDto> boards) {
         this.member = member;
         this.boards = boards;
     }

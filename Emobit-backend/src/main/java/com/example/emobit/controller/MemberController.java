@@ -177,12 +177,14 @@ public class MemberController {
 	public ResponseEntity<?> getMyBoards(@PathVariable("username") String username,
 										 @AuthenticationPrincipal CustomUser customUser) {		
 		Member member = memberService.getMemberByUsername(username);
+		MemberAuthDto memberAuthDto = new MemberAuthDto(member);
+		
 		List<Board> boardList = member.getBoards();
 		List<BoardDto> boardListDto = boardList.stream()
 		    .map(BoardDto::new)
 		    .toList();
 		
-		MemberProfileDto memberProfileDto = new MemberProfileDto(member, boardListDto);
+		MemberProfileDto memberProfileDto = new MemberProfileDto(memberAuthDto, boardListDto);
 		
 		return ResponseEntity.ok(memberProfileDto);
 	}
