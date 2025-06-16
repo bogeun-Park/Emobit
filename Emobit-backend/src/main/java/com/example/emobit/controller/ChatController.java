@@ -2,6 +2,7 @@ package com.example.emobit.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -16,6 +17,7 @@ import com.example.emobit.domain.ChatMessage;
 import com.example.emobit.domain.ChatRoom;
 import com.example.emobit.service.ChatMessageService;
 import com.example.emobit.service.ChatRoomService;
+import com.example.emobit.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatController {
 	private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
+    private final MemberService memberService;
     
     @GetMapping("/chat/getRooms/{username}")
     public ResponseEntity<?> getRooms(@PathVariable("username") String username) {
@@ -43,6 +46,10 @@ public class ChatController {
     
     @PostMapping("/chat/createRoom")
     public ResponseEntity<?> createRoom(@RequestParam("userA") String userA, @RequestParam("userB") String userB) {
+    	if (!memberService.existsByUsername(userA) || !memberService.existsByUsername(userB)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자가 포함되어 있습니다.");
+        }
+    	
     	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(userA, userB); 
     	
         return ResponseEntity.ok(chatRoom);
