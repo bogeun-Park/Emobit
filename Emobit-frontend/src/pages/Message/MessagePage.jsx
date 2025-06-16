@@ -1,10 +1,11 @@
 import '../../styles/MessagePage.css';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { MessageCirclePlus } from 'lucide-react';
 
 function MessagePage() {
     const axios = useAxios();
@@ -18,25 +19,50 @@ function MessagePage() {
     const [newMessage, setNewMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
     const [targetUsername, setTargetUsername] = useState('');
+    const [showInputForm, setShowInputForm] = useState(false);
+    const [targetMember, setTargetMember] = useState(null);
 
     useEffect(() => {
         if (auth.isAuthenticated) {
             axios.get(`/chat/getRooms/${auth.username}`)
-                .then(response => setChatRooms(response.data))
-                .catch(error => console.error(error));
+                .then(response => {
+                    setChatRooms(response.data);
+                })
+                .catch(error => {
+                    console.error(error)
+                });
         }
     }, [auth]);
 
     useEffect(() => {
-        if (selectedChatRoomId) {
-            axios.get(`/chat/${selectedChatRoomId}/messages`)
-                .then(response => setMessages(response.data))
-                .catch(error => console.error(error));
-        }
+        const fetchData = async () => {
+            if (!selectedChatRoomId) return;
+
+            try {
+                const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`);
+                setMessages(messagesRes.data);
+
+                const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
+                const target = chatRoom?.userA === auth.username ? chatRoom?.userB : chatRoom?.userA;
+
+                if (target) {
+                    const profileRes = await axios.get(`/profile/${target}`);
+                    setTargetMember(profileRes.data.member);
+                }
+            } catch (error) {
+                console.error('데이터 불러오기 실패:', error);
+            }
+        };
+
+        fetchData();
     }, [selectedChatRoomId]);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        const timeout = setTimeout(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+
+        return () => clearTimeout(timeout);
     }, [messages]);
 
     useEffect(() => {
@@ -51,7 +77,6 @@ function MessagePage() {
                     }
                 });
             },
-            // debug: str => console.log(str),
         });
 
         client.activate();
@@ -68,7 +93,8 @@ function MessagePage() {
         const message = {
             sender: auth.username,
             content: newMessage,
-            chatRoom: { id: selectedChatRoomId }
+            chatRoom: { id: selectedChatRoomId },
+            createdAt: new Date().toISOString(),
         };
 
         stompClient.publish({
@@ -93,12 +119,62 @@ function MessagePage() {
                 userA: auth.username,
                 userB: targetUsername
             }
-        }).then(res => {
-            const newRoom = res.data;
+        }).then(response => {
+            const newRoom = response.data;
             setSelectedChatRoomId(newRoom.id);
-            setChatRooms(prev => [...prev, newRoom]); // 목록에 추가
-        }).catch(err => {
-            console.error('채팅방 생성 실패', err);
+            
+            setChatRooms(prev => {
+                const exists = prev.some(room => room.id === newRoom.id);
+                if (exists) return prev;
+                
+                return [...prev, newRoom];
+            });
+        }).catch(error => {
+            console.error('채팅방 생성 실패', error);
+        });
+    };
+
+    const customMsgDate = (dateString) => {
+        const date = new Date(dateString);
+        const formattedTime = date.toLocaleTimeString('ko-KR', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+        });
+
+        return formattedTime;
+    };
+
+    const showTime = (msg, idx) => {
+        const currentTime = customMsgDate(msg.createdAt);
+        const previousMsg = messages[idx - 1];
+
+        // 이전 메시지가 시간 출력
+        if (!previousMsg) return true;
+
+        // 보낸 사람이 같을 때만 시간 중복을 체크
+        const sameSender = previousMsg.sender === msg.sender;
+        const previousTime = customMsgDate(previousMsg.createdAt);
+        const bDisplay = !sameSender || currentTime !== previousTime;
+
+        return bDisplay;
+    };
+
+    const showDateDivider = (msg, idx) => {
+        const currentDate = new Date(msg.createdAt).toDateString();
+        const previousDate = idx > 0 ? new Date(messages[idx - 1].createdAt).toDateString() : null;
+        const bDisplay = currentDate !== previousDate;
+
+        return bDisplay;
+    };
+
+    const getDateDividerText = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
         });
     };
 
@@ -122,30 +198,78 @@ function MessagePage() {
             <div className="chat-window">
                 {selectedChatRoomId ? (
                     <>
+                        {targetMember && (
+                            <div className="chat-header">
+                                <img src={targetMember.imageUrl} alt="" />
+
+                                <div className="chat-header-profile">
+                                    <span className="target-username">{targetMember.username}</span>
+                                    <span className="target-displayName">{targetMember.displayName}</span>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="chat-messages">
                             {messages.map((msg, idx) => (
-                                <div key={idx} className={msg.sender === auth.username ? 'my-message' : 'their-message'}>
-                                    <span>{msg.content}</span>
-                                </div>
+                                <React.Fragment key={idx}>
+                                    {showDateDivider(msg, idx) && (
+                                        <div className="date-divider">
+                                            <span>{getDateDividerText(msg.createdAt)}</span>
+                                        </div>
+                                    )}
+
+                                    <div className={msg.sender === auth.username ? 'my-message-wrapper' : 'their-message-wrapper'}>
+                                        {msg.sender === auth.username && showTime(msg, idx) && (
+                                            <span className="message-time">{customMsgDate(msg.createdAt)}</span>
+                                        )}
+
+                                        <div className={msg.sender === auth.username ? 'my-message' : 'their-message'}>
+                                            <span className="message-content">{msg.content}</span>
+                                        </div>
+
+                                        {msg.sender !== auth.username && showTime(msg, idx) && (
+                                            <span className="message-time">{customMsgDate(msg.createdAt)}</span>
+                                        )}
+                                    </div>
+                                </React.Fragment>
                             ))}
-
-                            <div ref={messagesEndRef} />
+                            
+                            <div ref={messagesEndRef} />  {/* 채팅창 맨 아래로 자동 스크롤 */}    
                         </div>
-
-                        <div className="chat-input">
-                            <input type="text" value={newMessage} 
-                                onChange={e => setNewMessage(e.target.value)}
-                                onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-                                placeholder="메시지를 입력하세요..."
-                            />
-                            <button onClick={handleSendMessage}>전송</button>
+                        
+                        <div className="chat-input-wrapper">
+                            <div className="chat-input">
+                                <input type="text" value={newMessage}
+                                    onChange={e => setNewMessage(e.target.value)}
+                                    onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
+                                    placeholder="메시지를 입력하세요..."
+                                />
+                                <button onClick={handleSendMessage}>Send</button>
+                            </div>
                         </div>
                     </>
                 ) : (
-                    <>
-                        <input type="text" placeholder="대화할 상대 이름" value={targetUsername} onChange={e => setTargetUsername(e.target.value)}/>
-                        <button onClick={handleCreateChatRoom}>채팅 시작</button>
-                    </>
+                    <div className="start-chat-container">
+                        {!showInputForm ? (
+                            <>
+                                <div className="chat-empty-icon">
+                                    <div className="chat-icon-circle">
+                                        <MessageCirclePlus size={55} strokeWidth={1} />
+                                    </div>
+                                </div>
+                                <h2 className="chat-empty-title">내 메시지</h2>
+                                <p className="chat-empty-subtitle">친구에게 나만의 메시지를 보내보세요</p>
+                                <button className="start-chat-button" onClick={() => setShowInputForm(true)}>메시지 보내기</button>
+                            </>
+                        ) : (
+                            <div className="start-chat-form">
+                                <input type="text" placeholder="대화할 상대 이름" value={targetUsername}
+                                    onChange={e => setTargetUsername(e.target.value)}
+                                />
+                                <button onClick={handleCreateChatRoom}>채팅 시작</button>
+                            </div>
+                        )}
+                    </div>
                 )}
             </div>
         </div>
