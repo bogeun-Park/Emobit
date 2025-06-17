@@ -92,7 +92,7 @@ public class MemberController {
 	    }
 
 	    if (refreshToken == null) {
-	    	return ResponseEntity.noContent().build();
+	    	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token missing");
 	    }
 
 	    Claims claims;
