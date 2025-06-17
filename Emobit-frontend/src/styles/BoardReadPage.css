@@ -53,15 +53,6 @@
     flex-shrink: 0;
 }
 
-.board-buttons {
-    margin-top: 0px;
-}
-
-.board-buttons button {
-    cursor: pointer;
-    margin-left: 5px;
-}
-
 .content-list {
     flex: 1;
     overflow-y: auto;
