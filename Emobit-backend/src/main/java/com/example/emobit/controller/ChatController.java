@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,9 +51,9 @@ public class ChatController {
 	    }
     	
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
-        String currentUsername = customUser.getUsername();
+        String username = customUser.getUsername();
  
-        if (!chatRoom.getUserA().equals(currentUsername) && !chatRoom.getUserB().equals(currentUsername)) {
+        if (!chatRoom.getUserA().equals(username) && !chatRoom.getUserB().equals(username)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 채팅방에 접근할 수 없습니다.");
         }
         
@@ -89,5 +90,17 @@ public class ChatController {
         chatMessageService.saveChatMessage(chatRoom, chatMessage.getSender(), chatMessage.getContent());
         
         return chatMessage;
+    }
+    
+    @DeleteMapping("/chat/exitRoom/{chatRoomId}")
+    public ResponseEntity<?> exitChatRoom(@PathVariable("chatRoomId") Long chatRoomId, 
+    									  @AuthenticationPrincipal CustomUser customUser) {
+    	if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+
+    	chatRoomService.exitChatRoom(chatRoomId, customUser.getUsername());
+    	
+        return ResponseEntity.status(200).body("채팅방을 나갔습니다.");
     }
 }
