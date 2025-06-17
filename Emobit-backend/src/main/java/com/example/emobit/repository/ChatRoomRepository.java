@@ -12,8 +12,10 @@ import com.example.emobit.domain.ChatRoom;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-	@Query("SELECT r FROM ChatRoom r WHERE r.userA = :user OR r.userB = :user")
-	List<ChatRoom> findByUser(@Param("user") String user);
+	@Query("SELECT c FROM ChatRoom c " +
+	       "WHERE (c.userA = :username AND c.userAJoined = true) " +
+	       "OR (c.userB = :username AND c.userBJoined = true)")
+	List<ChatRoom> findByUsername(@Param("username") String username);
 
 	Optional<ChatRoom> findByUserAAndUserB(String userA, String userB);  // 두 사용자의 채팅방을 찾는다
 }
