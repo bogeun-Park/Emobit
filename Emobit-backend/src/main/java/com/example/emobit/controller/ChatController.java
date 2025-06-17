@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.ChatMessage;
 import com.example.emobit.domain.ChatRoom;
+import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.ChatMessageService;
 import com.example.emobit.service.ChatRoomService;
 import com.example.emobit.service.MemberService;
@@ -29,26 +31,51 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final MemberService memberService;
     
-    @GetMapping("/chat/getRooms/{username}")
-    public ResponseEntity<?> getRooms(@PathVariable("username") String username) {
-    	List<ChatRoom> chatRoomList = chatRoomService.getUserChatRoomAll(username);
+    @GetMapping("/chat/getRooms")
+    public ResponseEntity<?> getRooms(@AuthenticationPrincipal CustomUser customUser) {
+    	if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+    	
+    	List<ChatRoom> chatRoomList = chatRoomService.getUserChatRoomAll(customUser.getUsername());
     	
         return ResponseEntity.ok(chatRoomList);
     }
 
     @GetMapping("/chat/{chatRoomId}/messages")
-    public ResponseEntity<?> getMessages(@PathVariable("chatRoomId") Long chatRoomId) {
+    public ResponseEntity<?> getMessages(@PathVariable("chatRoomId") Long chatRoomId,
+    									 @AuthenticationPrincipal CustomUser customUser) {
+    	if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+    	
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
+        String currentUsername = customUser.getUsername();
+ 
+        if (!chatRoom.getUserA().equals(currentUsername) && !chatRoom.getUserB().equals(currentUsername)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 채팅방에 접근할 수 없습니다.");
+        }
+        
         List<ChatMessage> chatMessageList = chatMessageService.getChatMessageAll(chatRoom); 
         
         return ResponseEntity.ok(chatMessageList);
     }
     
     @PostMapping("/chat/createRoom")
-    public ResponseEntity<?> createRoom(@RequestParam("userA") String userA, @RequestParam("userB") String userB) {
+    public ResponseEntity<?> createRoom(@RequestParam("userA") String userA, 
+    									@RequestParam("userB") String userB,
+    									@AuthenticationPrincipal CustomUser customUser) {
+    	if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+    	
     	if (!memberService.existsByUsername(userA) || !memberService.existsByUsername(userB)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자가 포함되어 있습니다.");
         }
+    	
+    	if (!customUser.getUsername().equals(userA) && !customUser.getUsername().equals(userB)) {
+    	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("자신이 포함된 대화만 생성할 수 있습니다.");
+    	}
     	
     	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(userA, userB); 
     	
