@@ -15,6 +15,13 @@ axiosInstance.interceptors.response.use(
     async error => {
         const originalRequest = error.config;
 
+        // /refresh 요청은 재시도하지 않음
+        if (originalRequest.url === '/refresh') {
+            // 리프레시 토큰 재발급 요청에서 401 발생하면 무한루프 방지 차원에서 바로 실패 처리
+            store.dispatch(authAction.logout());
+            return Promise.reject(error);
+        }
+
         // 토큰 만료로 401 떴을 경우 한 번만 재시도
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
