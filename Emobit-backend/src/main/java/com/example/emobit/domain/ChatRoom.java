@@ -8,13 +8,19 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
@@ -32,23 +38,27 @@ public class ChatRoom {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "USER_A", nullable = false)
-	private String userA;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "MEMBER_A_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	private Member memberA;
 	
-	@Column(name = "USER_B", nullable = false)
-	private String userB;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "MEMBER_B_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	private Member memberB;
 	
-	@Column(name = "USER_A_JOINED", nullable = false)
-	private boolean userAJoined = false;
+	@Column(name = "MEMBER_A_JOINED", nullable = false)
+	private boolean memberAJoined = false;
 
-	@Column(name = "USER_B_JOINED", nullable = false)
-	private boolean userBJoined = false;
+	@Column(name = "MEMBER_B_JOINED", nullable = false)
+	private boolean memberBJoined = false;
 	
-	@Column(name = "USER_A_EXITED_AT")
-	private LocalDateTime userAExitedAt;
+	@Column(name = "MEMBER_A_EXITED_AT")
+	private LocalDateTime memberAExitedAt;
 	
-	@Column(name = "USER_B_EXITED_AT")
-	private LocalDateTime userBExitedAt;
+	@Column(name = "MEMBER_B_EXITED_AT")
+	private LocalDateTime memberBExitedAt;
 	
 	@CreationTimestamp
 	@Column(name = "CREATED_AT", nullable = false, updatable = false)

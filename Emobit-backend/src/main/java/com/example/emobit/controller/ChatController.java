@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.ChatMessage;
 import com.example.emobit.domain.ChatRoom;
+import com.example.emobit.domain.Member;
+import com.example.emobit.dto.ChatMessageCreateDto;
+import com.example.emobit.dto.ChatMessageDto;
+import com.example.emobit.dto.ChatRoomDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.service.ChatMessageService;
 import com.example.emobit.service.ChatRoomService;
@@ -40,8 +44,11 @@ public class ChatController {
 	    }
     	
     	List<ChatRoom> chatRoomList = chatRoomService.getUserChatRoomAll(customUser.getUsername());
+    	List<ChatRoomDto> chatRoomDtoList = chatRoomList.stream()
+    		.map(ChatRoomDto::new)
+    		.toList();
     	
-        return ResponseEntity.ok(chatRoomList);
+        return ResponseEntity.ok(chatRoomDtoList);
     }
 
     @GetMapping("/chat/{chatRoomId}/messages")
@@ -53,19 +60,20 @@ public class ChatController {
     	
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
         String username = customUser.getUsername();
+        Member member = memberService.getMemberByUsername(username);
  
-        if (!chatRoom.getUserA().equals(username) && !chatRoom.getUserB().equals(username)) {
+        if (!chatRoom.getMemberA().equals(member) && !chatRoom.getMemberB().equals(member)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 채팅방에 접근할 수 없습니다.");
         }
         
-        boolean isUserA = username.equals(chatRoom.getUserA());
-        boolean isUserB = username.equals(chatRoom.getUserB());
+        boolean isMemberA = member.equals(chatRoom.getMemberA());
+        boolean isMemberB = member.equals(chatRoom.getMemberB());
         LocalDateTime exitedAt = null;
         
-        if (isUserA) {
-        	exitedAt = chatRoom.getUserAExitedAt();
-        } else if (isUserB) {
-        	exitedAt = chatRoom.getUserBExitedAt();
+        if (isMemberA) {
+        	exitedAt = chatRoom.getMemberAExitedAt();
+        } else if (isMemberB) {
+        	exitedAt = chatRoom.getMemberBExitedAt();
         }
         
         List<ChatMessage> chatMessageList;
@@ -79,33 +87,34 @@ public class ChatController {
     }
     
     @PostMapping("/chat/createRoom")
-    public ResponseEntity<?> createRoom(@RequestParam("userA") String userA, 
-    									@RequestParam("userB") String userB,
+    public ResponseEntity<?> createRoom(@RequestParam("memberA") String memberA, 
+    									@RequestParam("memberB") String memberB,
     									@AuthenticationPrincipal CustomUser customUser) {
     	if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
     	
-    	if (!memberService.existsByUsername(userA) || !memberService.existsByUsername(userB)) {
+    	if (!memberService.existsByUsername(memberA) || !memberService.existsByUsername(memberB)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자가 포함되어 있습니다.");
         }
     	
-    	if (!customUser.getUsername().equals(userA) && !customUser.getUsername().equals(userB)) {
+    	if (!customUser.getUsername().equals(memberA) && !customUser.getUsername().equals(memberB)) {
     	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("자신이 포함된 대화만 생성할 수 있습니다.");
     	}
     	
-    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(userA, userB); 
+    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(memberA, memberB); 
     	
         return ResponseEntity.ok(chatRoom);
     }
     
     @MessageMapping("/chat.send")  // 클라이언트에서 "/app/chat.send"로 보냄
     @SendTo("/topic/public")       // 모든 구독자에게 브로드캐스트
-    public ChatMessage sendMessage(ChatMessage chatMessage) {
-    	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessage.getChatRoom().getId());
-        chatMessageService.saveChatMessage(chatRoom, chatMessage.getSender(), chatMessage.getContent());
+    public ChatMessageDto sendMessage(ChatMessageCreateDto chatMessageCreateDto) {
+    	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessageCreateDto.getChatRoomId());
+    	ChatMessage chatMessage = chatMessageService.saveChatMessage(chatRoom, chatMessageCreateDto.getSender(), chatMessageCreateDto.getContent());
+    	ChatMessageDto chatMessageDto = new ChatMessageDto(chatMessage);
         
-        return chatMessage;
+        return chatMessageDto;
     }
     
     @DeleteMapping("/chat/exitRoom/{chatRoomId}")
