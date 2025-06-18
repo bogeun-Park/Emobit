@@ -1,5 +1,6 @@
 package com.example.emobit.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ public class ChatMessageService {
     public List<ChatMessage> getChatMessageAll(ChatRoom chatRoom) {
 		List<ChatMessage> chatMessageList = chatMessageRepository.findByChatRoomOrderByCreatedAtAsc(chatRoom);
 		
+        return chatMessageList;
+    }
+    
+    public List<ChatMessage> getChatMessagesAfter(ChatRoom chatRoom, LocalDateTime exitedAt) {
+    	List<ChatMessage> chatMessageList = chatMessageRepository.findByChatRoomAndCreatedAtAfterOrderByCreatedAtAsc(chatRoom, exitedAt);
+    	
         return chatMessageList;
     }
 

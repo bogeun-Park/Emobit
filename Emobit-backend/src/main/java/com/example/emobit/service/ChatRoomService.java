@@ -1,5 +1,6 @@
 package com.example.emobit.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,12 +77,15 @@ public class ChatRoomService {
     @Transactional
     public void exitChatRoom(Long chatRoomId, String username) {
         ChatRoom chatRoom = this.getChatRoomById(chatRoomId);
+        LocalDateTime now = LocalDateTime.now();
 
-        // userA 또는 userB가 username과 같으면 해당 필드 Left 여부 설정
+        // username의 퇴장 표시 설정 및 퇴장 시간 기록
         if (username.equals(chatRoom.getUserA())) {
             chatRoom.setUserAJoined(false);
+            chatRoom.setUserAExitedAt(now);
         } else if (username.equals(chatRoom.getUserB())) {
             chatRoom.setUserBJoined(false);
+            chatRoom.setUserBExitedAt(now);
         }
 
         // 둘 다 퇴장했으면 방 삭제

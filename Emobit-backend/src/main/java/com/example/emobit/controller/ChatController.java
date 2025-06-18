@@ -1,5 +1,6 @@
 package com.example.emobit.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -57,7 +58,22 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 채팅방에 접근할 수 없습니다.");
         }
         
-        List<ChatMessage> chatMessageList = chatMessageService.getChatMessageAll(chatRoom); 
+        boolean isUserA = username.equals(chatRoom.getUserA());
+        boolean isUserB = username.equals(chatRoom.getUserB());
+        LocalDateTime exitedAt = null;
+        
+        if (isUserA) {
+        	exitedAt = chatRoom.getUserAExitedAt();
+        } else if (isUserB) {
+        	exitedAt = chatRoom.getUserBExitedAt();
+        }
+        
+        List<ChatMessage> chatMessageList;
+        if (exitedAt == null) {  // 처음 입장하거나 나간 기록이 없으면 모든 메시지 조회            
+            chatMessageList = chatMessageService.getChatMessageAll(chatRoom);
+        } else {  // 나갔던 시간 이후 메시지만 조회
+            chatMessageList = chatMessageService.getChatMessagesAfter(chatRoom, exitedAt);
+        } 
         
         return ResponseEntity.ok(chatMessageList);
     }
