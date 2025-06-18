@@ -14,22 +14,22 @@ import lombok.ToString;
 @ToString
 public class ChatRoomDto {
 	private Long id;
-	private MemberAuthDto userA;
-	private MemberAuthDto userB;
-	private boolean userAJoined = false;
-	private boolean userBJoined = false;
-	private LocalDateTime userAExitedAt;
-	private LocalDateTime userBExitedAt;
+	private MemberAuthDto memberA;
+	private MemberAuthDto memberB;
+	private boolean memberAJoined = false;
+	private boolean memberBJoined = false;
+	private LocalDateTime memberAExitedAt;
+	private LocalDateTime memberBExitedAt;
     private Date createdAt;
     
     public ChatRoomDto(ChatRoom chatRoom) {
     	this.id = chatRoom.getId();
-		this.userA = new MemberAuthDto(chatRoom.getUserA());
-		this.userB = new MemberAuthDto(chatRoom.getUserB());
-		this.userAJoined = chatRoom.isUserAJoined();
-		this.userBJoined = chatRoom.isUserBJoined();
-		this.userAExitedAt = chatRoom.getUserAExitedAt();
-		this.userBExitedAt = chatRoom.getUserBExitedAt();
+		this.memberA = new MemberAuthDto(chatRoom.getMemberA());
+		this.memberB = new MemberAuthDto(chatRoom.getMemberB());
+		this.memberAJoined = chatRoom.isMemberAJoined();
+		this.memberBJoined = chatRoom.isMemberBJoined();
+		this.memberAExitedAt = chatRoom.getMemberAExitedAt();
+		this.memberBExitedAt = chatRoom.getMemberBExitedAt();
 		this.createdAt = chatRoom.getCreatedAt();
     }
 }

@@ -39,26 +39,26 @@ public class ChatRoom {
 	private Long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_A_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
+	@JoinColumn(name = "MEMBER_A_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	private Member userA;
+	private Member memberA;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_B_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
+	@JoinColumn(name = "MEMBER_B_ID", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT), nullable = false)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	private Member userB;
+	private Member memberB;
 	
-	@Column(name = "USER_A_JOINED", nullable = false)
-	private boolean userAJoined = false;
+	@Column(name = "MEMBER_A_JOINED", nullable = false)
+	private boolean memberAJoined = false;
 
-	@Column(name = "USER_B_JOINED", nullable = false)
-	private boolean userBJoined = false;
+	@Column(name = "MEMBER_B_JOINED", nullable = false)
+	private boolean memberBJoined = false;
 	
-	@Column(name = "USER_A_EXITED_AT")
-	private LocalDateTime userAExitedAt;
+	@Column(name = "MEMBER_A_EXITED_AT")
+	private LocalDateTime memberAExitedAt;
 	
-	@Column(name = "USER_B_EXITED_AT")
-	private LocalDateTime userBExitedAt;
+	@Column(name = "MEMBER_B_EXITED_AT")
+	private LocalDateTime memberBExitedAt;
 	
 	@CreationTimestamp
 	@Column(name = "CREATED_AT", nullable = false, updatable = false)

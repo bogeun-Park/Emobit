@@ -60,20 +60,20 @@ public class ChatController {
     	
         ChatRoom chatRoom = chatRoomService.getChatRoomById(chatRoomId);
         String username = customUser.getUsername();
-        Member user = memberService.getMemberByUsername(username);
+        Member member = memberService.getMemberByUsername(username);
  
-        if (!chatRoom.getUserA().equals(user) && !chatRoom.getUserB().equals(user)) {
+        if (!chatRoom.getMemberA().equals(member) && !chatRoom.getMemberB().equals(member)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("해당 채팅방에 접근할 수 없습니다.");
         }
         
-        boolean isUserA = user.equals(chatRoom.getUserA());
-        boolean isUserB = user.equals(chatRoom.getUserB());
+        boolean isMemberA = member.equals(chatRoom.getMemberA());
+        boolean isMemberB = member.equals(chatRoom.getMemberB());
         LocalDateTime exitedAt = null;
         
-        if (isUserA) {
-        	exitedAt = chatRoom.getUserAExitedAt();
-        } else if (isUserB) {
-        	exitedAt = chatRoom.getUserBExitedAt();
+        if (isMemberA) {
+        	exitedAt = chatRoom.getMemberAExitedAt();
+        } else if (isMemberB) {
+        	exitedAt = chatRoom.getMemberBExitedAt();
         }
         
         List<ChatMessage> chatMessageList;
@@ -87,22 +87,22 @@ public class ChatController {
     }
     
     @PostMapping("/chat/createRoom")
-    public ResponseEntity<?> createRoom(@RequestParam("userA") String userA, 
-    									@RequestParam("userB") String userB,
+    public ResponseEntity<?> createRoom(@RequestParam("memberA") String memberA, 
+    									@RequestParam("memberB") String memberB,
     									@AuthenticationPrincipal CustomUser customUser) {
     	if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
 	    }
     	
-    	if (!memberService.existsByUsername(userA) || !memberService.existsByUsername(userB)) {
+    	if (!memberService.existsByUsername(memberA) || !memberService.existsByUsername(memberB)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("존재하지 않는 사용자가 포함되어 있습니다.");
         }
     	
-    	if (!customUser.getUsername().equals(userA) && !customUser.getUsername().equals(userB)) {
+    	if (!customUser.getUsername().equals(memberA) && !customUser.getUsername().equals(memberB)) {
     	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("자신이 포함된 대화만 생성할 수 있습니다.");
     	}
     	
-    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(userA, userB); 
+    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(memberA, memberB); 
     	
         return ResponseEntity.ok(chatRoom);
     }

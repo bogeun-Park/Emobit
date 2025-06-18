@@ -39,14 +39,14 @@ public class ChatMessageService {
     	chatMessage.setSender(sender);
     	chatMessage.setContent(content);
     	
-    	Member userA = chatRoom.getUserA();
-    	Member userB = chatRoom.getUserB();
+    	Member memberA = chatRoom.getMemberA();
+    	Member memberB = chatRoom.getMemberB();
 
         // receiver의 참여 표시
-        if (sender.equals(userA.getUsername())) {
-            chatRoom.setUserBJoined(true);
-        } else if (sender.equals(userB.getUsername())) {
-            chatRoom.setUserAJoined(true);
+        if (sender.equals(memberA.getUsername())) {
+            chatRoom.setMemberBJoined(true);
+        } else if (sender.equals(memberB.getUsername())) {
+            chatRoom.setMemberAJoined(true);
         }
 
         chatRoomRepository.save(chatRoom);
