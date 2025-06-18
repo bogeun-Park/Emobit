@@ -1,5 +1,6 @@
 package com.example.emobit.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,7 @@ import com.example.emobit.domain.ChatRoom;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 	List<ChatMessage> findByChatRoomOrderByCreatedAtAsc(ChatRoom chatRoom);
+	
+	// createdAt > exitedAt : 채팅방을 나간 시간 이후의 메시지를 추출
+	List<ChatMessage> findByChatRoomAndCreatedAtAfterOrderByCreatedAtAsc(ChatRoom chatRoom, LocalDateTime exitAt);
 }
