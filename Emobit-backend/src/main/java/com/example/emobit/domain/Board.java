@@ -68,7 +68,7 @@ public class Board {
 	
 	@ToString.Exclude
 	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonBackReference  // 무한 순환 참조 방지 : comments는 json 데이터로 넘어감
+	@JsonBackReference
 	private List<Comments> comments = new ArrayList<>();
 	
 	// 이미지 URL 기본값 설정
