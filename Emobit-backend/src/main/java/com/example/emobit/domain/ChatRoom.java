@@ -1,5 +1,6 @@
 package com.example.emobit.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,12 @@ public class ChatRoom {
 
 	@Column(name = "USER_B_JOINED", nullable = false)
 	private boolean userBJoined = false;
+	
+	@Column(name = "USER_A_EXITED_AT")
+	private LocalDateTime userAExitedAt;
+	
+	@Column(name = "USER_B_EXITED_AT")
+	private LocalDateTime userBExitedAt;
 	
 	@CreationTimestamp
 	@Column(name = "CREATED_AT", nullable = false, updatable = false)
