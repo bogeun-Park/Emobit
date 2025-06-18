@@ -49,7 +49,7 @@ function MessagePage() {
                 setMessages(messagesRes.data);
 
                 const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
-                const target = chatRoom?.userA === auth.username ? chatRoom?.userB : chatRoom?.userA;
+                const target = chatRoom?.userA.username === auth.username ? chatRoom?.userB.username : chatRoom?.userA.username;
 
                 if (target) {
                     const profileRes = await axios.get(`/profile/${target}`);
@@ -84,7 +84,7 @@ function MessagePage() {
             onConnect: () => {
                 client.subscribe('/topic/public', message => {
                     const receivedMessage = JSON.parse(message.body);
-                    if (receivedMessage.chatRoom.id === selectedChatRoomId) {
+                    if (receivedMessage.chatRoomId === selectedChatRoomId) {
                         setMessages(prev => [...prev, receivedMessage]);
                     }
                 });
@@ -105,7 +105,7 @@ function MessagePage() {
         const message = {
             sender: auth.username,
             content: newMessage,
-            chatRoom: { id: selectedChatRoomId },
+            chatRoomId: selectedChatRoomId,
             createdAt: new Date().toISOString(),
         };
 
@@ -232,7 +232,7 @@ function MessagePage() {
                             className={chatRoom.id === selectedChatRoomId ? 'active' : ''}
                             onClick={() => setSelectedChatRoomId(chatRoom.id)}
                         >
-                            {chatRoom.userA === auth.username ? chatRoom.userB : chatRoom.userA}
+                            {chatRoom.userA.username === auth.username ? chatRoom.userB.username : chatRoom.userA.username}
                         </li>
                     ))}
                 </ul>
