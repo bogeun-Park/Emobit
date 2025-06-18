@@ -40,7 +40,13 @@
     align-items: center;
     padding: 1rem;
     border-bottom: 1px solid #ddd;
+}
+
+.chat-header-profile-wrapper {
+    display: flex;
+    align-items: center;
     gap: 0.75rem;
+    cursor: pointer;
 }
 
 .chat-header img {
@@ -66,6 +72,20 @@
 .chat-header-profile .target-displayName {
     font-size: 0.6rem;
     color: #666; 
+}
+
+.chat-header-buttons {
+    margin-left: auto;
+    display: flex;
+}
+
+.chat-header-buttons button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #3897f0;
+    font-size: 0.8rem;
+    padding: 2px 4px;
 }
 
 .chat-messages {
@@ -233,7 +253,6 @@
     cursor: pointer;
 }
 
-/* ✅ 원 안에 아이콘 */
 .chat-empty-icon {
     margin-bottom: 1rem;
 }
@@ -249,7 +268,6 @@
     margin: 0 auto;
 }
 
-/* ✅ 타이틀 및 설명 */
 .chat-empty-title {
     font-size: 1.2rem;
     font-weight: bold;

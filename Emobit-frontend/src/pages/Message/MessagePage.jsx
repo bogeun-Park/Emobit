@@ -23,15 +23,21 @@ function MessagePage() {
     const [targetMember, setTargetMember] = useState(null);
 
     useEffect(() => {
-        if (auth.isAuthenticated) {
-            axios.get(`/chat/getRooms/${auth.username}`)
-                .then(response => {
-                    setChatRooms(response.data);
-                })
-                .catch(error => {
-                    console.error(error)
-                });
-        }
+        if (!auth.isAuthenticated) return;
+
+        axios.get(`/chat/getRooms`)
+            .then(response => {
+                setChatRooms(response.data);
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+                if (error.response?.status === 401) {
+                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('채팅방을 불러오는 중 오류가 발생했습니다.');
+                }
+            });
     }, [auth]);
 
     useEffect(() => {
@@ -50,7 +56,13 @@ function MessagePage() {
                     setTargetMember(profileRes.data.member);
                 }
             } catch (error) {
-                console.error('데이터 불러오기 실패:', error);
+                console.error('에러 발생:', error);
+                if (error.response?.status === 401) {
+                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('채팅을 불러오는 중 오류가 발생했습니다.');
+                }
             }
         };
 
@@ -129,8 +141,16 @@ function MessagePage() {
                 
                 return [...prev, newRoom];
             });
+
+            setTargetUsername('');
         }).catch(error => {
-            console.error('채팅방 생성 실패', error);
+            console.error('에러 발생', error);
+            if (error.response?.status === 401) {
+                alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                navigate('/login');
+            } else {
+                alert('채팅방을 불러오는 중 오류가 발생했습니다.');
+            }
         });
     };
 
@@ -149,7 +169,7 @@ function MessagePage() {
         const currentTime = customMsgDate(msg.createdAt);
         const previousMsg = messages[idx - 1];
 
-        // 이전 메시지가 시간 출력
+        // 이전 메시지가 없으면 시간 출력
         if (!previousMsg) return true;
 
         // 보낸 사람이 같을 때만 시간 중복을 체크
@@ -170,12 +190,35 @@ function MessagePage() {
 
     const getDateDividerText = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('ko-KR', {
+        const dateStr = date.toLocaleDateString('ko-KR', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
             weekday: 'long',
         });
+
+        return dateStr;
+    };
+
+    const hadleChatExit = () => {
+        const confirmed = window.confirm('채팅방을 나가시겠습니까?');
+        if (!confirmed || !selectedChatRoomId) return;
+
+        axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
+            .then(() => {
+                // UI에서 채팅방 제거
+                setChatRooms(prev => prev.filter(room => room.id !== selectedChatRoomId));
+                setSelectedChatRoomId(null);
+            })
+            .catch(error => {
+                console.error('에러 발생', error);
+                if (error.response?.status === 401) {
+                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/login');
+                } else {
+                    alert('채팅방 나가기 중 오류가 발생했습니다.');
+                }
+            });
     };
 
     return (
@@ -200,11 +243,17 @@ function MessagePage() {
                     <>
                         {targetMember && (
                             <div className="chat-header">
-                                <img src={targetMember.imageUrl} alt="" />
+                                <div className="chat-header-profile-wrapper" onClick={() => navigate(`/${targetMember.username}`)}>
+                                    <img src={targetMember.imageUrl} alt="" />
 
-                                <div className="chat-header-profile">
-                                    <span className="target-username">{targetMember.username}</span>
-                                    <span className="target-displayName">{targetMember.displayName}</span>
+                                    <div className="chat-header-profile">
+                                        <span className="target-username">{targetMember.username}</span>
+                                        <span className="target-displayName">{targetMember.displayName}</span>
+                                    </div>
+                                </div>
+
+                                <div className="chat-header-buttons">
+                                    <button onClick={hadleChatExit}>나가기</button>
                                 </div>
                             </div>
                         )}
