@@ -49,7 +49,7 @@ function MessagePage() {
                 setMessages(messagesRes.data);
 
                 const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
-                const target = chatRoom?.userA.username === auth.username ? chatRoom?.userB.username : chatRoom?.userA.username;
+                const target = chatRoom?.memberA.username === auth.username ? chatRoom?.memberB.username : chatRoom?.memberA.username;
 
                 if (target) {
                     const profileRes = await axios.get(`/profile/${target}`);
@@ -128,8 +128,8 @@ function MessagePage() {
 
         axios.post(`/chat/createRoom`, null, {
             params: {
-                userA: auth.username,
-                userB: targetUsername
+                memberA: auth.username,
+                memberB: targetUsername
             }
         }).then(response => {
             const newRoom = response.data;
@@ -232,7 +232,7 @@ function MessagePage() {
                             className={chatRoom.id === selectedChatRoomId ? 'active' : ''}
                             onClick={() => setSelectedChatRoomId(chatRoom.id)}
                         >
-                            {chatRoom.userA.username === auth.username ? chatRoom.userB.username : chatRoom.userA.username}
+                            {chatRoom.memberA.username === auth.username ? chatRoom.memberB.username : chatRoom.memberA.username}
                         </li>
                     ))}
                 </ul>
