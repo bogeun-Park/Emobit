@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.emobit.domain.ChatMessage;
 import com.example.emobit.domain.ChatRoom;
+import com.example.emobit.domain.Member;
 import com.example.emobit.repository.ChatMessageRepository;
 import com.example.emobit.repository.ChatRoomRepository;
 
@@ -32,23 +33,25 @@ public class ChatMessageService {
     }
 
     @Transactional
-    public void saveChatMessage(ChatRoom chatRoom, String sender, String content) {
+    public ChatMessage saveChatMessage(ChatRoom chatRoom, String sender, String content) {
     	ChatMessage chatMessage = new ChatMessage();
     	chatMessage.setChatRoom(chatRoom);
     	chatMessage.setSender(sender);
     	chatMessage.setContent(content);
-
-    	String userA = chatRoom.getUserA();
-        String userB = chatRoom.getUserB();
+    	
+    	Member userA = chatRoom.getUserA();
+    	Member userB = chatRoom.getUserB();
 
         // receiver의 참여 표시
-        if (sender.equals(userA)) {
+        if (sender.equals(userA.getUsername())) {
             chatRoom.setUserBJoined(true);
-        } else if (sender.equals(userB)) {
+        } else if (sender.equals(userB.getUsername())) {
             chatRoom.setUserAJoined(true);
         }
 
         chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(chatMessage);
+        
+        return chatMessage;
     }
 }
