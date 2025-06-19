@@ -375,9 +375,15 @@ function MessagePage() {
                         
                         <div className="chat-input-wrapper">
                             <div className="chat-input">
-                                <input type="text" value={newMessage}
+                                <textarea
+                                    value={newMessage} rows={1}
                                     onChange={e => setNewMessage(e.target.value)}
-                                    onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
+                                    onKeyDown={e => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {  // Shift+Enter는 기본 줄바꿈 동작을 그대로 둠
+                                            e.preventDefault(); // 줄바꿈 막고
+                                            handleSendMessage(); // 메시지 전송
+                                        }
+                                    }}
                                     placeholder="메시지를 입력하세요..."
                                 />
                                 <button onClick={handleSendMessage}>Send</button>
