@@ -31,6 +31,12 @@ public class ChatMessageService {
     	
         return chatMessageList;
     }
+    
+    public ChatMessage getLastMessage(ChatRoom chatRoom) {
+    	ChatMessage chatMessage = chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom).orElse(null);
+    	
+        return chatMessage;
+    }
 
     @Transactional
     public ChatMessage saveChatMessage(ChatRoom chatRoom, String sender, String content) {

@@ -21,8 +21,10 @@ public class ChatRoomDto {
 	private LocalDateTime memberAExitedAt;
 	private LocalDateTime memberBExitedAt;
     private Date createdAt;
+    private String lastMessage;
+    private Date lastMessageTime;
     
-    public ChatRoomDto(ChatRoom chatRoom) {
+    public ChatRoomDto(ChatRoom chatRoom, String lastMessage, Date lastMessageTime) {
     	this.id = chatRoom.getId();
 		this.memberA = new MemberAuthDto(chatRoom.getMemberA());
 		this.memberB = new MemberAuthDto(chatRoom.getMemberB());
@@ -31,5 +33,7 @@ public class ChatRoomDto {
 		this.memberAExitedAt = chatRoom.getMemberAExitedAt();
 		this.memberBExitedAt = chatRoom.getMemberBExitedAt();
 		this.createdAt = chatRoom.getCreatedAt();
+		this.lastMessage = lastMessage;
+		this.lastMessageTime = lastMessageTime;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.emobit.controller;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,15 @@ public class ChatController {
     	
     	List<ChatRoom> chatRoomList = chatRoomService.getUserChatRoomAll(customUser.getUsername());
     	List<ChatRoomDto> chatRoomDtoList = chatRoomList.stream()
-    		.map(ChatRoomDto::new)
+    		.map(chatRoom -> {
+    			ChatMessage chatMessage = chatMessageService.getLastMessage(chatRoom);
+                String lastMessage = chatMessage != null ? chatMessage.getContent() : null;
+                Date lastMessageTime = chatMessage != null ? chatMessage.getCreatedAt() : null;
+                
+                ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime);
+                
+                return chatRoomDto; 
+    		})
     		.toList();
     	
         return ResponseEntity.ok(chatRoomDtoList);
