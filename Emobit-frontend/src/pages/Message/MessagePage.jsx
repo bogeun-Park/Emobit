@@ -5,7 +5,7 @@ import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { MessageCirclePlus } from 'lucide-react';
+import { MessageCirclePlus, SquarePen } from 'lucide-react';
 
 function MessagePage() {
     const axios = useAxios();
@@ -21,13 +21,21 @@ function MessagePage() {
     const [targetUsername, setTargetUsername] = useState('');
     const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!auth.isAuthenticated) return;
 
         axios.get(`/chat/getRooms`)
             .then(response => {
-                setChatRooms(response.data);
+                const sortedChatRooms = [...response.data].sort((a, b) => {
+                    const timeA = new Date(a.lastMessageTime || 0).getTime();
+                    const timeB = new Date(b.lastMessageTime || 0).getTime();
+                    return timeB - timeA;
+                });
+                
+                setChatRooms(sortedChatRooms);
+                setLoading(false);
             })
             .catch(error => {
                 console.error('에러 발생:', error);
@@ -84,9 +92,33 @@ function MessagePage() {
             onConnect: () => {
                 client.subscribe('/topic/public', message => {
                     const receivedMessage = JSON.parse(message.body);
+
+                    // 대화창 세팅
                     if (receivedMessage.chatRoomId === selectedChatRoomId) {
                         setMessages(prev => [...prev, receivedMessage]);
                     }
+
+                    // chat-list에 마지막 메시지, 마지막 시간 세팅 후 chat-list 최신순 정렬
+                    setChatRooms(prevChatRooms => {
+                        const updatedChatRooms = prevChatRooms.map(chatRoom => {
+                            if (chatRoom.id === receivedMessage.chatRoomId) {
+                                return {
+                                    ...chatRoom,
+                                    lastMessage: receivedMessage.content,
+                                    lastMessageTime: receivedMessage.createdAt,
+                                };
+                            }
+                            return chatRoom;
+                        });
+                        
+                        const sortedChatRooms = updatedChatRooms.sort((a, b) => {
+                            const timeA = new Date(a.lastMessageTime || 0).getTime();
+                            const timeB = new Date(b.lastMessageTime || 0).getTime();
+                            return timeB - timeA;
+                        });
+
+                        return sortedChatRooms;
+                    });
                 });
             },
         });
@@ -154,7 +186,34 @@ function MessagePage() {
         });
     };
 
-    const customMsgDate = (dateString) => {
+    const customMsgListDate = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+
+        const isSameDay =
+            date.getFullYear() === now.getFullYear() &&
+            date.getMonth() === now.getMonth() &&
+            date.getDate() === now.getDate();
+
+        let formattedTime;
+        if (isSameDay) {  // 오늘일 경우: 오전/오후 00:00 형식
+            formattedTime = date.toLocaleTimeString('ko-KR', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+            });
+        } else {  // 하루 이상 지난 경우: yyyy. MM. dd 형식
+            formattedTime = date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+            }).replace(/\.$/, '');
+        }
+
+        return formattedTime;
+    };
+
+    const customMsgWindowDate = (dateString) => {
         const date = new Date(dateString);
         const formattedTime = date.toLocaleTimeString('ko-KR', {
             hour: 'numeric',
@@ -166,7 +225,7 @@ function MessagePage() {
     };
 
     const showTime = (msg, idx) => {
-        const currentTime = customMsgDate(msg.createdAt);
+        const currentTime = customMsgWindowDate(msg.createdAt);
         const previousMsg = messages[idx - 1];
 
         // 이전 메시지가 없으면 시간 출력
@@ -174,7 +233,7 @@ function MessagePage() {
 
         // 보낸 사람이 같을 때만 시간 중복을 체크
         const sameSender = previousMsg.sender === msg.sender;
-        const previousTime = customMsgDate(previousMsg.createdAt);
+        const previousTime = customMsgWindowDate(previousMsg.createdAt);
         const bDisplay = !sameSender || currentTime !== previousTime;
 
         return bDisplay;
@@ -224,18 +283,46 @@ function MessagePage() {
     return (
         <div className="message-container">
             <div className="chat-list">
-                <h3>채팅 목록</h3>
-                <ul>
-                    {chatRooms.map(chatRoom => (
-                        <li
-                            key={chatRoom.id}
-                            className={chatRoom.id === selectedChatRoomId ? 'active' : ''}
-                            onClick={() => setSelectedChatRoomId(chatRoom.id)}
-                        >
-                            {chatRoom.memberA.username === auth.username ? chatRoom.memberB.username : chatRoom.memberA.username}
-                        </li>
-                    ))}
-                </ul>
+                <div className="chat-list-header">
+                    <span>메시지</span>
+                    <SquarePen className="send-message-search" />
+                </div>
+
+                {loading ? (
+                    <div></div>
+                ) : chatRooms.length === 0 ? (
+                    <div className="chat-list-empty">
+                        <span>메시지가 없습니다.</span>
+                    </div>
+                ) : (
+                    <ul>
+                        {chatRooms.map(chatRoom => {
+                            const chatPartner =
+                                chatRoom.memberA.username === auth.username
+                                    ? chatRoom.memberB
+                                    : chatRoom.memberA;
+                            return (
+                                <li
+                                    key={chatRoom.id}
+                                    className={chatRoom.id === selectedChatRoomId ? 'active' : 'none'}
+                                    onClick={() => setSelectedChatRoomId(chatRoom.id)}
+                                >
+                                    <div className="chat-list-item">
+                                        <img src={chatPartner.imageUrl} alt="" />
+                                        <div className="chat-list-text">
+                                            <span className="chat-list-username">{chatPartner.username}</span>
+                                            <span className="chat-list-lastmessage">{chatRoom.lastMessage}</span>
+                                        </div>
+
+                                        <div className='chat-list-live'>
+                                            <span className="chat-list-time">{chatRoom.lastMessageTime ? customMsgListDate(chatRoom.lastMessageTime) : ''}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
             </div>
 
             <div className="chat-window">
@@ -269,7 +356,7 @@ function MessagePage() {
 
                                     <div className={msg.sender === auth.username ? 'my-message-wrapper' : 'their-message-wrapper'}>
                                         {msg.sender === auth.username && showTime(msg, idx) && (
-                                            <span className="message-time">{customMsgDate(msg.createdAt)}</span>
+                                            <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
                                         )}
 
                                         <div className={msg.sender === auth.username ? 'my-message' : 'their-message'}>
@@ -277,7 +364,7 @@ function MessagePage() {
                                         </div>
 
                                         {msg.sender !== auth.username && showTime(msg, idx) && (
-                                            <span className="message-time">{customMsgDate(msg.createdAt)}</span>
+                                            <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
                                         )}
                                     </div>
                                 </React.Fragment>
