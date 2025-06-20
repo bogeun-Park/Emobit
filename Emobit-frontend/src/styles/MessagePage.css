@@ -13,6 +13,21 @@
     border-right: 1px solid #ddd;
 }
 
+@media (max-width: 900px) {
+    .chat-list {
+        width: 100px;
+    }
+
+    .chat-list-header span,
+    .chat-list-time {
+        display: none;
+    }
+
+    .send-message-search {
+        margin: 0 auto;
+    }
+}
+
 .chat-list ul {
     flex: 1;
     list-style: none;
@@ -36,7 +51,7 @@
 .chat-list-header {
     display: flex;
     justify-content: space-between;
-    padding: 40px 24px 12px 24px;
+    padding: 44px 22px 30px 22px;
 }
 
 .chat-list-header span {
@@ -59,7 +74,7 @@
 .chat-list-item {
     display: flex;
     align-items: center;
-    padding: 8px 24px;
+    padding: 8px 22px;
     gap: 0.75rem;
 }
 
@@ -197,12 +212,12 @@
     display: flex;
     max-width: 100%;
     justify-content: flex-start;  /* 왼쪽 정렬 */
-    align-items: flex-end;        
+    align-items: flex-end;
 }
 
 .my-message {
     display: inline-block;
-    max-width: 70%;
+    max-width: 60%;
     padding: 0.5rem 0.8rem;
     background-color: #3797F0;
     color: white;
@@ -214,7 +229,7 @@
 
 .their-message {
     display: inline-block;
-    max-width: 70%;
+    max-width: 60%;
     padding: 0.5rem 0.8rem;
     background-color: #e4e6eb;
     color: black;
@@ -245,7 +260,7 @@
     border-radius: 16px;
     font-size: 0.85rem;
     font-weight: 500;
-    
+
 }
 
 .chat-input-wrapper {
