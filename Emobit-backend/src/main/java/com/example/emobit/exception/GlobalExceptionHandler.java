@@ -29,4 +29,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleMemberException(MemberException e) {
 	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
 	}
+	
+	@ExceptionHandler(ChatRoomException.class)
+	public ResponseEntity<String> handleChatRoomException(ChatRoomException e) {
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
 }
