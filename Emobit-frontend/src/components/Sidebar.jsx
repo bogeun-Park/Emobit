@@ -26,7 +26,7 @@ function Sidebar() {
             dispatch(menuAction.setActiveMenu('search'));
         } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('board'));
-        } else if (curPath === '/message') {
+        } else if (curPath === '/message' || /^\/message\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('message'));
         } else if (curPath === '/alarm') {
             dispatch(menuAction.setActiveMenu('alarm'));
