@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.emobit.domain.ChatRoom;
 import com.example.emobit.domain.Member;
+import com.example.emobit.exception.ChatRoomNotFoundException;
 import com.example.emobit.repository.ChatRoomRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ChatRoomService {
 
     public ChatRoom getChatRoomById(Long id) {
     	ChatRoom chatRoom =	chatRoomRepository.findByIdWithUsers(id)
-                				.orElseThrow(() -> new RuntimeException("채팅방이 존재하지 않습니다.")); 
+                				.orElseThrow(() -> new ChatRoomNotFoundException("채팅방이 존재하지 않습니다.")); 
         return chatRoom;
     }
     
