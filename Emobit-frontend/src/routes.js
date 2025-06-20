@@ -21,6 +21,7 @@ const routes = [
     { path: "/board/read/:boardId", element: <BoardRead /> },
     { path: "/board/update/:boardId", element: <BoardUpdate /> },
     { path: "/message", element: <MessagePage /> },
+    { path: "/message/:chatRoomId?", element: <MessagePage /> },
     { path: "/:username", element: <ProfilePage /> },
 ];
 
