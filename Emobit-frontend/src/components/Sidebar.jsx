@@ -42,7 +42,7 @@ function Sidebar() {
     }, [location.pathname, dispatch, auth]);
 
     useEffect(() => {
-        const sidebar = document.querySelector('.sidebar');
+        const sidebar = document.querySelector('.sidebar-container');
         const updateSidebarWidth = () => {
             const width = sidebar.offsetWidth;
             document.documentElement.style.setProperty('--sidebar-width', `${width}px`);
@@ -75,7 +75,7 @@ function Sidebar() {
     }
 
     return (
-        <aside className="sidebar">
+        <aside className="sidebar-container">
             <Link to="/" className="logo" onClick={() => navigate('/')}>
                 E<span className="menu-label">mobit</span>
             </Link>

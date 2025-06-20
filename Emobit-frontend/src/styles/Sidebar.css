@@ -1,3 +1,14 @@
+.sidebar-container {
+    position: fixed;
+    width: 244px;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-right: 1px solid #ddd;
+}
+
 .logo {
     font-family: 'Parisienne', cursive;
     font-size: 1.8rem;
@@ -7,17 +18,6 @@
     font-weight: 800;
     display: inline-block;
     margin-bottom: 0.5rem;
-}
-
-.sidebar {
-    position: fixed;
-    width: 244px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-    box-sizing: border-box;
-    border-right: 1px solid #ddd;
 }
 
 .menu {
@@ -61,7 +61,7 @@
 }
 
 @media (max-width: 1264px) {
-    .sidebar {
+    .sidebar-container {
         width: 72px;
     }
 
