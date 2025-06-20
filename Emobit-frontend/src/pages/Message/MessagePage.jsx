@@ -1,6 +1,6 @@
 import '../../styles/MessagePage.css';
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
@@ -12,6 +12,7 @@ function MessagePage() {
     const auth = useSelector(state => state.auth);
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
+    const { chatRoomId } = useParams();
 
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
     const [chatRooms, setChatRooms] = useState([]);
@@ -22,6 +23,12 @@ function MessagePage() {
     const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (chatRoomId && chatRooms.length > 0) {
+            setSelectedChatRoomId(Number(chatRoomId));
+        }
+    }, [chatRoomId, chatRooms]);
 
     useEffect(() => {
         if (!auth.isAuthenticated) return;
@@ -49,20 +56,25 @@ function MessagePage() {
     }, [auth]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (!selectedChatRoomId) return;
+        if (!selectedChatRoomId || chatRooms.length === 0) return;
 
+        const fetchData = async () => {
             try {
                 const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`);
                 setMessages(messagesRes.data);
 
-                const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
-                const target = chatRoom?.memberA.username === auth.username ? chatRoom?.memberB.username : chatRoom?.memberA.username;
-
-                if (target) {
-                    const profileRes = await axios.get(`/profile/${target}`);
-                    setTargetMember(profileRes.data.member);
+                const chatRoom = chatRooms.find(room => room.id.toString() === selectedChatRoomId);
+                if (!chatRoom) {
+                    setTargetMember(null);
+                    return;
                 }
+
+                const targetUsername = chatRoom.memberA.username === auth.username
+                    ? chatRoom.memberB.username
+                    : chatRoom.memberA.username;
+
+                const profileRes = await axios.get(`/profile/${targetUsername}`);
+                setTargetMember(profileRes.data.member);
             } catch (error) {
                 console.error('에러 발생:', error);
                 if (error.response?.status === 401) {
@@ -75,7 +87,7 @@ function MessagePage() {
         };
 
         fetchData();
-    }, [selectedChatRoomId]);
+    }, [selectedChatRoomId, chatRooms]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -264,8 +276,7 @@ function MessagePage() {
         if (!confirmed || !selectedChatRoomId) return;
 
         axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
-            .then(() => {
-                // UI에서 채팅방 제거
+            .then(() => {                
                 setChatRooms(prev => prev.filter(room => room.id !== selectedChatRoomId));
                 setSelectedChatRoomId(null);
             })
@@ -279,6 +290,11 @@ function MessagePage() {
                 }
             });
     };
+
+    const onSelectChatRoom = (chatRoomId) => {
+        setSelectedChatRoomId(chatRoomId);
+        navigate(`/message/${chatRoomId}`);
+      };
 
     return (
         <div className="message-container">
@@ -305,7 +321,7 @@ function MessagePage() {
                                 <li
                                     key={chatRoom.id}
                                     className={chatRoom.id === selectedChatRoomId ? 'active' : 'none'}
-                                    onClick={() => setSelectedChatRoomId(chatRoom.id)}
+                                    onClick={() => onSelectChatRoom(chatRoom.id)}
                                 >
                                     <div className="chat-list-item">
                                         <img src={chatPartner.imageUrl} alt="" />
