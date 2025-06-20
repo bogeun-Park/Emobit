@@ -63,7 +63,7 @@ function MessagePage() {
                 const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`);
                 setMessages(messagesRes.data);
 
-                const chatRoom = chatRooms.find(room => room.id.toString() === selectedChatRoomId);
+                const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
                 if (!chatRoom) {
                     setTargetMember(null);
                     return;
