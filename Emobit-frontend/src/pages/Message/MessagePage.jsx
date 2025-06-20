@@ -27,6 +27,8 @@ function MessagePage() {
     useEffect(() => {
         if (chatRoomId && chatRooms.length > 0) {
             setSelectedChatRoomId(Number(chatRoomId));
+        } else if (!chatRoomId) {
+            setSelectedChatRoomId(null);
         }
     }, [chatRoomId, chatRooms]);
 
