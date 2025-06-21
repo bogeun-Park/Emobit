@@ -1,6 +1,6 @@
 .message-container {
     display: flex;
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     font-family: sans-serif;
     margin: 0 -20px -20px -20px;
@@ -13,18 +13,10 @@
     border-right: 1px solid #ddd;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     .chat-list {
-        width: 100px;
-    }
-
-    .chat-list-header span,
-    .chat-list-time {
-        display: none;
-    }
-
-    .send-message-search {
-        margin: 0 auto;
+        flex: 1;
+        width: 100%;
     }
 }
 

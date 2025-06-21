@@ -23,6 +23,16 @@ function MessagePage() {
     const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         if (chatRoomId && chatRooms.length > 0) {
@@ -300,138 +310,142 @@ function MessagePage() {
 
     return (
         <div className="message-container">
-            <div className="chat-list">
-                <div className="chat-list-header">
-                    <span>메시지</span>
-                    <SquarePen className="send-message-search" />
+            {(isMobile && !chatRoomId) || !isMobile ? (
+                <div className="chat-list">
+                    <div className="chat-list-header">
+                        <span>메시지</span>
+                        <SquarePen className="send-message-search" />
+                    </div>
+
+                    {loading ? (
+                        <div></div>
+                    ) : chatRooms.length === 0 ? (
+                        <div className="chat-list-empty">
+                            <span>메시지가 없습니다.</span>
+                        </div>
+                    ) : (
+                        <ul>
+                            {chatRooms.map(chatRoom => {
+                                const chatPartner =
+                                    chatRoom.memberA.username === auth.username
+                                        ? chatRoom.memberB
+                                        : chatRoom.memberA;
+                                return (
+                                    <li
+                                        key={chatRoom.id}
+                                        className={chatRoom.id === selectedChatRoomId ? 'active' : 'none'}
+                                        onClick={() => onSelectChatRoom(chatRoom.id)}
+                                    >
+                                        <div className="chat-list-item">
+                                            <img src={chatPartner.imageUrl} alt="" />
+                                            <div className="chat-list-text">
+                                                <span className="chat-list-username">{chatPartner.username}</span>
+                                                <span className="chat-list-lastmessage">{chatRoom.lastMessage}</span>
+                                            </div>
+
+                                            <div className='chat-list-live'>
+                                                <span className="chat-list-time">{chatRoom.lastMessageTime ? customMsgListDate(chatRoom.lastMessageTime) : ''}</span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
                 </div>
+            ) : null}
 
-                {loading ? (
-                    <div></div>
-                ) : chatRooms.length === 0 ? (
-                    <div className="chat-list-empty">
-                        <span>메시지가 없습니다.</span>
-                    </div>
-                ) : (
-                    <ul>
-                        {chatRooms.map(chatRoom => {
-                            const chatPartner =
-                                chatRoom.memberA.username === auth.username
-                                    ? chatRoom.memberB
-                                    : chatRoom.memberA;
-                            return (
-                                <li
-                                    key={chatRoom.id}
-                                    className={chatRoom.id === selectedChatRoomId ? 'active' : 'none'}
-                                    onClick={() => onSelectChatRoom(chatRoom.id)}
-                                >
-                                    <div className="chat-list-item">
-                                        <img src={chatPartner.imageUrl} alt="" />
-                                        <div className="chat-list-text">
-                                            <span className="chat-list-username">{chatPartner.username}</span>
-                                            <span className="chat-list-lastmessage">{chatRoom.lastMessage}</span>
-                                        </div>
+            {(isMobile && chatRoomId) || !isMobile ? (
+                <div className="chat-window">
+                    {selectedChatRoomId ? (
+                        <>
+                            {targetMember && (
+                                <div className="chat-header">
+                                    <div className="chat-header-profile-wrapper" onClick={() => navigate(`/${targetMember.username}`)}>
+                                        <img src={targetMember.imageUrl} alt="" />
 
-                                        <div className='chat-list-live'>
-                                            <span className="chat-list-time">{chatRoom.lastMessageTime ? customMsgListDate(chatRoom.lastMessageTime) : ''}</span>
+                                        <div className="chat-header-profile">
+                                            <span className="target-username">{targetMember.username}</span>
+                                            <span className="target-displayName">{targetMember.displayName}</span>
                                         </div>
                                     </div>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                )}
-            </div>
 
-            <div className="chat-window">
-                {selectedChatRoomId ? (
-                    <>
-                        {targetMember && (
-                            <div className="chat-header">
-                                <div className="chat-header-profile-wrapper" onClick={() => navigate(`/${targetMember.username}`)}>
-                                    <img src={targetMember.imageUrl} alt="" />
-
-                                    <div className="chat-header-profile">
-                                        <span className="target-username">{targetMember.username}</span>
-                                        <span className="target-displayName">{targetMember.displayName}</span>
+                                    <div className="chat-header-buttons">
+                                        <button onClick={hadleChatExit}>나가기</button>
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="chat-header-buttons">
-                                    <button onClick={hadleChatExit}>나가기</button>
-                                </div>
+                            <div className="chat-messages">
+                                {messages.map((msg, idx) => (
+                                    <React.Fragment key={idx}>
+                                        {showDateDivider(msg, idx) && (
+                                            <div className="date-divider">
+                                                <span>{getDateDividerText(msg.createdAt)}</span>
+                                            </div>
+                                        )}
+
+                                        <div className={msg.sender === auth.username ? 'my-message-wrapper' : 'their-message-wrapper'}>
+                                            {msg.sender === auth.username && showTime(msg, idx) && (
+                                                <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
+                                            )}
+
+                                            <div className={msg.sender === auth.username ? 'my-message' : 'their-message'}>
+                                                <span className="message-content">{msg.content}</span>
+                                            </div>
+
+                                            {msg.sender !== auth.username && showTime(msg, idx) && (
+                                                <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
+                                            )}
+                                        </div>
+                                    </React.Fragment>
+                                ))}
+                                
+                                <div ref={messagesEndRef} />  {/* 채팅창 맨 아래로 자동 스크롤 */}    
                             </div>
-                        )}
-
-                        <div className="chat-messages">
-                            {messages.map((msg, idx) => (
-                                <React.Fragment key={idx}>
-                                    {showDateDivider(msg, idx) && (
-                                        <div className="date-divider">
-                                            <span>{getDateDividerText(msg.createdAt)}</span>
-                                        </div>
-                                    )}
-
-                                    <div className={msg.sender === auth.username ? 'my-message-wrapper' : 'their-message-wrapper'}>
-                                        {msg.sender === auth.username && showTime(msg, idx) && (
-                                            <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
-                                        )}
-
-                                        <div className={msg.sender === auth.username ? 'my-message' : 'their-message'}>
-                                            <span className="message-content">{msg.content}</span>
-                                        </div>
-
-                                        {msg.sender !== auth.username && showTime(msg, idx) && (
-                                            <span className="message-time">{customMsgWindowDate(msg.createdAt)}</span>
-                                        )}
-                                    </div>
-                                </React.Fragment>
-                            ))}
                             
-                            <div ref={messagesEndRef} />  {/* 채팅창 맨 아래로 자동 스크롤 */}    
-                        </div>
-                        
-                        <div className="chat-input-wrapper">
-                            <div className="chat-input">
-                                <textarea
-                                    value={newMessage} rows={1}
-                                    onChange={e => setNewMessage(e.target.value)}
-                                    onKeyDown={e => {
-                                        if (e.key === 'Enter' && !e.shiftKey) {  // Shift+Enter는 기본 줄바꿈 동작을 그대로 둠
-                                            e.preventDefault(); // 줄바꿈 막고
-                                            handleSendMessage(); // 메시지 전송
-                                        }
-                                    }}
-                                    placeholder="메시지를 입력하세요..."
-                                />
-                                <button onClick={handleSendMessage}>Send</button>
-                            </div>
-                        </div>
-                    </>
-                ) : (
-                    <div className="start-chat-container">
-                        {!showInputForm ? (
-                            <>
-                                <div className="chat-empty-icon">
-                                    <div className="chat-icon-circle">
-                                        <MessageCirclePlus size={55} strokeWidth={1} />
-                                    </div>
+                            <div className="chat-input-wrapper">
+                                <div className="chat-input">
+                                    <textarea
+                                        value={newMessage} rows={1}
+                                        onChange={e => setNewMessage(e.target.value)}
+                                        onKeyDown={e => {
+                                            if (e.key === 'Enter' && !e.shiftKey) {  // Shift+Enter는 기본 줄바꿈 동작을 그대로 둠
+                                                e.preventDefault(); // 줄바꿈 막고
+                                                handleSendMessage(); // 메시지 전송
+                                            }
+                                        }}
+                                        placeholder="메시지를 입력하세요..."
+                                    />
+                                    <button onClick={handleSendMessage}>Send</button>
                                 </div>
-                                <h2 className="chat-empty-title">내 메시지</h2>
-                                <p className="chat-empty-subtitle">친구에게 나만의 메시지를 보내보세요</p>
-                                <button className="start-chat-button" onClick={() => setShowInputForm(true)}>메시지 보내기</button>
-                            </>
-                        ) : (
-                            <div className="start-chat-form">
-                                <input type="text" placeholder="대화할 상대 이름" value={targetUsername}
-                                    onChange={e => setTargetUsername(e.target.value)}
-                                />
-                                <button onClick={handleCreateChatRoom}>채팅 시작</button>
                             </div>
-                        )}
-                    </div>
-                )}
-            </div>
+                        </>
+                    ) : (
+                        <div className="start-chat-container">
+                            {!showInputForm ? (
+                                <>
+                                    <div className="chat-empty-icon">
+                                        <div className="chat-icon-circle">
+                                            <MessageCirclePlus size={55} strokeWidth={1} />
+                                        </div>
+                                    </div>
+                                    <h2 className="chat-empty-title">내 메시지</h2>
+                                    <p className="chat-empty-subtitle">친구에게 나만의 메시지를 보내보세요</p>
+                                    <button className="start-chat-button" onClick={() => setShowInputForm(true)}>메시지 보내기</button>
+                                </>
+                            ) : (
+                                <div className="start-chat-form">
+                                    <input type="text" placeholder="대화할 상대 이름" value={targetUsername}
+                                        onChange={e => setTargetUsername(e.target.value)}
+                                    />
+                                    <button onClick={handleCreateChatRoom}>채팅 시작</button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            ) : null}
         </div>
     );
 }
