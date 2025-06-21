@@ -50,8 +50,8 @@ function LoginPage() {
     return (
         <div className="login-Register-container">
             <div className="login-Register-box">
-                <div className="logo-wrapper" onClick={() => navigate('/')}>
-                    <span className="logo-text">Emobit</span>
+                <div className="logo-wrapper">
+                    <span className="logo-text" onClick={() => navigate('/')}>Emobit</span>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-Register-form">
