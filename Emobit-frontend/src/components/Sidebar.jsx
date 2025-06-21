@@ -24,7 +24,7 @@ function Sidebar() {
             dispatch(menuAction.setActiveMenu('home'));
         } else if (curPath === '/search') {
             dispatch(menuAction.setActiveMenu('search'));
-        } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath)) {
+        } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath) || /^\/board\/update\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('board'));
         } else if (curPath === '/message' || /^\/message\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('message'));
