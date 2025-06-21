@@ -301,6 +301,8 @@ function MessagePage() {
                     alert('채팅방 나가기 중 오류가 발생했습니다.');
                 }
             });
+
+        navigate('/message')
     };
 
     const onSelectChatRoom = (chatRoomId) => {
