@@ -163,7 +163,7 @@
 }
 
 .comment-form {
-    padding: 0 1rem;
+    padding: 2px 1rem;
     border-top: 1px solid #eee;
     background: #fff;
     flex-shrink: 0;
@@ -173,8 +173,10 @@
 }
 
 .comment-form textarea {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 0.9rem;
     flex: 1;
+    padding: 0;
     width: auto;
     resize: none;
     border: none;
@@ -252,6 +254,11 @@
     background: none;
     border: none;
     cursor: pointer;
+}
+
+.like-button:hover svg,
+.send-button:hover svg {
+    stroke: #828282;
 }
 
 .created-at {

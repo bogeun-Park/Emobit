@@ -172,6 +172,36 @@ function BoardRead() {
         navigate(`/${username}`);
     };
 
+    const handleSendMessageToAuthor = () => {
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
+        if (auth.username === board.memberUsername) {
+            return;
+        }
+
+        axios.post('/chat/createRoom', null, {
+            params: {
+                memberA: auth.username,
+                memberB: board.memberUsername,
+            },
+        }).then(response => {
+            const chatRoomId = response.data.id;
+            navigate(`/message/${chatRoomId}`);    
+        }).catch (error => {
+            console.error('에러 발생:', error);
+            if (error.response?.status === 401) {
+                alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                navigate('/login');
+            } else {
+                alert('채팅방을 불러오는 중 오류가 발생했습니다.');
+            }
+        })
+    };
+
     if (notFound) {
         return <NotFoundPage />;
     }
@@ -266,8 +296,14 @@ function BoardRead() {
                 <div className="board-extra-info">
                     <div className="left-side">
                         <div className="like-send-buttons">
-                            <button type="button" className="like-button"><Heart size={24} /></button>
-                            <button type="button" className="send-button"><Send size={24} /></button>
+                            <button type="button" className="like-button">
+                                <Heart size={24} color="#000" />
+                            </button>
+                            {auth.id !== board.createdBy && (
+                                <button type="button" className="send-button" onClick={handleSendMessageToAuthor}>
+                                    <Send size={24} color="#000" />
+                                </button>
+                            )}
                         </div>
                         <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                     </div>
