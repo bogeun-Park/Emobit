@@ -1,0 +1,4 @@
+.no-layout-container {
+    display: flex;
+    min-height: 100dvh;
+}
