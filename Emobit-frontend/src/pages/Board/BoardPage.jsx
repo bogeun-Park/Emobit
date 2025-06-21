@@ -23,17 +23,22 @@ function BoardPage() {
         <div className="board-container">
             <h2 className="board-title">Open Diary</h2>
 
-            <div className="board-list">
+            <div className="board-grid">
                 {boardList.length > 0 ? (
                     boardList.map((board) => (
-                        <Link to={`/board/read/${board.id}`} key={board.id} className="board-card">
-                            <h3 className="board-card-title">{board.title}</h3>
-                            <div className="board-card-info">
-                                <span className="board-username">@{board.memberUsername}</span>
-                                <span className="board-displayName">({board.memberDisplayName})</span>
+                        <Link className="board-card" to={`/board/read/${board.id}`} key={board.id}>
+                            <img src={board.imageUrl} alt="" />
+                            <div className="board-card-overlay">
+                                <div className="board-card-overlay-content">
+                                    <div className="board-overlay-row">
+                                        <span className="board-title-text">{board.title}</span>
+                                    </div>
+                                    <div className="board-overlay-row">
+                                        <span>{board.memberUsername} · {board.memberDisplayName}</span>
+                                        <span><Eye size={12} style={{ verticalAlign: 'middle' }} /> {board.viewCount}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <span className="board-viewCount"><Eye size={13} />{board.viewCount}</span>
-                            <span className="board-createdAt">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                         </Link>
                     ))
                 ) : (

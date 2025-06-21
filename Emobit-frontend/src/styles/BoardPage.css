@@ -10,53 +10,64 @@
     margin-bottom: 1rem;
 }
 
-.board-list {
+.board-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
 }
-
 .board-card {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem 0.7rem 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
     text-decoration: none;
     color: inherit;
-    transition: box-shadow 0.2s ease;
-    position: relative;
 }
 
-.board-card:hover {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+.board-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.board-card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.board-card-info {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 0.4rem;
-}
-
-.board-card-info span:not(:last-child)::after {
-    content: ' · ';
-    margin: 0 0.3rem;
-}
-
-.board-viewCount {
+.board-card-overlay {
     position: absolute;
-    top: 1rem;
-    right: 1.2rem;
-    color: #000;
-    font-size: 0.85rem;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 0.66rem;
     display: flex;
-    align-items: center;
-    gap: 0.2rem;
+    flex-direction: column;
+}
+
+.board-card-overlay-content {
+    padding: 0.4rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.board-overlay-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.board-title-text {
+    font-size: 0.75rem;
+    max-width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.board-card-overlay span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .board-empty {
@@ -64,11 +75,17 @@
     color: #999;
     text-align: center;
     padding: 2rem 0;
+    grid-column: span 3;
 }
 
-.board-createdAt {
-    position: absolute;
-    bottom: 1rem;
-    right: 1.2rem;
-    font-size: 0.8rem;
+@media (max-width: 768px) {
+    .board-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .board-grid {
+        grid-template-columns: 1fr;
+    }
 }
