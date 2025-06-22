@@ -22,7 +22,8 @@ function MessagePage() {
     const [targetUsername, setTargetUsername] = useState('');
     const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [chatRoomLoading, setChatRoomLoading] = useState(true);
+    const [chatWindowLoading, setChatWindowLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
     useEffect(() => {
@@ -45,6 +46,7 @@ function MessagePage() {
     useEffect(() => {
         if (!auth.isAuthenticated) return;
 
+        setChatRoomLoading(true);
         axios.get(`/chat/getRooms`)
             .then(response => {
                 const sortedChatRooms = [...response.data].sort((a, b) => {
@@ -54,7 +56,6 @@ function MessagePage() {
                 });
                 
                 setChatRooms(sortedChatRooms);
-                setLoading(false);
             })
             .catch(error => {
                 console.error('에러 발생:', error);
@@ -64,6 +65,9 @@ function MessagePage() {
                 } else {
                     alert('채팅방을 불러오는 중 오류가 발생했습니다.');
                 }
+            })
+            .finally(() => {
+                setChatRoomLoading(false);
             });
     }, [auth]);
 
@@ -78,6 +82,7 @@ function MessagePage() {
                 const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
                 if (!chatRoom) {
                     setTargetMember(null);
+                    setChatWindowLoading(false);
                     return;
                 }
 
@@ -95,9 +100,12 @@ function MessagePage() {
                 } else {
                     alert('채팅을 불러오는 중 오류가 발생했습니다.');
                 }
+            } finally {
+                setChatWindowLoading(false);
             }
         };
 
+        setChatWindowLoading(true);
         fetchData();
     }, [selectedChatRoomId, chatRooms]);
 
@@ -319,7 +327,7 @@ function MessagePage() {
                         <SquarePen className="send-message-search" />
                     </div>
 
-                    {loading ? (
+                    {chatRoomLoading ? (
                         <div></div>
                     ) : chatRooms.length === 0 ? (
                         <div className="chat-list-empty">
@@ -359,7 +367,9 @@ function MessagePage() {
 
             {(isMobile && chatRoomId) || !isMobile ? (
                 <div className="chat-window">
-                    {selectedChatRoomId ? (
+                    {chatWindowLoading ? (
+                        <div></div>
+                    ) : selectedChatRoomId ? (
                         <>
                             {targetMember && (
                                 <div className="chat-header">
