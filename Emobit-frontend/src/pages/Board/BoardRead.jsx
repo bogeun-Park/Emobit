@@ -5,6 +5,7 @@ import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye } from 'lucide-react';
+import PopupButton from './PopupButton';
 
 function BoardRead() {
     const axios = useAxios();
@@ -223,8 +224,10 @@ function BoardRead() {
 
                     {auth.id === board.createdBy && (
                         <div className="board-buttons">
-                            <button onClick={() => navigate(`/board/update/${boardId}`)}>수정</button>
-                            <button onClick={handleDelete}>삭제</button>
+                            <PopupButton
+                                onEdit={() => navigate(`/board/update/${boardId}`)}
+                                onDelete={handleDelete}
+                            />
                         </div>
                     )}
                 </div>
@@ -258,16 +261,11 @@ function BoardRead() {
 
                                             {auth.id === comment.createdBy && (
                                                 <div className="board-buttons">
-                                                    {commentEditId === comment.id ? (
-                                                        <>
-                                                            <button onClick={handleUpdateComment}>저장</button>
-                                                            <button onClick={cancelEditing}>취소</button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <button onClick={() => startEditing(comment)}>수정</button>
-                                                            <button onClick={() => handleDeleteComment(comment.id)}>삭제</button>
-                                                        </>
+                                                    {commentEditId !== comment.id && (
+                                                        <PopupButton
+                                                            onEdit={() => startEditing(comment)}
+                                                            onDelete={() => handleDeleteComment(comment.id)}
+                                                        />
                                                     )}
                                                 </div>
                                             )}
@@ -279,6 +277,11 @@ function BoardRead() {
                                                     onChange={(e) => setCommentEditContent(e.target.value)}
                                                     rows={3}
                                                 />
+
+                                                <div className="comment-edit-buttons">
+                                                    <button onClick={handleUpdateComment}>저장</button>
+                                                    <button onClick={cancelEditing}>취소</button>
+                                                </div>
                                             </div>
                                         ) : (
                                             <div className="content-text">{comment.content}</div>
