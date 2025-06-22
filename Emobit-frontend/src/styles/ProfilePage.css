@@ -5,19 +5,23 @@
 }
 
 .profile-header {
-    display: flex;
     align-items: center;
     margin-top: 2rem;
     margin-left: clamp(0px, calc((100vw - 500px) * 0.1471), 64px);
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
+}
+
+.profile-header-wrapper {
+    display: flex;
+    align-items: center;
 }
 
 .profile-image {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background-color: #ddd;
-    margin-right: 3rem;
+    background-color: white;
+    margin-right: clamp(1.3rem, 5vw, 3rem);
     object-fit: cover;
 }
 
@@ -26,37 +30,90 @@
 }
 
 .profile-info {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 30px;
     justify-content: center;
 }
 
 .profile-info-username {
     font-size: 24px;
-    font-weight: 500;
-    color: black;
-    margin: 0;
 }
 
 .profile-info-stats {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 16px;
+}
+
+.stats-label {
     color: #737373;
-    margin: 0;
 }
 
 .profile-info-board-count {
-    font-size: 16px;
-    color: black;
     font-weight: 600;
-    margin: 0;
 }
 
 .profile-info-displayName {
-    font-size: 14px;
-    color: black;
+    font-size: 15px;
     font-weight: 600;
-    margin: 0;
+}
+
+.profile-info-content {
+    font-size: 14px;
+    white-space: pre-line;
+}
+
+.profile-info-user-mobile {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: none;
+    padding-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .profile-info {
+        margin-top: -40px;
+        gap: 13px;
+    }
+
+    .profile-image {
+        width: 90px;
+        height: 90px;
+        padding: 10px 0;
+    }
+
+    .profile-info-stats {
+        font-size: 14px;        
+        flex-direction: column-reverse;
+        gap: 0;
+    }
+
+    .stats-label {
+        color: black;
+    }
+
+    .profile-info-user-pc {
+        display: none;
+    }
+
+    .profile-info-user-mobile {
+        display: block;
+    }
+
+    .profile-divider {
+        margin: 1.3rem 0 !important;
+    }
+}
+
+.profile-divider {
+    border: none;
+    height: 1px;
+    background-color: #ccc;
+    margin: 3rem 0;
 }
 
 .post-grid {
@@ -70,11 +127,4 @@
     aspect-ratio: 1 / 1.3;
     object-fit: cover;
     display: block;
-}
-
-.profile-divider {
-    border: none;
-    height: 1px;
-    background-color: #ccc;
-    margin: 3rem 0;
 }

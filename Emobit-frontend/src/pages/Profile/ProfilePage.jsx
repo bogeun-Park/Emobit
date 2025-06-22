@@ -81,20 +81,33 @@ function ProfilePage() {
     return (
         <div className="profile-container">
             <div className="profile-header">
-                <img className={`profile-image ${auth.username === member.username ? 'clickable' : ''}`}
-                    src={member.imageUrl} alt="" onClick={handleClickImage}
-                />
-                <input type="file" id="fileInput" accept="image/*" style={{ display: 'none' }}
-                    onChange={handleImageChange}
-                    onClick={(e) => { e.target.value = null; }}
-                />
+                <div className="profile-header-wrapper">                        
+                    <img className={`profile-image ${auth.username === member.username ? 'clickable' : ''}`}
+                        src={member.imageUrl} alt="" onClick={handleClickImage}
+                    />
+                    <input type="file" id="fileInput" accept="image/*" style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                        onClick={(e) => { e.target.value = null; }}
+                    />                    
 
-                <div className="profile-info">
-                    <p className="profile-info-username">{member.username}</p>
-                    <p className="profile-info-stats">
-                        게시물 <span className='profile-info-board-count'>{boards.length}</span>
-                    </p>
-                    <p className="profile-info-displayName">{member.displayName}</p>
+                    <div className="profile-info">
+                        <div className="profile-info-username">{member.username}</div>
+
+                        <div className="profile-info-stats">
+                            <span className="stats-label">게시물</span>
+                            <span className="profile-info-board-count">{boards.length}</span>
+                        </div>
+
+                        <div className="profile-info-user-pc">
+                            <div className="profile-info-displayName">{member.displayName}</div>
+                            <div className="profile-info-content"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="profile-info-user-mobile">
+                    <div className="profile-info-displayName">{member.displayName}</div>
+                    <div className="profile-info-content"></div>
                 </div>
             </div>
 
