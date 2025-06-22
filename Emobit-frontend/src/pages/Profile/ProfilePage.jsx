@@ -43,7 +43,6 @@ function ProfilePage() {
 
         if (!image) return;
 
-        let imageUrl = '';
         try {
             if (image) {
                 // Presigned URL 요청
@@ -55,10 +54,10 @@ function ProfilePage() {
                     headers: { 'Content-Type': image.type },
                 });
 
-                imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
+                let imagePath = presignedUrl.replace(/^.*\/o\//, "");
+                await axios.put(`/member/imagePath_update/${auth.id}?imagePath=${encodeURIComponent(imagePath)}`)
 
-                await axios.put(`/member/imageUrl_update/${auth.id}?imageUrl=${encodeURIComponent(imageUrl)}`)
-
+                let imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
                 setMember(prev => ({ ...prev, imageUrl: imageUrl }));
             }
         } catch (error) {

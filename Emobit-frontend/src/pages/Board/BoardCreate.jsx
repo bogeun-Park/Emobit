@@ -35,10 +35,20 @@ function BoardCreate() {
             return;
         }
 
+        if (!title || title.trim() === "") {
+            alert("제목을 입력하세요.");
+            return;
+        }
+
+        if (!content || content.trim() === "") {
+            alert("내용을 입력하세요.");
+            return;
+        }
+
         const confirmed = window.confirm('게시글을 작성하시겠습니까?');
         if (!confirmed) return;
 
-        let imageUrl = '';
+        let imagePath = '';
         try {
             if (image) {
                 // Presigned URL 요청
@@ -50,13 +60,13 @@ function BoardCreate() {
                     headers: { 'Content-Type': image.type },
                 });
 
-                imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
+                imagePath = presignedUrl.replace(/^.*\/o\//, "");
             }
 
             await axios.post('/board/create_process', {
                 title,
                 content,
-                imageUrl,
+                imagePath,
             });
 
             alert('게시글이 성공적으로 작성되었습니다.');
