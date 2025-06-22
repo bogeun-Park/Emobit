@@ -67,7 +67,7 @@ function BoardUpdate() {
         const confirmed = window.confirm('게시글을 수정하시겠습니까?');
         if (!confirmed) return;
 
-        let imagePath = '';
+        let imagePath = board.imageUrl.replace(/^.*\/o\//, "");
         try {
             if (image) {
                 // Presigned URL 요청
@@ -86,7 +86,7 @@ function BoardUpdate() {
                 title: board.title,
                 content: board.content,
                 beforeImagePath: board.imageUrl.replace(/^.*\/o\//, ""),
-                afterImagePath: imagePath
+                afterImagePath: imagePath,
             });
 
             alert('게시글이 수정되었습니다!');
