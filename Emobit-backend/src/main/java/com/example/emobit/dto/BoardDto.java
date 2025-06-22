@@ -3,6 +3,7 @@ package com.example.emobit.dto;
 import java.util.Date;
 
 import com.example.emobit.domain.Board;
+import com.example.emobit.util.Constant;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,13 +29,13 @@ public class BoardDto {
 		this.id = board.getId();
 		this.title = board.getTitle();
 		this.content = board.getContent();
-		this.imageUrl = board.getImageUrl();
+		this.imageUrl = Constant.Oracle_Storage_ORIGIN + board.getImagePath();
 		this.viewCount = board.getViewCount();
 		this.createdAt = board.getCreatedAt();
 		this.updatedAt = board.getUpdatedAt();
 		this.createdBy = board.getMember().getId();
 		this.memberUsername = board.getMember().getUsername();
 		this.memberDisplayName = board.getMember().getDisplayName();
-		this.memberImageUrl = board.getMember().getImageUrl();
+		this.memberImageUrl = Constant.Oracle_Storage_ORIGIN + board.getMember().getImagePath();
 	}
 }

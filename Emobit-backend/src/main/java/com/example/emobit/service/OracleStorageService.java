@@ -80,31 +80,16 @@ public class OracleStorageService {
         }
     }
     
-    public boolean deleteObject(String fileUrl) {
+    public boolean deleteObject(String filePath) {
         try {
-            // Oracle Storage의 기본 엔드포인트
-            String endpoint = "https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/";
-            
-            // URL에서 파일명 추출
-            if (!fileUrl.startsWith(endpoint)) {
-                throw new IllegalArgumentException("잘못된 파일 URL입니다.");
-            }
-
             // 네임스페이스 가져오기
-            String namespaceName = objectStorageClient.getNamespace(GetNamespaceRequest.builder().build()).getValue();
-            
-            // 삭제하려는 파일명 추출
-            String prefix = endpoint + namespaceName + "/b/" + bucketName + "/o/";
-            if (!fileUrl.startsWith(prefix)) {
-                throw new IllegalArgumentException("파일 URL이 네임스페이스와 버킷 이름을 포함하지 않습니다.");
-            }
-            String objectName = fileUrl.substring(prefix.length());
+            String namespaceName = objectStorageClient.getNamespace(GetNamespaceRequest.builder().build()).getValue();            
             
             // 파일 삭제 요청
             DeleteObjectRequest request = DeleteObjectRequest.builder()
                     .namespaceName(namespaceName)
                     .bucketName(bucketName)
-                    .objectName(objectName)
+                    .objectName(filePath)
                     .build();
 
             objectStorageClient.deleteObject(request);

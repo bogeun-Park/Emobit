@@ -45,13 +45,13 @@ public class BoardService {
 	public void createBoard(Long createdBy, BoardCreateDto boardCreateDto) {
         String title = boardCreateDto.getTitle();
         String content = boardCreateDto.getContent();
-        String imageUrl = boardCreateDto.getImageUrl();
+        String imagePath = boardCreateDto.getImagePath();
         Member member = memberService.getMemberById(createdBy);
         
         Board board = new Board();
         board.setTitle(title);
         board.setContent(content);
-        board.setImageUrl(imageUrl);
+        board.setImagePath(imagePath);
         board.setMember(member);
 
         boardRepository.save(board);
@@ -60,22 +60,22 @@ public class BoardService {
 	@Transactional
 	public void updateBoard(Long id, BoardUpdateDto boardUpdateDto) {
 		Board board = this.getBoardById(id);
-		String beforeImageUrl = boardUpdateDto.getBeforeImageUrl();
-		String afterImageUrl = boardUpdateDto.getAfterImageUrl();
+		String beforeImagePath = boardUpdateDto.getBeforeImagePath();
+		String afterImagePath = boardUpdateDto.getAfterImagePath();
 		
 		try {
 			board.setTitle(boardUpdateDto.getTitle());
 	        board.setContent(boardUpdateDto.getContent());
-	        board.setImageUrl(afterImageUrl);
+	        board.setImagePath(afterImagePath);
 
 	        boardRepository.save(board);
 		} catch(Exception e) {
             throw new RuntimeException("게시판 수정 실패", e);
         }
 		  
-		if (!beforeImageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL) && !beforeImageUrl.equals(afterImageUrl)) {
-			boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
-            if (!bImageDeleted) {
+		if (!beforeImagePath.equals(Constant.BOARD_DEFAULT_IMAGE_PATH) && !beforeImagePath.equals(afterImagePath)) {
+			boolean isImageDeleted = oracleStorageService.deleteObject(beforeImagePath);
+            if (!isImageDeleted) {
             	throw new RuntimeException("이미지 삭제 실패");
             }
         }
@@ -84,7 +84,7 @@ public class BoardService {
 	@Transactional
 	public void deleteBoard(Long id) {
 		Board board = this.getBoardById(id); 
-        String imageUrl = board.getImageUrl();
+        String imagePath = board.getImagePath();
         
 		// 게시판 삭제 작업
         try {
@@ -94,9 +94,9 @@ public class BoardService {
         }
 		
         // 이미지 삭제 작업
-        if (!imageUrl.equals(Constant.BOARD_DEFAULT_IMG_URL)) {
-            boolean imageDeleted = oracleStorageService.deleteObject(imageUrl);
-            if (!imageDeleted) {
+        if (!imagePath.equals(Constant.BOARD_DEFAULT_IMAGE_PATH)) {
+            boolean isImageDeleted = oracleStorageService.deleteObject(imagePath);
+            if (!isImageDeleted) {
                 throw new RuntimeException("이미지 삭제 실패");
             }
         }

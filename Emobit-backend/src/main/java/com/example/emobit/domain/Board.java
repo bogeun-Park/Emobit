@@ -52,8 +52,8 @@ public class Board {
 	@JsonBackReference  // member 자체 값을 안보내고 BoardDto에서 createdBy로 바꿔서 보냄
 	private Member member;
 	
-	@Column(name = "IMAGEURL")
-	private String imageUrl;
+	@Column(name = "IMAGE_PATH")
+	private String imagePath = Constant.BOARD_DEFAULT_IMAGE_PATH;
 	
 	@Column(name = "VIEW_COUNT", nullable = false)
 	private int viewCount = 0;
@@ -74,8 +74,8 @@ public class Board {
 	// 이미지 URL 기본값 설정
     @PrePersist
     public void prePersist() {
-        if (this.imageUrl == null || this.imageUrl.isEmpty()) {
-            this.imageUrl = Constant.BOARD_DEFAULT_IMG_URL;
+        if (this.imagePath == null || this.imagePath.isEmpty()) {
+            this.imagePath = Constant.BOARD_DEFAULT_IMAGE_PATH;
         }
     }
 }

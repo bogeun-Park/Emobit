@@ -3,6 +3,7 @@ package com.example.emobit.dto;
 import java.util.Date;
 
 import com.example.emobit.domain.Comments;
+import com.example.emobit.util.Constant;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,6 @@ public class CommentsDto {
 		this.createdBy = comment.getMember().getId();
 		this.memberUsername = comment.getMember().getUsername();
 		this.memberDisplayName = comment.getMember().getDisplayName();
-		this.memberImageUrl = comment.getMember().getImageUrl();
+		this.memberImageUrl = Constant.Oracle_Storage_ORIGIN + comment.getMember().getImagePath();
 	}
 }

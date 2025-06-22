@@ -43,8 +43,8 @@ public class Member {
 	@Column(name = "PASSWORD", nullable = false)
 	private String password;
 	
-	@Column(name = "IMAGEURL")
-	private String imageUrl = Constant.MEMBER_DEFAULT_IMG_URL;
+	@Column(name = "IMAGE_PATH")
+	private String imagePath = Constant.MEMBER_DEFAULT_IMAGE_PATH;
 	
 	@Enumerated(EnumType.STRING)
     @Column(name = "ROLE")

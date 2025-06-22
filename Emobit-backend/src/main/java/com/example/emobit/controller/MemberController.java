@@ -200,9 +200,9 @@ public class MemberController {
 	    }
 	}
 	
-	@PutMapping("/member/imageUrl_update/{id}")
-	public ResponseEntity<?> imageUrlUpdate(@PathVariable("id") Long id,
-											@RequestParam("imageUrl") String imageUrl,
+	@PutMapping("/member/imagePath_update/{id}")
+	public ResponseEntity<?> imagePathUpdate(@PathVariable("id") Long id,
+											@RequestParam("imagePath") String imagePath,
 			 								@AuthenticationPrincipal CustomUser customUser) {
 		if (customUser == null) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -213,7 +213,7 @@ public class MemberController {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
 	    }
 		
-		memberService.updateImageUrl(member, imageUrl);
+		memberService.updateImagePath(member, imagePath);
 		
 		return ResponseEntity.ok("프로필 이미지가 변경되었습니다.");
 	}

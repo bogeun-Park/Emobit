@@ -63,20 +63,20 @@ public class MemberService {
 	}
 	
 	@Transactional
-	public void updateImageUrl(Member member, String afterImageUrl) {
-		String beforeImageUrl = member.getImageUrl();
+	public void updateImagePath(Member member, String afterImagePath) {
+		String beforeImagePath = member.getImagePath();
 		
 		try {
-			member.setImageUrl(afterImageUrl);
+			member.setImagePath(afterImagePath);
 
 	        memberRepository.save(member);
 		} catch(Exception e) {
             throw new RuntimeException("이미지 수정 실패", e);
         }
 		
-		if (!beforeImageUrl.equals(Constant.MEMBER_DEFAULT_IMG_URL) && !beforeImageUrl.equals(afterImageUrl)) {
-			boolean bImageDeleted = oracleStorageService.deleteObject(beforeImageUrl);
-            if (!bImageDeleted) {
+		if (!beforeImagePath.equals(Constant.MEMBER_DEFAULT_IMAGE_PATH) && !beforeImagePath.equals(afterImagePath)) {
+			boolean isImageDeleted = oracleStorageService.deleteObject(beforeImagePath);
+            if (!isImageDeleted) {
             	throw new RuntimeException("이미지 삭제 실패");
             }
         }
