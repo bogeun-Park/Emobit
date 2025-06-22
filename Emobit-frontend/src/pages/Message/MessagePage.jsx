@@ -112,7 +112,7 @@ function MessagePage() {
     useEffect(() => {
         const timeout = setTimeout(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        }, 300);
 
         return () => clearTimeout(timeout);
     }, [messages]);
