@@ -1,0 +1,23 @@
+.panel-search-container {
+    position: fixed;
+    top: 0;
+    left: calc(var(--sidebar-width, 244px));
+    width: 400px;
+    height: 100dvh;
+    border-right: 1px solid #ddd;
+    background-color: #fff;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    transform: translateX(-110%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 999;
+}
+
+.panel-search-container.open {
+    transform: translateX(0);
+}
+
+@media (max-width: 472px) {
+    .panel-search-container {
+        width: calc(100vw - var(--sidebar-width, 72px) - 20px);
+    }
+}
