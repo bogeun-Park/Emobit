@@ -13,6 +13,7 @@ function Sidebar() {
     const dispatch = useDispatch();
     const auth = useSelector(state => state.auth);
     const active = useSelector(state => state.menu.active);
+    const panelMenu = useSelector(state => state.menu.panelMenu);
     const location = useLocation();
 
     const menuImgSize = 26;
@@ -28,8 +29,6 @@ function Sidebar() {
             dispatch(menuAction.setActiveMenu('board'));
         } else if (curPath === '/message' || /^\/message\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('message'));
-        } else if (curPath === '/alarm') {
-            dispatch(menuAction.setActiveMenu('alarm'));
         } else if (curPath === '/board/create') {
             dispatch(menuAction.setActiveMenu('create'));
         } else if (auth.username && curPath === `/${auth.username}`) {
@@ -60,7 +59,7 @@ function Sidebar() {
         };
     }, []);
 
-    function handlelogout() {
+    const handlelogout = () => {
         axios.post('/logout')
             .then(response => {
                 console.log(response);
@@ -72,49 +71,61 @@ function Sidebar() {
             .catch(error => {
                 console.error('Failed to fetch user data:', error);
             });
-    }
+    };
+
+    const handleMenuClick = (menuName) => {
+        if (panelMenu) {
+            dispatch(menuAction.setPanelMenu(null));
+        }
+
+        navigate(menuName);
+    };
+
+    const handlePanelMenuClick = (menuName) => {
+        dispatch(menuAction.setPanelMenu(menuName))
+    };
 
     return (
         <aside className="sidebar-container">
-            <Link to="/" className="logo" onClick={() => navigate('/')}>
+            <Link to="/" className="logo" onClick={() => handleMenuClick('/')}>
                 E<span className="menu-label">mobit</span>
             </Link>
 
             <nav className="menu">
                 <div className="menu-top">
-                    <button className={active === 'home' ? 'active' : ''} onClick={() => navigate('/')}>
+                    <button className={active === 'home' ? 'active' : ''} onClick={() => handleMenuClick('/')}>
                         <Home size={menuImgSize} />
                         <span className="menu-label">홈</span>
                     </button>
 
-                    <button className={active === 'search' ? 'active' : ''} onClick={() => navigate('/search')}>
+                    <button className={active === 'search' ? 'active' : ''} onClick={() => handlePanelMenuClick('search')}>
                         <Search size={menuImgSize} />
                         <span className="menu-label">검색</span>
                     </button>
 
-                    <button className={active === 'board' ? 'active' : ''} onClick={() => navigate('/board')}>
+                    <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board')}>
                         <BookOpen size={menuImgSize} />
                         <span className="menu-label">일기</span>
                     </button>
 
                     {auth.isAuthenticated && 
                         <>
-                            <button className={active === 'message' ? 'active' : ''} onClick={() => navigate('/message')}>
+                            <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
                                 <Send size={menuImgSize} />
                                 <span className="menu-label">메시지</span>
                             </button>
 
-                            <button className={active === 'alarm' ? 'active' : ''} onClick={() => navigate('/alarm')}>
+                            <button className={active === 'alarm' ? 'active' : ''} onClick={() => handlePanelMenuClick('alarm')}>
                                 <Bell size={menuImgSize} />
                                 <span className="menu-label">알림</span>
                             </button>
 
-                            <button className={active === 'create' ? 'active' : ''} onClick={() => navigate('/board/create')}>
+                            <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>
                                 <PlusCircle size={menuImgSize} />
                                 <span className="menu-label">작성하기</span>
                             </button>
 
-                            <button className={active === 'profile' ? 'active' : ''} onClick={() => navigate(`/${auth.username}`)}>
+                            <button className={active === 'profile' ? 'active' : ''} onClick={() => handleMenuClick(`/${auth.username}`)}>
                                 <User size={menuImgSize} />
                                 <span className="menu-label">프로필</span>
                             </button>
@@ -124,7 +135,7 @@ function Sidebar() {
 
                 <div className="menu-bottom">
                     {!auth.isAuthenticated ? (
-                        <button className={active === 'login' ? 'active' : ''} onClick={() => navigate('/login')}>
+                        <button className={active === 'login' ? 'active' : ''} onClick={() => handleMenuClick('/login')}>
                             <LogIn size={menuImgSize} />
                             <span className="menu-label">로그인</span>
                         </button>
