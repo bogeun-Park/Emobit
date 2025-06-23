@@ -72,7 +72,10 @@ function MessagePage() {
     }, [auth]);
 
     useEffect(() => {
-        if (!selectedChatRoomId || chatRooms.length === 0) return;
+        if (!selectedChatRoomId || chatRooms.length === 0) {
+            setChatWindowLoading(false);
+            return;
+        }
 
         const fetchData = async () => {
             try {
