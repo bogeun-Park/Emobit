@@ -21,24 +21,29 @@ function Sidebar() {
     useEffect(() => {
         const curPath = location.pathname;
 
-        if (curPath === '/') {
+        const createPathRegExp = (pathPattern) => {
+            return new RegExp(`^${pathPattern}/?$`);
+        };
+
+        if (createPathRegExp('/').test(curPath)) {
             dispatch(menuAction.setActiveMenu('home'));
-        } else if (/^\/search\/[^\/]+$/.test(curPath)) {
+        } else if (createPathRegExp('/search/[^/]+').test(curPath)) {
             dispatch(menuAction.setActiveMenu('search'));
-        } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath) || /^\/board\/update\/\d+$/.test(curPath)) {
+        } else if (createPathRegExp('/board').test(curPath) || createPathRegExp('/board/read/\\d+').test(curPath) || createPathRegExp('/board/update/\\d+').test(curPath)) {
             dispatch(menuAction.setActiveMenu('board'));
-        } else if (curPath === '/message' || /^\/message\/\d+$/.test(curPath)) {
+        } else if (createPathRegExp('/message').test(curPath) || createPathRegExp('/message/\\d+').test(curPath)) {
             dispatch(menuAction.setActiveMenu('message'));
-        } else if (curPath === '/board/create') {
+        } else if (createPathRegExp('/board/create').test(curPath)) {
             dispatch(menuAction.setActiveMenu('create'));
-        } else if (auth.username && curPath === `/${auth.username}`) {
+        } else if (auth.username && createPathRegExp(`/${auth.username}`).test(curPath)) {
             dispatch(menuAction.setActiveMenu('profile'));
-        } else if (curPath === '/login') {
+        } else if (createPathRegExp('/login').test(curPath)) {
             dispatch(menuAction.setActiveMenu('login'));
         } else {
             dispatch(menuAction.setActiveMenu(''));
         }
     }, [location.pathname, dispatch, auth]);
+    
 
     useEffect(() => {
         const sidebar = document.querySelector('.sidebar-container');
