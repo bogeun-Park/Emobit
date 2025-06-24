@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { MessageCirclePlus, SquarePen } from 'lucide-react';
+import NotFoundPage from '../NotFound/NotFoundPage';
 
 function MessagePage() {
     const axios = useAxios();
@@ -319,7 +320,11 @@ function MessagePage() {
     const onSelectChatRoom = (chatRoomId) => {
         setSelectedChatRoomId(chatRoomId);
         navigate(`/message/${chatRoomId}`);
-      };
+    };
+
+    if (chatRoomId !== undefined && !/^\d+$/.test(chatRoomId)) {  // chatRoomId가 문자열인 경우
+        return <NotFoundPage />;
+    }
 
     return (
         <div className="message-container">
