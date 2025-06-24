@@ -5,6 +5,8 @@ const menuSlice = createSlice({
     initialState: {
         active: 'home',
         panelMenu: null,
+        keyword: '',
+        resultList: [],
     },
     reducers: {
         setActiveMenu: (state, action) => {
@@ -13,6 +15,16 @@ const menuSlice = createSlice({
         },
         setPanelMenu: (state, action) => {
             state.panelMenu = (state.panelMenu === action.payload) ? null : action.payload;
+        },
+        setKeyword: (state, action) => {
+            state.keyword = action.payload;
+        },
+        setResultList: (state, action) => {
+            state.resultList = action.payload;
+        },
+        clearSearchState: (state) => {
+            state.keyword = '';
+            state.resultList = [];
         },
     },
 });
