@@ -23,7 +23,7 @@ function Sidebar() {
 
         if (curPath === '/') {
             dispatch(menuAction.setActiveMenu('home'));
-        } else if (curPath === '/search') {
+        } else if (/^\/search\/[^\/]+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('search'));
         } else if (curPath === '/board' || /^\/board\/read\/\d+$/.test(curPath) || /^\/board\/update\/\d+$/.test(curPath)) {
             dispatch(menuAction.setActiveMenu('board'));
