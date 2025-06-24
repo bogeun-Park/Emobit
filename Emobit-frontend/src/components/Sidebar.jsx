@@ -81,13 +81,23 @@ function Sidebar() {
     const handleMenuClick = (menuName) => {
         if (panelMenu) {
             dispatch(menuAction.setPanelMenu(null));
+            
+            setTimeout(() => {
+                dispatch(menuAction.clearSearchState())
+            }, 300);
         }
 
         navigate(menuName);
     };
 
     const handlePanelMenuClick = (menuName) => {
-        dispatch(menuAction.setPanelMenu(menuName))
+        if (panelMenu === menuName) {
+            setTimeout(() => {
+                dispatch(menuAction.clearSearchState())
+            }, 300);
+        }
+
+        dispatch(menuAction.setPanelMenu(menuName));
     };
 
     return (
