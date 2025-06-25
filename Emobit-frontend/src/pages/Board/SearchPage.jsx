@@ -19,7 +19,7 @@ function SearchPage() {
             .catch((error) => {
                 console.error('검색 목록 불러오기 실패:', error);
             });
-    }, []);
+    }, [keyword]);
 
     return (
         <div className="board-container">
