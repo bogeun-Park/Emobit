@@ -189,6 +189,16 @@ public class MemberController {
 		return ResponseEntity.ok(memberProfileDto);
 	}
 	
+	@GetMapping("/member/search/{keyword}")
+	public ResponseEntity<?> getMembersByUsernameOrDisplayName(@PathVariable("keyword") String keyword) {
+		List<Member> memberList = memberService.getMembersByUsernameOrDisplayName(keyword);
+		List<MemberAuthDto> memberAuthDtoList = memberList.stream()
+				.map(MemberAuthDto::new)
+				.toList();
+		
+		return ResponseEntity.ok(memberAuthDtoList);
+	}
+	
 	@GetMapping("/member/PresignedUrl")
 	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename) {
 	    String presignedUrl = oracleStorageService.createPresignedUrl(filename, "member");

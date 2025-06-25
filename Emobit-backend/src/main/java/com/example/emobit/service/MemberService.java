@@ -1,5 +1,7 @@
 package com.example.emobit.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,12 @@ public class MemberService {
 		        			.orElseThrow(() -> new MemberNotFoundException("회원 정보를 찾을 수 없습니다."));
 				
 	    return member;
+	}
+	
+	public List<Member> getMembersByUsernameOrDisplayName(String keyword) {
+		List<Member> memberList = memberRepository.getMembersByUsernameOrDisplayName(keyword);
+		
+		return memberList;
 	}
 	
 	public void registerMember(MemberRegisterDto memberRegisterDto) {
