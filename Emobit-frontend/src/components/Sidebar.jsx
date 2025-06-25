@@ -71,6 +71,10 @@ function Sidebar() {
 
                 dispatch(authAction.logout());
 
+                setTimeout(() => {
+                    dispatch(menuAction.clearSearchState())
+                }, 300);
+
                 navigate('/login');
             })
             .catch(error => {
