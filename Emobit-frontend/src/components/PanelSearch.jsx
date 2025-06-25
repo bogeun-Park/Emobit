@@ -15,6 +15,7 @@ function PanelSearch() {
     const navigate = useNavigate();
     const panelRef = useRef(null);
     const inputRef = useRef(null);
+    const isHashtag = keyword.startsWith('#');
 
     const [loading, setLoading] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
@@ -28,7 +29,7 @@ function PanelSearch() {
                 dispatch(menuAction.setPanelMenu(null));
 
                 setTimeout(() => {
-                    dispatch(menuAction.clearSearchState())
+                    dispatch(menuAction.clearSearchState());
                 }, 300);
             }
         };
@@ -43,7 +44,9 @@ function PanelSearch() {
     }, [panelMenu, dispatch]);
 
     useEffect(() => {
-        if (!keyword.trim()) {
+        const trimmedKeyword = keyword.trim();
+
+        if (!trimmedKeyword || trimmedKeyword === '#') {
             dispatch(menuAction.setResultList([]));
             setLoading(false);
             return;
@@ -52,11 +55,19 @@ function PanelSearch() {
         setLoading(true);
 
         const delay = setTimeout(() => {
-            axios.get(`/member/search/${encodeURIComponent(keyword)}`)
-                .then(response => dispatch(menuAction.setResultList(response.data)))
-                .catch(error => console.error(error))
-                .finally(() => setLoading(false));
-        }, 300); // debounce
+            const encoded = encodeURIComponent(isHashtag ? trimmedKeyword.slice(1) : trimmedKeyword);
+            const url = isHashtag ? `/board/search/${encoded}` : `/member/search/${encoded}`;
+            axios.get(url)
+                .then(response => {
+                    dispatch(menuAction.setResultList(response.data))
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+                .finally(() => {
+                    setLoading(false)
+                });
+        }, 300);
 
         return () => clearTimeout(delay);
     }, [keyword]);
@@ -65,14 +76,18 @@ function PanelSearch() {
         e.preventDefault();
         dispatch(menuAction.setKeyword(''));
         inputRef.current?.blur();
-    }
+    };
 
     const handleItemClick = (result) => {
-        navigate(`/${result.username}`);
-        dispatch(menuAction.setPanelMenu(null));
+        if (isHashtag) {
+            navigate(`/search/${result}`);
+        } else {
+            navigate(`/${result.username}`);
+        }
 
+        dispatch(menuAction.setPanelMenu(null));
         setTimeout(() => {
-            dispatch(menuAction.clearSearchState())
+            dispatch(menuAction.clearSearchState());
         }, 300);
     };
 
@@ -83,13 +98,12 @@ function PanelSearch() {
 
                 <div className="search-input-wrapper">
                     {!isFocused && <Search className="search-icon" />}
-                    <input type="text" value={keyword} placeholder='검색' ref={inputRef}
+                    <input type="text" value={keyword} placeholder="검색" ref={inputRef}
                         onChange={(e) => dispatch(menuAction.setKeyword(e.target.value))}
-                        onFocus={() => {setIsFocused(true)}}
+                        onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         autoFocus
                     />
-
                     {!loading && <button className="clear-button" onMouseDown={handleClearKeyword}><X size={12} strokeWidth={2} /></button>}
                     {loading && <div className="loading-spinner" />}
                 </div>
@@ -98,17 +112,29 @@ function PanelSearch() {
             <div className="panel-search-body">
                 {loading ? null : (
                     keyword.trim() === '' ? (
-                        <div className="search-empty">검색어를 입력해주세요</div>
+                        <div className="search-empty">
+                            <span>일기는 해시태그(#),</span>
+                            <span>프로필은 이름이나 아이디로 검색하세요.</span>
+                        </div>
                     ) : (
                         <ul className="search-result-list">
                             {resultList.length === 0 ? (
-                                <li className="search-result-empty">검색 결과가 없습니다</li>
+                                <li className="search-result-empty">검색 결과가 없습니다.</li>
+                            ) : isHashtag ? (
+                                <li className="search-result-item" onClick={() => handleItemClick(keyword.slice(1))}>
+                                    <div className="result-item-wrapper">
+                                        <div className="result-img hashtag-img">#</div>
+                                        <div className="result-texts">
+                                            <div className="result-title">{keyword}</div>
+                                            <div className="result-preview">게시물 {resultList.length}</div>
+                                        </div>
+                                    </div>
+                                </li>
                             ) : (
                                 resultList.map((result) => (
-                                    <li key={result.id} className="search-result-item" onClick={() => handleItemClick(result) }>
+                                    <li key={result.id} className="search-result-item" onClick={() => handleItemClick(result)}>
                                         <div className="result-item-wrapper">
                                             <img className="result-img" src={result.imageUrl} alt="" />
-
                                             <div className="result-texts">
                                                 <div className="result-title">{result.username}</div>
                                                 <div className="result-preview">{result.displayName}</div>

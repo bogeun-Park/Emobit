@@ -133,10 +133,13 @@
 
 .search-empty,
 .search-result-empty {
+    display: flex;
+    flex-direction: column;
     margin-top: 20px;
     color: #888;
     text-align: center;
     font-size: 14px;
+    gap: 5px;
 }
 
 .search-result-list {
@@ -155,32 +158,10 @@
     background-color: #EFEFEF;
 }
 
-.result-title {
-    font-weight: bold;
-    color: #222;
-    margin-bottom: 4px;
-    font-size: 14px;
-}
-
-.result-preview {
-    font-size: 13px;
-    color: #666;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .result-item-wrapper {
     display: flex;
     align-items: center;
     gap: 12px;
-}
-
-.result-img {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;    
 }
 
 .result-texts {
@@ -197,7 +178,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
-    top: 1px;
+    top: -1px;
 }
 
 .result-preview {
@@ -207,5 +188,26 @@
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
-    top: -1px;
+    top: 1px;
+}
+
+.result-img {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.hashtag-img {
+    width: 43px;
+    height: 43px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
 }
