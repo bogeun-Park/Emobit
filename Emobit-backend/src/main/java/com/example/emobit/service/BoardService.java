@@ -42,6 +42,12 @@ public class BoardService {
 		return board;
 	}
 	
+	public List<Board> getBoardByTitleOrContent(String keyword) {
+		List<Board> boardList = boardRepository.getBoardByTitleOrContent(keyword);
+		
+		return boardList;
+	} 
+	
 	public void createBoard(Long createdBy, BoardCreateDto boardCreateDto) {
         String title = boardCreateDto.getTitle();
         String content = boardCreateDto.getContent();

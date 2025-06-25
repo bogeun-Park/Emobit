@@ -45,6 +45,16 @@ public class BoardController {
 		return ResponseEntity.ok(boardListDto);
 	}
 	
+	@GetMapping("/board/search/{keyword}")
+	public ResponseEntity<?> getBoardByTitleOrContent(@PathVariable("keyword") String keyword) {
+		List<Board> boardList =  boardService.getBoardByTitleOrContent(keyword);
+		List<BoardDto> boardListDto = boardList.stream()
+		    .map(BoardDto::new)
+		    .toList();
+		
+		return ResponseEntity.ok(boardListDto);
+	}
+	
 	@PostMapping("/board/create_process")
 	public ResponseEntity<?> boardCreateProcess(@RequestBody @Valid BoardCreateDto boardCreateDto,
 												@AuthenticationPrincipal CustomUser customUser) {
