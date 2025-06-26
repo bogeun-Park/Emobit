@@ -126,13 +126,11 @@ function MessagePage() {
         const client = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {
-                client.subscribe('/topic/public', message => {
+                client.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
                     const receivedMessage = JSON.parse(message.body);
 
                     // 대화창 세팅
-                    if (receivedMessage.chatRoomId === selectedChatRoomId) {
-                        setMessages(prev => [...prev, receivedMessage]);
-                    }
+                    setMessages(prev => [...prev, receivedMessage]);
 
                     // chat-list에 마지막 메시지, 마지막 시간 세팅 후 chat-list 최신순 정렬
                     setChatRooms(prevChatRooms => {
