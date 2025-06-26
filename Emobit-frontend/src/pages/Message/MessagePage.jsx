@@ -111,7 +111,7 @@ function MessagePage() {
 
         setChatWindowLoading(true);
         fetchData();
-    }, [selectedChatRoomId, chatRooms]);
+    }, [selectedChatRoomId]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
