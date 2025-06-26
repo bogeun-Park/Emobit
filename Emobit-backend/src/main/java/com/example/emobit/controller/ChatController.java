@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ public class ChatController {
 	private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     private final MemberService memberService;
+    private final SimpMessagingTemplate messagingTemplate;
     
     @GetMapping("/chat/getRooms")
     public ResponseEntity<?> getRooms(@AuthenticationPrincipal CustomUser customUser) {
@@ -116,16 +118,6 @@ public class ChatController {
         return ResponseEntity.ok(chatRoom);
     }
     
-    @MessageMapping("/chat.send")  // 클라이언트에서 "/app/chat.send"로 보냄
-    @SendTo("/topic/public")       // 모든 구독자에게 브로드캐스트
-    public ChatMessageDto sendMessage(ChatMessageCreateDto chatMessageCreateDto) {
-    	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessageCreateDto.getChatRoomId());
-    	ChatMessage chatMessage = chatMessageService.saveChatMessage(chatRoom, chatMessageCreateDto.getSender(), chatMessageCreateDto.getContent());
-    	ChatMessageDto chatMessageDto = new ChatMessageDto(chatMessage);
-        
-        return chatMessageDto;
-    }
-    
     @DeleteMapping("/chat/exitRoom/{chatRoomId}")
     public ResponseEntity<?> exitChatRoom(@PathVariable("chatRoomId") Long chatRoomId, 
     									  @AuthenticationPrincipal CustomUser customUser) {
@@ -136,5 +128,15 @@ public class ChatController {
     	chatRoomService.exitChatRoom(chatRoomId, customUser.getUsername());
     	
         return ResponseEntity.status(200).body("채팅방을 나갔습니다.");
+    }
+    
+    @MessageMapping("/chat.send")  // 클라이언트에서 "/app/chat.send"로 보냄
+    public void sendMessage(ChatMessageCreateDto chatMessageCreateDto) {
+    	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessageCreateDto.getChatRoomId());
+    	ChatMessage chatMessage = chatMessageService.saveChatMessage(chatRoom, chatMessageCreateDto.getSender(), chatMessageCreateDto.getContent());
+    	ChatMessageDto chatMessageDto = new ChatMessageDto(chatMessage);
+    	
+    	// 동적으로 대상 topic에 메시지 전송
+    	messagingTemplate.convertAndSend("/topic/chatRoom/" + chatRoom.getId(), chatMessageDto);
     }
 }
