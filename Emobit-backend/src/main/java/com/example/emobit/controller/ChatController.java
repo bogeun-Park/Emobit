@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,8 +51,9 @@ public class ChatController {
     			ChatMessage chatMessage = chatMessageService.getLastMessage(chatRoom);
                 String lastMessage = chatMessage != null ? chatMessage.getContent() : null;
                 Date lastMessageTime = chatMessage != null ? chatMessage.getCreatedAt() : null;
+                int unreadCount = chatMessageService.getUnreadCount(chatRoom.getId(), customUser.getId());
                 
-                ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime);
+                ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime, unreadCount);
                 
                 return chatRoomDto; 
     		})
@@ -92,7 +92,10 @@ public class ChatController {
             chatMessageList = chatMessageService.getChatMessageAll(chatRoom);
         } else {  // 나갔던 시간 이후 메시지만 조회
             chatMessageList = chatMessageService.getChatMessagesAfter(chatRoom, exitedAt);
-        } 
+        }
+        
+        chatRoomService.enterChatRoom(chatRoomId, customUser.getId());
+        chatMessageService.resetUnreadCount(chatRoomId, customUser.getId());
         
         return ResponseEntity.ok(chatMessageList);
     }
@@ -113,9 +116,10 @@ public class ChatController {
     	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("자신이 포함된 대화만 생성할 수 있습니다.");
     	}
     	
-    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(memberA, memberB); 
+    	ChatRoom chatRoom = chatRoomService.createOrGetChatRoom(memberA, memberB);
+    	ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, null, null, 0);
     	
-        return ResponseEntity.ok(chatRoom);
+        return ResponseEntity.ok(chatRoomDto);
     }
     
     @DeleteMapping("/chat/exitRoom/{chatRoomId}")
@@ -130,6 +134,18 @@ public class ChatController {
         return ResponseEntity.status(200).body("채팅방을 나갔습니다.");
     }
     
+    @PostMapping("/chat/leaveRoom/{chatRoomId}")
+    public ResponseEntity<?> leaveRoom(@PathVariable("chatRoomId") Long chatRoomId,
+                                       @AuthenticationPrincipal CustomUser customUser) {
+        if (customUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
+        chatRoomService.leaveChatRoom(chatRoomId, customUser.getId());
+        
+        return ResponseEntity.status(200).body("채팅방을 닫았습니다.");
+    }
+    
     @MessageMapping("/chat.send")  // 클라이언트에서 "/app/chat.send"로 보냄
     public void sendMessage(ChatMessageCreateDto chatMessageCreateDto) {
     	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessageCreateDto.getChatRoomId());
@@ -138,5 +154,17 @@ public class ChatController {
     	
     	// 동적으로 대상 topic에 메시지 전송
     	messagingTemplate.convertAndSend("/topic/chatRoom/" + chatRoom.getId(), chatMessageDto);
+    	
+        String lastMessage = chatMessage != null ? chatMessage.getContent() : null;
+        Date lastMessageTime = chatMessage != null ? chatMessage.getCreatedAt() : null;
+        int unreadCountA = chatMessageService.getUnreadCount(chatRoom.getId(), chatRoom.getMemberA().getId());
+        int unreadCountB = chatMessageService.getUnreadCount(chatRoom.getId(), chatRoom.getMemberB().getId());
+        
+        ChatRoomDto chatRoomDtoA = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime, unreadCountA);
+        ChatRoomDto chatRoomDtoB = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime, unreadCountB);
+    	
+        // 동적으로 두 사람에게 최신 채팅방을 전송
+    	messagingTemplate.convertAndSend("/topic/chatRoomList/" + chatRoom.getMemberA().getId(), chatRoomDtoA);
+    	messagingTemplate.convertAndSend("/topic/chatRoomList/" + chatRoom.getMemberB().getId(), chatRoomDtoB);
     }
 }
