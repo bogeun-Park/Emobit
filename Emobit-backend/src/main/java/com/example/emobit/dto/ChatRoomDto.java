@@ -23,8 +23,9 @@ public class ChatRoomDto {
     private Date createdAt;
     private String lastMessage;
     private Date lastMessageTime;
+    private int unreadCount;
     
-    public ChatRoomDto(ChatRoom chatRoom, String lastMessage, Date lastMessageTime) {
+    public ChatRoomDto(ChatRoom chatRoom, String lastMessage, Date lastMessageTime, int unreadCount) {
     	this.id = chatRoom.getId();
 		this.memberA = new MemberAuthDto(chatRoom.getMemberA());
 		this.memberB = new MemberAuthDto(chatRoom.getMemberB());
@@ -35,5 +36,6 @@ public class ChatRoomDto {
 		this.createdAt = chatRoom.getCreatedAt();
 		this.lastMessage = lastMessage;
 		this.lastMessageTime = lastMessageTime;
+		this.unreadCount = unreadCount;
     }
 }

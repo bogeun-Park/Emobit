@@ -3,7 +3,9 @@ package com.example.emobit.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatRoomService {
 	private final ChatRoomRepository chatRoomRepository;
 	private final MemberService memberService;;
+	private final StringRedisTemplate redisTemplate;
 	
 	public List<ChatRoom> getUserChatRoomAll(String username) {
 		Member member = memberService.getMemberByUsername(username);
@@ -52,7 +55,7 @@ public class ChatRoomService {
             if (sender.equals(chatRoom.getMemberA().getUsername()) && !chatRoom.isMemberAJoined()) {
                 chatRoom.setMemberAJoined(true);
                 chatRoomRepository.save(chatRoom);
-            } else if (sender.equals(chatRoom.getMemberA().getUsername()) && !chatRoom.isMemberBJoined()) {
+            } else if (sender.equals(chatRoom.getMemberB().getUsername()) && !chatRoom.isMemberBJoined()) {
                 chatRoom.setMemberBJoined(true);
                 chatRoomRepository.save(chatRoom);
             }
@@ -97,5 +100,24 @@ public class ChatRoomService {
         } else {
             chatRoomRepository.save(chatRoom);
         }
+    }
+    
+    // 입장 표시 세팅 (TTL 포함)
+    public void enterChatRoom(Long chatRoomId, Long userId) {
+        String enterKey = "chatroom::" + chatRoomId + "::user::" + userId;
+        redisTemplate.opsForValue().set(enterKey, "true", 5, TimeUnit.MINUTES);
+    }
+
+    // 퇴장 표시 (키 삭제)
+    public void leaveChatRoom(Long chatRoomId, Long userId) {
+        String enterKey = "chatroom::" + chatRoomId + "::user::" + userId;
+        redisTemplate.delete(enterKey);
+    }
+    
+    public boolean isUserInChatRoom(Long chatRoomId, Long userId) {
+        String enterKey = "chatroom::" + chatRoomId + "::user::" + userId;
+        Boolean exists = redisTemplate.hasKey(enterKey);
+        
+        return Boolean.TRUE.equals(exists);
     }
 }
