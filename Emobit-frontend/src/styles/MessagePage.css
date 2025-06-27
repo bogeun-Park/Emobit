@@ -110,12 +110,29 @@
     height: 16px;
 }
 
+.chat-list-live {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-height: 31px;
+}
+
 .chat-list-time {
     font-size: 0.66rem;
     color: #737373;
-    white-space: nowrap;
     position: relative;
-    top: -14px;
+    top: -4px;
+}
+
+.chat-list-unread {
+    font-size: 0.73rem;
+    color: white;
+    background-color: #ff4757;
+    padding: 0px 5px 1px 5px;
+    border-radius: 100px;
+    font-weight: 600;
+    position: relative;
+    top: 2px;
 }
 
 .chat-window {
@@ -237,8 +254,9 @@
 }
 
 .message-time {
-    font-size: 0.6rem;
-    padding: 0 0.3rem;
+    color: #737373;
+    font-size: 0.66rem;
+    padding: 0 0.2rem;
 }
 
 .date-divider {

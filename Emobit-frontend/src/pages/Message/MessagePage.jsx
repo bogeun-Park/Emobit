@@ -1,6 +1,6 @@
 import '../../styles/MessagePage.css';
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
@@ -14,6 +14,8 @@ function MessagePage() {
     const navigate = useNavigate();
     const messagesEndRef = useRef(null);
     const { chatRoomId } = useParams();
+    const location = useLocation();
+    const prevChatRoomId = useRef(null);
 
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
     const [chatRooms, setChatRooms] = useState([]);
@@ -90,6 +92,10 @@ function MessagePage() {
                     return;
                 }
 
+                setChatRooms(prevChatRooms =>
+                    prevChatRooms.map(chatRoom => chatRoom.id === selectedChatRoomId ? { ...chatRoom, unreadCount: 0 } : chatRoom)
+                );
+
                 const targetUsername = chatRoom.memberA.username === auth.username
                     ? chatRoom.memberB.username
                     : chatRoom.memberA.username;
@@ -126,32 +132,37 @@ function MessagePage() {
         const client = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {
-                client.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
-                    const receivedMessage = JSON.parse(message.body);
+                if (selectedChatRoomId) {
+                    client.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
+                        const receivedMessage = JSON.parse(message.body);
 
-                    // 대화창 세팅
-                    setMessages(prev => [...prev, receivedMessage]);
+                        // 대화창 세팅
+                        setMessages(prevMessages => [...prevMessages, receivedMessage]);
+                    });
+                }
 
-                    // chat-list에 마지막 메시지, 마지막 시간 세팅 후 chat-list 최신순 정렬
+                client.subscribe(`/topic/chatRoomList/${auth.id}`, (message) => {
+                    const updatedRoom = JSON.parse(message.body);
+
                     setChatRooms(prevChatRooms => {
-                        const updatedChatRooms = prevChatRooms.map(chatRoom => {
-                            if (chatRoom.id === receivedMessage.chatRoomId) {
-                                return {
-                                    ...chatRoom,
-                                    lastMessage: receivedMessage.content,
-                                    lastMessageTime: receivedMessage.createdAt,
-                                };
-                            }
-                            return chatRoom;
-                        });
-                        
-                        const sortedChatRooms = updatedChatRooms.sort((a, b) => {
+                        // 기존 방 목록에서 변경된 방 업데이트 혹은 새로 추가
+                        const exists = prevChatRooms.some(chatRoom => chatRoom.id === updatedRoom.id);
+                        let newChatRooms;
+
+                        if (exists) {
+                            newChatRooms = prevChatRooms.map(chatRoom => chatRoom.id === updatedRoom.id ? updatedRoom : chatRoom);
+                        } else {
+                            newChatRooms = [...prevChatRooms, updatedRoom];
+                        }
+
+                        // 마지막 메시지 시간 기준 내림차순 정렬
+                        newChatRooms.sort((a, b) => {
                             const timeA = new Date(a.lastMessageTime || 0).getTime();
                             const timeB = new Date(b.lastMessageTime || 0).getTime();
                             return timeB - timeA;
                         });
 
-                        return sortedChatRooms;
+                        return newChatRooms;
                     });
                 });
             },
@@ -163,7 +174,31 @@ function MessagePage() {
         return () => {
             client.deactivate();
         };
-    }, [selectedChatRoomId]);
+    }, [selectedChatRoomId, auth]);
+
+    useEffect(() => {
+        // 현재 경로가 /message/:id 인지 검사
+        const match = location.pathname.match(/^\/message\/(\d+)$/);
+        const currentChatRoomId = match ? Number(match[1]) : null;
+
+        // 이전 채팅방이 있고, 이전 채팅방과 현재 채팅방이 다르면 leaveRoom 호출
+        if (prevChatRoomId.current && prevChatRoomId.current !== currentChatRoomId) {
+            axios.post(`/chat/leaveRoom/${prevChatRoomId.current}`)
+                .catch(console.error);
+        }
+
+        prevChatRoomId.current = currentChatRoomId;
+
+        // 컴포넌트 언마운트 시에도 leaveChatRoom 호출
+        return () => {
+            if (prevChatRoomId.current) {
+                axios.post(`/chat/leaveRoom/${prevChatRoomId.current}`)
+                    .catch(console.error);
+                    
+                prevChatRoomId.current = null;
+            }
+        };
+    }, [location.pathname]);  
 
     const handleSendMessage = () => {
         if (newMessage.trim() === '' || !stompClient) return;
@@ -198,17 +233,19 @@ function MessagePage() {
                 memberB: targetUsername
             }
         }).then(response => {
-            const newRoom = response.data;
-            setSelectedChatRoomId(newRoom.id);
+            const newChatRoom = response.data;
+            setSelectedChatRoomId(newChatRoom.id);
             
-            setChatRooms(prev => {
-                const exists = prev.some(room => room.id === newRoom.id);
-                if (exists) return prev;
+            setChatRooms(prevChatrooms => {
+                const exists = prevChatrooms.some(chatRoom => chatRoom.id === newChatRoom.id);
+                if (exists) return prevChatrooms;
                 
-                return [...prev, newRoom];
+                return [...prevChatrooms, newChatRoom];
             });
 
             setTargetUsername('');
+            setShowInputForm(false);
+            navigate(`/message/${newChatRoom.id}`);
         }).catch(error => {
             console.error('에러 발생', error);
             if (error.response?.status === 401) {
@@ -361,6 +398,7 @@ function MessagePage() {
 
                                             <div className='chat-list-live'>
                                                 <span className="chat-list-time">{chatRoom.lastMessageTime ? customMsgListDate(chatRoom.lastMessageTime) : ''}</span>
+                                                {chatRoom.unreadCount > 0 && <span className="chat-list-unread">{chatRoom.unreadCount}</span>}
                                             </div>
                                         </div>
                                     </li>
