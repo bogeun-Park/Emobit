@@ -2,30 +2,31 @@ import '../../styles/MessagePage.css';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { MessageCirclePlus, SquarePen } from 'lucide-react';
 import NotFoundPage from '../NotFound/NotFoundPage';
+import { messageAction } from '../../redux/Slice/messageSlice';
 
 function MessagePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const messagesEndRef = useRef(null);
     const { chatRoomId } = useParams();
     const location = useLocation();
     const prevChatRoomId = useRef(null);
+    const chatRooms = useSelector(state => state.message.chatRooms);
 
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
-    const [chatRooms, setChatRooms] = useState([]);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
     const [targetUsername, setTargetUsername] = useState('');
     const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
-    const [chatRoomLoading, setChatRoomLoading] = useState(true);
     const [chatWindowLoading, setChatWindowLoading] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -47,34 +48,6 @@ function MessagePage() {
     }, [chatRoomId, chatRooms]);
 
     useEffect(() => {
-        if (!auth.isAuthenticated) return;
-
-        setChatRoomLoading(true);
-        axios.get(`/chat/getRooms`)
-            .then(response => {
-                const sortedChatRooms = [...response.data].sort((a, b) => {
-                    const timeA = new Date(a.lastMessageTime || 0).getTime();
-                    const timeB = new Date(b.lastMessageTime || 0).getTime();
-                    return timeB - timeA;
-                });
-                
-                setChatRooms(sortedChatRooms);
-            })
-            .catch(error => {
-                console.error('에러 발생:', error);
-                if (error.response?.status === 401) {
-                    alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-                    navigate('/login');
-                } else {
-                    alert('채팅방을 불러오는 중 오류가 발생했습니다.');
-                }
-            })
-            .finally(() => {
-                setChatRoomLoading(false);
-            });
-    }, [auth]);
-
-    useEffect(() => {
         if (!selectedChatRoomId || chatRooms.length === 0) {
             setChatWindowLoading(false);
             return;
@@ -92,9 +65,10 @@ function MessagePage() {
                     return;
                 }
 
-                setChatRooms(prevChatRooms =>
-                    prevChatRooms.map(chatRoom => chatRoom.id === selectedChatRoomId ? { ...chatRoom, unreadCount: 0 } : chatRoom)
+                const updatedRooms = chatRooms.map(chatRoom =>
+                    chatRoom.id === selectedChatRoomId ? { ...chatRoom, unreadCount: 0 } : chatRoom
                 );
+                dispatch(messageAction.setChatRooms(updatedRooms));
 
                 const targetUsername = chatRoom.memberA.username === auth.username
                     ? chatRoom.memberB.username
@@ -140,31 +114,6 @@ function MessagePage() {
                         setMessages(prevMessages => [...prevMessages, receivedMessage]);
                     });
                 }
-
-                client.subscribe(`/topic/chatRoomList/${auth.id}`, (message) => {
-                    const updatedRoom = JSON.parse(message.body);
-
-                    setChatRooms(prevChatRooms => {
-                        // 기존 방 목록에서 변경된 방 업데이트 혹은 새로 추가
-                        const exists = prevChatRooms.some(chatRoom => chatRoom.id === updatedRoom.id);
-                        let newChatRooms;
-
-                        if (exists) {
-                            newChatRooms = prevChatRooms.map(chatRoom => chatRoom.id === updatedRoom.id ? updatedRoom : chatRoom);
-                        } else {
-                            newChatRooms = [...prevChatRooms, updatedRoom];
-                        }
-
-                        // 마지막 메시지 시간 기준 내림차순 정렬
-                        newChatRooms.sort((a, b) => {
-                            const timeA = new Date(a.lastMessageTime || 0).getTime();
-                            const timeB = new Date(b.lastMessageTime || 0).getTime();
-                            return timeB - timeA;
-                        });
-
-                        return newChatRooms;
-                    });
-                });
             },
         });
 
@@ -174,7 +123,7 @@ function MessagePage() {
         return () => {
             client.deactivate();
         };
-    }, [selectedChatRoomId, auth]);
+    }, [selectedChatRoomId]);
 
     useEffect(() => {
         // 현재 경로가 /message/:id 인지 검사
@@ -236,12 +185,7 @@ function MessagePage() {
             const newChatRoom = response.data;
             setSelectedChatRoomId(newChatRoom.id);
             
-            setChatRooms(prevChatrooms => {
-                const exists = prevChatrooms.some(chatRoom => chatRoom.id === newChatRoom.id);
-                if (exists) return prevChatrooms;
-                
-                return [...prevChatrooms, newChatRoom];
-            });
+            dispatch(messageAction.addChatRoom(newChatRoom));
 
             setTargetUsername('');
             setShowInputForm(false);
@@ -336,7 +280,7 @@ function MessagePage() {
 
         axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
             .then(() => {                
-                setChatRooms(prev => prev.filter(room => room.id !== selectedChatRoomId));
+                dispatch(messageAction.exitChatRoom(selectedChatRoomId));
                 setSelectedChatRoomId(null);
             })
             .catch(error => {
@@ -370,9 +314,7 @@ function MessagePage() {
                         <SquarePen className="send-message-search" />
                     </div>
 
-                    {chatRoomLoading ? (
-                        <div></div>
-                    ) : chatRooms.length === 0 ? (
+                    {chatRooms.length === 0 ? (
                         <div className="chat-list-empty">
                             <span>메시지가 없습니다.</span>
                         </div>
