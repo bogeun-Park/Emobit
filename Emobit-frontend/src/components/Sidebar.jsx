@@ -15,6 +15,7 @@ function Sidebar() {
     const auth = useSelector(state => state.auth);
     const active = useSelector(state => state.menu.active);
     const panelMenu = useSelector(state => state.menu.panelMenu);
+    const messageTotalUnreadCount = useSelector(state => state.message.totalUnreadCount);
     const location = useLocation();
 
     const menuImgSize = 26;
@@ -131,7 +132,10 @@ function Sidebar() {
                     {auth.isAuthenticated && 
                         <>
                             <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
-                                <Send size={menuImgSize} />
+                                <div className="menu-icon-wrapper">
+                                    <Send size={menuImgSize} />
+                                    {messageTotalUnreadCount > 0 && <span className="bubble-badge">{messageTotalUnreadCount}</span>}
+                                </div>
                                 <span className="menu-label">메시지</span>
                             </button>
 
