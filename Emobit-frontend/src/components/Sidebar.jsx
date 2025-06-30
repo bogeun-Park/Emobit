@@ -5,6 +5,7 @@ import { useAxios } from '../contexts/AxiosContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
+import { searchAction } from '../redux/Slice/searchSlice';
 import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut } from 'lucide-react';
 
 function Sidebar() {
@@ -72,7 +73,7 @@ function Sidebar() {
                 dispatch(authAction.logout());
 
                 setTimeout(() => {
-                    dispatch(menuAction.clearSearchState())
+                    dispatch(searchAction.clearSearchState())
                 }, 300);
 
                 navigate('/login');
@@ -87,7 +88,7 @@ function Sidebar() {
             dispatch(menuAction.setPanelMenu(null));
             
             setTimeout(() => {
-                dispatch(menuAction.clearSearchState())
+                dispatch(searchAction.clearSearchState())
             }, 300);
         }
 
@@ -97,7 +98,7 @@ function Sidebar() {
     const handlePanelMenuClick = (menuName) => {
         if (panelMenu === menuName) {
             setTimeout(() => {
-                dispatch(menuAction.clearSearchState())
+                dispatch(searchAction.clearSearchState())
             }, 300);
         }
 

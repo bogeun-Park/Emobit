@@ -2,14 +2,15 @@ import '../styles/PanelSearch.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuAction } from '../redux/Slice/menuSlice';
+import { searchAction } from '../redux/Slice/searchSlice';
 import { useAxios } from '../contexts/AxiosContext';
 import { useNavigate } from 'react-router-dom';
 import { Search, X } from 'lucide-react';
 
 function PanelSearch() {
     const panelMenu = useSelector(state => state.menu.panelMenu);
-    const keyword = useSelector(state => state.menu.keyword);
-    const resultList = useSelector(state => state.menu.resultList);
+    const keyword = useSelector(state => state.search.keyword);
+    const resultList = useSelector(state => state.search.resultList);
     const dispatch = useDispatch();
     const axios = useAxios();
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ function PanelSearch() {
                 dispatch(menuAction.setPanelMenu(null));
 
                 setTimeout(() => {
-                    dispatch(menuAction.clearSearchState());
+                    dispatch(searchAction.clearSearchState());
                 }, 300);
             }
         };
@@ -47,7 +48,7 @@ function PanelSearch() {
         const trimmedKeyword = keyword.trim();
 
         if (!trimmedKeyword || trimmedKeyword === '#') {
-            dispatch(menuAction.setResultList([]));
+            dispatch(searchAction.setResultList([]));
             setLoading(false);
             return;
         }
@@ -59,7 +60,7 @@ function PanelSearch() {
             const url = isHashtag ? `/board/search/${encoded}` : `/member/search/${encoded}`;
             axios.get(url)
                 .then(response => {
-                    dispatch(menuAction.setResultList(response.data))
+                    dispatch(searchAction.setResultList(response.data))
                 })
                 .catch(error => {
                     console.error(error)
@@ -74,7 +75,7 @@ function PanelSearch() {
 
     const handleClearKeyword = (e) => {
         e.preventDefault();
-        dispatch(menuAction.setKeyword(''));
+        dispatch(searchAction.setKeyword(''));
         inputRef.current?.blur();
     };
 
@@ -87,7 +88,7 @@ function PanelSearch() {
 
         dispatch(menuAction.setPanelMenu(null));
         setTimeout(() => {
-            dispatch(menuAction.clearSearchState());
+            dispatch(searchAction.clearSearchState());
         }, 300);
     };
 
@@ -99,7 +100,7 @@ function PanelSearch() {
                 <div className="search-input-wrapper">
                     {!isFocused && <Search className="search-icon" />}
                     <input type="text" value={keyword} placeholder="검색" ref={inputRef}
-                        onChange={(e) => dispatch(menuAction.setKeyword(e.target.value))}
+                        onChange={(e) => dispatch(searchAction.setKeyword(e.target.value))}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         autoFocus
