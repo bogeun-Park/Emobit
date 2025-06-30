@@ -148,10 +148,10 @@ public class MemberController {
 	}
 	
 	@GetMapping("/login/auth")
-	public ResponseEntity<MemberAuthDto> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
-        if (customUser == null) {
-        	return ResponseEntity.ok().build();
-        }
+	public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal CustomUser customUser) {
+		if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
                 
         Member member = memberService.getMemberById(customUser.getId());
 		MemberAuthDto memberAuthDto = memberService.getMemberDto(member);
