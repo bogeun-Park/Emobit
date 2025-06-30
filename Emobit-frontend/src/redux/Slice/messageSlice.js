@@ -11,9 +11,6 @@ const messageSlice = createSlice({
             state.chatRooms = action.payload;
             state.totalUnreadCount = action.payload.reduce((sum, chatRoom) => sum + (chatRoom.unreadCount || 0), 0);
         },
-        setTotalUnreadCount: (state, action) => {
-            state.totalUnreadCount = action.payload;
-        },
         exitChatRoom: (state, action) => {
             state.chatRooms = state.chatRooms.filter(chatRoom => chatRoom.id !== action.payload);
         },
