@@ -15,7 +15,7 @@ function Sidebar() {
     const auth = useSelector(state => state.auth);
     const active = useSelector(state => state.menu.active);
     const panelMenu = useSelector(state => state.menu.panelMenu);
-    const messageTotalUnreadCount = useSelector(state => state.message.totalUnreadCount);
+    const senderCount = useSelector(state => state.message.senderCount);
     const location = useLocation();
 
     const menuImgSize = 26;
@@ -134,7 +134,7 @@ function Sidebar() {
                             <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
                                 <div className="menu-icon-wrapper">
                                     <Send size={menuImgSize} />
-                                    {messageTotalUnreadCount > 0 && <span className="bubble-badge">{messageTotalUnreadCount}</span>}
+                                {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
                                 </div>
                                 <span className="menu-label">메시지</span>
                             </button>

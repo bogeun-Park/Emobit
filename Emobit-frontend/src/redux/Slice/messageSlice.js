@@ -3,13 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 const messageSlice = createSlice({
     name: 'message',
     initialState: {
-        totalUnreadCount: 0,
+        senderCount: 0,
         chatRooms: [],
     },
     reducers: {
         setChatRooms: (state, action) => {
             state.chatRooms = action.payload;
-            state.totalUnreadCount = action.payload.reduce((sum, chatRoom) => sum + (chatRoom.unreadCount || 0), 0);
+            state.senderCount = action.payload.filter(chatRoom => chatRoom.unreadCount > 0).length;
         },
         exitChatRoom: (state, action) => {
             state.chatRooms = state.chatRooms.filter(chatRoom => chatRoom.id !== action.payload);
