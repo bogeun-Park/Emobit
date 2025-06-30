@@ -13,7 +13,6 @@ import SockJS from 'sockjs-client';
 function Layout() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
-    const chatRooms = useSelector(state => state.message.chatRooms);
     const dispatch = useDispatch();
 
     useEffect(() => {
