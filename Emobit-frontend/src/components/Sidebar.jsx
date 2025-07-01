@@ -139,7 +139,7 @@ function Sidebar() {
                                 <span className="menu-label">메시지</span>
                             </button>
 
-                            <button className={active === 'alarm' ? 'active' : ''} onClick={() => handlePanelMenuClick('alarm')}>
+                            <button className={active === 'notification' ? 'active' : ''} onClick={() => handlePanelMenuClick('notification')}>
                                 <Bell size={menuImgSize} />
                                 <span className="menu-label">알림</span>
                             </button>

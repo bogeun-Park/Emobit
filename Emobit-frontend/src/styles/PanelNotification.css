@@ -1,4 +1,4 @@
-.panel-alarm-container {
+.panel-notification-container {
     position: fixed;
     top: 0;
     left: calc(var(--sidebar-width, 244px));
@@ -12,12 +12,12 @@
     z-index: 999;
 }
 
-.panel-alarm-container.open {
+.panel-notification-container.open {
     transform: translateX(0);
 }
 
 @media (max-width: 472px) {
-    .panel-alarm-container {
+    .panel-notification-container {
         width: calc(100vw - var(--sidebar-width, 72px) - 20px);
     }
 }

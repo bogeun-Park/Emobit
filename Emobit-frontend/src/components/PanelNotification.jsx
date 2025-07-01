@@ -1,9 +1,9 @@
-import '../styles/PanelAlarm.css';
+import '../styles/PanelNotification.css';
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { menuAction } from '../redux/Slice/menuSlice';
 
-function PanelAlarm() {
+function PanelNotification() {
     const panelMenu = useSelector(state => state.menu.panelMenu);
     const dispatch = useDispatch();
     const panelRef = useRef(null);
@@ -18,7 +18,7 @@ function PanelAlarm() {
             }
         };
 
-        if (panelMenu === 'alarm') {
+        if (panelMenu === 'notification') {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
@@ -28,10 +28,10 @@ function PanelAlarm() {
     }, [panelMenu, dispatch]);
 
     return (
-        <div className={`panel-alarm-container ${panelMenu == 'alarm' ? 'open' : ''}`} ref={panelRef} >
-            알람패널
+        <div className={`panel-notification-container ${panelMenu == 'notification' ? 'open' : ''}`} ref={panelRef} >
+            알림패널
         </div>
     );
 }
 
-export default PanelAlarm;
+export default PanelNotification;

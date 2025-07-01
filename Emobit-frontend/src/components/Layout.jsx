@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import PanelSearch from './PanelSearch';
-import PanelAlarm from './PanelAlarm';
+import PanelNotification from './PanelNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAxios } from '../contexts/AxiosContext';
 import { messageAction } from '../redux/Slice/messageSlice';
@@ -79,7 +79,7 @@ function Layout() {
         <div className="layout-container">
             <Sidebar />
             <PanelSearch />
-            <PanelAlarm />
+            <PanelNotification />
 
             <main className="main-content">
                 <Outlet />
