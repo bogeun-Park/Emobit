@@ -3,7 +3,7 @@ package com.example.emobit.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.emobit.security.Role;
+import com.example.emobit.enums.MemberRole;
 import com.example.emobit.util.Constant;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -48,7 +48,7 @@ public class Member {
 	
 	@Enumerated(EnumType.STRING)
     @Column(name = "ROLE")
-    private Role role = Role.USER;
+    private MemberRole role = MemberRole.USER;
 	
 	@ToString.Exclude
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.emobit.domain.Member;
+import com.example.emobit.enums.MemberRole;
 import com.example.emobit.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
 		}
 		
 		List<GrantedAuthority> authority = new ArrayList<>();
-		if(member.getRole().equals(Role.ADMIN)) { 
+		if(member.getRole().equals(MemberRole.ADMIN)) { 
 			authority.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		} else {
 			authority.add(new SimpleGrantedAuthority("ROLE_USER"));
