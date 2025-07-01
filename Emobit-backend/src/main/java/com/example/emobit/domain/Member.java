@@ -47,7 +47,7 @@ public class Member {
 	private String imagePath = Constant.MEMBER_DEFAULT_IMAGE_PATH;
 	
 	@Enumerated(EnumType.STRING)
-    @Column(name = "ROLE")
+    @Column(name = "ROLE", nullable = false)
     private MemberRole role = MemberRole.USER;
 	
 	@ToString.Exclude
