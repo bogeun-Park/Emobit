@@ -49,6 +49,7 @@ function Layout() {
         const client = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {
+                // 채팅방 목록 구독
                 client.subscribe(`/topic/chatRoomList/${auth.id}`, (message) => {
                     const updatedRoom = JSON.parse(message.body);
 
@@ -72,6 +73,18 @@ function Layout() {
                         });
 
                         dispatch(messageAction.setChatRooms(newChatRooms));
+                    });
+                });
+
+                // 알림 구독
+                client.subscribe(`/topic/notification/${auth.id}`, (message) => {
+                    const newNotification = JSON.parse(message.body);
+
+                    dispatch((dispatch, getState) => {
+                        const prevNotifications = getState().notification.notifications;
+                        const newNotifications = [newNotification, ...prevNotifications];
+
+                        dispatch(notificationAction.setNotifications(newNotifications));
                     });
                 });
             },
