@@ -11,6 +11,10 @@ const notificationSlice = createSlice({
             state.notifications = action.payload;
             state.commentCount = action.payload.filter(notification => notification.type == "COMMENT" && !notification.read).length;
         },
+        readNotifications: (state) => {
+            state.notifications = state.notifications.map(notification => ({ ...notification, read: true }));
+            state.commentCount = 0;
+        }
     },
 });
 
