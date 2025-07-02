@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
-import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut } from 'lucide-react';
+import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut, MessageCircle } from 'lucide-react';
 
 function Sidebar() {
     const axios = useAxios();
@@ -16,6 +16,7 @@ function Sidebar() {
     const active = useSelector(state => state.menu.active);
     const panelMenu = useSelector(state => state.menu.panelMenu);
     const senderCount = useSelector(state => state.message.senderCount);
+    const notification = useSelector(state => state.notification);
     const location = useLocation();
 
     const menuImgSize = 26;
@@ -134,14 +135,28 @@ function Sidebar() {
                             <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
                                 <div className="menu-icon-wrapper">
                                     <Send size={menuImgSize} />
-                                {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
+                                    {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
                                 </div>
                                 <span className="menu-label">메시지</span>
                             </button>
 
                             <button className={active === 'notification' ? 'active' : ''} onClick={() => handlePanelMenuClick('notification')}>
-                                <Bell size={menuImgSize} />
-                                <span className="menu-label">알림</span>
+                                <div className="menu-icon-wrapper">
+                                    <Bell size={menuImgSize} />
+                                    {notification.commentCount > 0 && <span className="dot-indicator" />}
+                                </div>
+
+                                <div className="menu-label-wrapper">
+                                    <span className="menu-label">알림</span>
+                                    {notification.commentCount > 0 && (
+                                        <div className="notification-bubble">
+                                            <div className="bubble-content">
+                                                <MessageCircle className='notification-icon' size={20} />
+                                                <span className='notification-count'>{notification.commentCount}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </button>
 
                             <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>

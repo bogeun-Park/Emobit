@@ -81,11 +81,15 @@
     display: inline-block;
 }
 
+.menu-icon-wrapper svg {
+    display: block;
+}
+
 .bubble-badge {
     position: absolute;
     top: -8px;
-    right: -10px;
-    background-color: #ff3b30;
+    right: -4px;
+    background-color: #ff3040;
     color: white;
     font-size: 0.65rem;
     font-weight: 400;
@@ -94,4 +98,65 @@
     line-height: 1;
     white-space: nowrap;
     box-shadow: 0 0 0 2px white;
+}
+
+.dot-indicator {
+    position: absolute;
+    top: -2px;
+    right: 1px;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3040;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px white;
+}
+
+.menu-label-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-bubble {
+    position: absolute;
+    top: -7px;
+    left: 150%;
+    margin-left: 6px;
+    display: inline-flex;
+    align-items: center;
+    background-color: #ff3040;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    white-space: nowrap;
+    gap: 8px;
+}
+
+.notification-bubble::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background-color: #ff3040;
+    border-end-start-radius: 4px;
+}
+
+.bubble-content {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.notification-icon {
+    fill: #fff;
+}
+
+.notification-count {
+    font-size: 14px;
+    font-weight: 400;
 }
