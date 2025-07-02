@@ -8,12 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Member;
-import com.example.emobit.domain.Notification;
 import com.example.emobit.dto.CommentsCreateDto;
 import com.example.emobit.dto.CommentsUpdateDto;
 import com.example.emobit.enums.NotificationType;
 import com.example.emobit.repository.CommentsRepository;
-import com.example.emobit.repository.NotificationRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +21,7 @@ public class CommentsService {
 	private final CommentsRepository commentsRepository;
 	private final MemberService memberService;
 	private final BoardService boardService;
-	private final NotificationRepository notificationRepository;
+	private final NotificationService notificationService;
 	
 	public List<Comments> getCommentByBoardId(Long boardId) {
 		List<Comments> comments = commentsRepository.customFindAllByBoardId(boardId);
@@ -53,19 +51,11 @@ public class CommentsService {
 		
 		commentsRepository.save(comment);
 		
-		// --- 알림 생성 부분 ---
 		Member receiver = board.getMember();
-
+		
 	    // 게시글 작성자가 댓글 작성자가 아닐 경우에만 알림 생성 (자기 알림 방지)
 	    if (!receiver.getId().equals(createdBy)) {
-	        Notification notification = new Notification();
-	        notification.setReceiver(receiver);
-	        notification.setSender(sender);
-	        notification.setType(NotificationType.COMMENT);
-	        notification.setTargetId(board.getId());
-	        notification.setContent(content);
-
-	        notificationRepository.save(notification);
+	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, board.getId(), content);
 	    }
 	}
 	
