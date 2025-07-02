@@ -7,6 +7,7 @@ import PanelNotification from './PanelNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAxios } from '../contexts/AxiosContext';
 import { messageAction } from '../redux/Slice/messageSlice';
+import { notificationAction } from '../redux/Slice/notificationSlice';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
@@ -27,6 +28,14 @@ function Layout() {
                 });
                 
                 dispatch(messageAction.setChatRooms(sortedChatRooms));
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            })
+
+        axios.get('/notification')
+            .then(response => {
+                dispatch(notificationAction.setNotifications(response.data));
             })
             .catch(error => {
                 console.error('에러 발생:', error);
