@@ -11,4 +11,6 @@ import com.example.emobit.domain.Notification;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 	List<Notification> findByReceiverOrderByCreatedAtDesc(Member receiver);
+
+	List<Notification> findByReceiverAndIsReadFalse(Member receiver);
 }
