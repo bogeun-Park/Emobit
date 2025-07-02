@@ -1,7 +1,7 @@
 package com.example.emobit.dto;
 
 import com.example.emobit.domain.Member;
-import com.example.emobit.security.Role;
+import com.example.emobit.enums.MemberRole;
 import com.example.emobit.util.Constant;
 
 import jakarta.persistence.EnumType;
@@ -20,7 +20,7 @@ public class MemberAuthDto {
 	private String imageUrl;
 	
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	private MemberRole role;
 	
 	public MemberAuthDto(Member member) {
 		this.id = member.getId();
