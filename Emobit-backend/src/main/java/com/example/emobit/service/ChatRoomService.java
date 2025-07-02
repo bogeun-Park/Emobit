@@ -3,7 +3,6 @@ package com.example.emobit.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -105,7 +104,7 @@ public class ChatRoomService {
     // 입장 표시 세팅 (TTL 포함)
     public void enterChatRoom(Long chatRoomId, Long userId) {
         String enterKey = "chatroom::" + chatRoomId + "::user::" + userId;
-        redisTemplate.opsForValue().set(enterKey, "true", 5, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(enterKey, "true");
     }
 
     // 퇴장 표시 (키 삭제)
