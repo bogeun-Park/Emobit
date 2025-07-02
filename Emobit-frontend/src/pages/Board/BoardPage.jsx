@@ -8,16 +8,22 @@ function BoardPage() {
     const axios = useAxios();
     
     const [boardList, setBoardList] = useState([]);
+    const [loading, setLoading] = useState(false);
     
     useEffect(() => {
         axios.get('/board')
             .then((response) => {
                 setBoardList(response.data);
+                setLoading(true);
             })
             .catch((error) => {
                 console.error('게시판 목록 불러오기 실패:', error);
             });
     }, []);
+
+    if(!loading) {
+        return null;
+    }
 
     return (
         <div className="board-container">
