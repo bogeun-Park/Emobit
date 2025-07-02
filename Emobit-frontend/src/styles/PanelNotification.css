@@ -2,7 +2,7 @@
     font-family: 'system-ui', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     position: fixed;
     top: 0;
-    left: calc(var(--sidebar-width, 244px));
+    left: calc(var(--sidebar-width, 245px));
     width: 400px;
     height: 100dvh;
     border-right: 1px solid #ddd;

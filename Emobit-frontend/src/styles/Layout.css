@@ -5,7 +5,7 @@
 
 .main-content {
     flex: 1;
-    padding-left: calc(var(--sidebar-width, 244px) + 20px); /* Sidebar 너비만큼 여백 줌 */
+    padding-left: calc(var(--sidebar-width, 245px) + 20px); /* Sidebar 너비만큼 여백 줌 */
     padding-right: 20px;
     padding-bottom: 20px;
     box-sizing: border-box;
