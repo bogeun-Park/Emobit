@@ -159,6 +159,17 @@ function Sidebar() {
                                 <span className="menu-label">알림</span>
                             </button>
 
+                            {notification.commentCount > 0 && (
+                                <div className="menu-label-wrapper">
+                                    <div className="notification-bubble" onClick={() => handlePanelMenuClick('notification')}>
+                                        <div className="bubble-content">
+                                            <MessageCircle className='notification-icon' size={20} />
+                                            <span className='notification-count'>{notification.commentCount}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>
                                 <PlusCircle size={menuImgSize} />
                                 <span className="menu-label">작성하기</span>
@@ -171,17 +182,6 @@ function Sidebar() {
                         </>
                     }
                 </div>
-
-                {notification.commentCount > 0 && (
-                    <div className="menu-label-wrapper">
-                        <div className="notification-bubble" onClick={() => handlePanelMenuClick('notification')}>
-                            <div className="bubble-content">
-                                <MessageCircle className='notification-icon' size={20} />
-                                <span className='notification-count'>{notification.commentCount}</span>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 <div className="menu-bottom">
                     {!auth.isAuthenticated ? (

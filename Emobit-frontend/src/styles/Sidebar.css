@@ -4,7 +4,7 @@
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 12px;
     box-sizing: border-box;
     border-right: 1px solid #ddd;
     z-index: 1000;
@@ -16,10 +16,13 @@
     font-size: 1.8rem;
     color: #262626;
     text-decoration: none; 
-    padding: 1.3rem 0.6rem;
     font-weight: 800;
-    display: inline-block;
-    margin-bottom: 0.5rem;
+    display: flex;
+    height: 48px;
+    margin-top: 16px;
+    margin-bottom: 29px;
+    padding-left: 14px;
+    align-items: center;
 }
 
 .menu {
@@ -44,7 +47,7 @@
     font-size: 1rem;
     cursor: pointer;
     color: #000000;
-    padding: 1.5rem 0.4rem;
+    padding: 24px 11px;
     height: 47px;
 }
 
@@ -63,20 +66,21 @@
 }
 
 @media (max-width: 1264px) {
+    .logo:hover {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+    }
+
     .sidebar-container {
-        width: 72px;
+        width: 73px;
     }
 
     .menu-label {
         display: none;
     }
 
-    .menu button {
-        justify-content: center;
-    }
-
     .notification-bubble {
-        left: 58px !important;
+        left: 63px !important;
     }
 }
 
@@ -86,6 +90,7 @@
 }
 
 .menu-icon-wrapper svg {
+    flex-shrink: 0;
     display: block;
 }
 
@@ -116,14 +121,14 @@
 }
 
 .menu-label-wrapper {
-    position: relative;
+    position: absolute;
     display: inline-block;
 }
 
 .notification-bubble {
     position: absolute;
-    top: -185px;
-    left: 100px;
+    top: 230px;
+    left: 103px;
     display: inline-flex;
     align-items: center;
     background-color: #ff3040;
