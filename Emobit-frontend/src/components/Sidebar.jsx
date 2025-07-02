@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
+import { notificationAction } from '../redux/Slice/notificationSlice';
 import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut, MessageCircle } from 'lucide-react';
 
 function Sidebar() {
@@ -105,6 +106,16 @@ function Sidebar() {
         }
 
         dispatch(menuAction.setPanelMenu(menuName));
+
+        if (menuName === 'notification' && notification.commentCount > 0) {
+            axios.post('/notification/readAll')
+                .then(() => {
+                    dispatch(notificationAction.readNotifications());
+                })
+                .catch(error => {
+                    console.error('Failed to fetch user data:', error);
+                });
+        }
     };
 
     return (
@@ -145,18 +156,7 @@ function Sidebar() {
                                     <Bell size={menuImgSize} />
                                     {notification.commentCount > 0 && <span className="dot-indicator" />}
                                 </div>
-
-                                <div className="menu-label-wrapper">
-                                    <span className="menu-label">알림</span>
-                                    {notification.commentCount > 0 && (
-                                        <div className="notification-bubble">
-                                            <div className="bubble-content">
-                                                <MessageCircle className='notification-icon' size={20} />
-                                                <span className='notification-count'>{notification.commentCount}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <span className="menu-label">알림</span>
                             </button>
 
                             <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>
@@ -171,6 +171,17 @@ function Sidebar() {
                         </>
                     }
                 </div>
+
+                {notification.commentCount > 0 && (
+                    <div className="menu-label-wrapper">
+                        <div className="notification-bubble" onClick={() => handlePanelMenuClick('notification')}>
+                            <div className="bubble-content">
+                                <MessageCircle className='notification-icon' size={20} />
+                                <span className='notification-count'>{notification.commentCount}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <div className="menu-bottom">
                     {!auth.isAuthenticated ? (
