@@ -23,6 +23,7 @@
     margin-bottom: 29px;
     padding-left: 14px;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .menu {
