@@ -2,15 +2,17 @@ import '../../styles/BoardReadPage.css';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye } from 'lucide-react';
 import PopupButton from './PopupButton';
+import { messageAction } from '../../redux/Slice/messageSlice';
 
 function BoardRead() {
     const axios = useAxios();
     const navigate = useNavigate();
     const auth = useSelector(state => state.auth);    
+    const dispatch = useDispatch();
     
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
@@ -190,8 +192,10 @@ function BoardRead() {
                 memberB: board.memberUsername,
             },
         }).then(response => {
-            const chatRoomId = response.data.id;
-            navigate(`/message/${chatRoomId}`);    
+            const newChatRoom = response.data;
+
+            dispatch(messageAction.addChatRoom(newChatRoom));
+            navigate(`/message/${newChatRoom.id}`);    
         }).catch (error => {
             console.error('에러 발생:', error);
             if (error.response?.status === 401) {
