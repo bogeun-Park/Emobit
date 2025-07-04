@@ -7,7 +7,7 @@ import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
-import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut, MessageCircle } from 'lucide-react';
+import { Home, Search, BookOpen, Send, Bell, PlusCircle, User, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
 
 function Sidebar() {
     const axios = useAxios();
@@ -107,7 +107,7 @@ function Sidebar() {
 
         dispatch(menuAction.setPanelMenu(menuName));
 
-        if (menuName === 'notification' && notification.commentCount > 0) {
+        if (menuName === 'notification' && notification.totalCount > 0) {
             axios.post('/notification/readAll')
                 .then(() => {
                     dispatch(notificationAction.readNotifications());
@@ -154,18 +154,26 @@ function Sidebar() {
                             <button className={active === 'notification' ? 'active' : ''} onClick={() => handlePanelMenuClick('notification')}>
                                 <div className="menu-icon-wrapper">
                                     <Bell size={menuImgSize} />
-                                    {notification.commentCount > 0 && <span className="dot-indicator" />}
+                                    {notification.totalCount > 0 && <span className="dot-indicator" />}
                                 </div>
                                 <span className="menu-label">알림</span>
                             </button>
 
-                            {notification.commentCount > 0 && (
+                            {notification.totalCount > 0 && (
                                 <div className="menu-label-wrapper">
                                     <div className="notification-bubble" onClick={() => handlePanelMenuClick('notification')}>
-                                        <div className="bubble-content">
-                                            <MessageCircle className='notification-icon' size={20} />
-                                            <span className='notification-count'>{notification.commentCount}</span>
-                                        </div>
+                                        {notification.commentCount > 0 && (
+                                            <div className="bubble-content">
+                                                <MessageCircle className='notification-icon' size={20} />
+                                                <span className='notification-count'>{notification.commentCount}</span>
+                                            </div>
+                                        )}
+                                        {notification.likeCount > 0 && (
+                                            <div className="bubble-content">
+                                                <Heart className='notification-icon' size={20} />
+                                                <span className='notification-count'>{notification.likeCount}</span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             )}
