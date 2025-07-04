@@ -69,7 +69,7 @@ public class CommentsController {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("수정 권한이 없습니다.");
 	    }
 		
-		commentsService.updateBoard(id, commentsUpdateDto);
+		commentsService.updateComment(id, commentsUpdateDto);
 		
 		return ResponseEntity.ok("댓글이 성공적으로 수정되었습니다.");
 	}
@@ -88,7 +88,7 @@ public class CommentsController {
 	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한이 없습니다.");
 	    }
 		
-		commentsService.deleteBoard(id);
+		commentsService.deleteComment(id, customUser.getId());
 		
 		return ResponseEntity.status(200).body("댓글이 성공적으로 삭제되었습니다.");
 	}

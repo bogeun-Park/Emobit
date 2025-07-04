@@ -59,7 +59,7 @@ public class CommentsService {
 	    }
 	}
 	
-	public void updateBoard(Long id, CommentsUpdateDto commentsUpdateDto) {
+	public void updateComment(Long id, CommentsUpdateDto commentsUpdateDto) {
 		String content = commentsUpdateDto.getContent();
 		
 		Comments comment = this.getCommentById(id);
@@ -68,7 +68,19 @@ public class CommentsService {
 		commentsRepository.save(comment);
 	}
 	
-	public void deleteBoard(Long id) {
-		commentsRepository.deleteById(id);
+	@Transactional
+	public void deleteComment(Long id, Long senderId) {
+		Comments comment = this.getCommentById(id);
+		Board board = comment.getBoard();
+        Member receiver = board.getMember();
+        Member sender = memberService.getMemberById(senderId);
+        Long targetId = board.getId();
+        
+		commentsRepository.delete(comment);
+		
+		// 상대방이 댓글 알림을 읽지 않은 경우 알림 삭제
+        if (!receiver.getId().equals(sender.getId())) {
+            notificationService.deleteNotificationIfUnread(receiver, sender, NotificationType.COMMENT, targetId);
+        }
 	}
 }
