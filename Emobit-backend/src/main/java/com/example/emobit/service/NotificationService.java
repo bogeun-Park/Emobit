@@ -1,6 +1,7 @@
 package com.example.emobit.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -53,7 +54,7 @@ public class NotificationService {
             	Notification savedNotification = notificationRepository.findById(notification.getId()).orElseThrow();
                 NotificationDto notificationDto = new NotificationDto(savedNotification);
                 
-                messagingTemplate.convertAndSend("/topic/notification/" + receiver.getId(), notificationDto);
+                messagingTemplate.convertAndSend("/topic/notification/new/" + receiver.getId(), notificationDto);
             }
         });
     }
@@ -67,5 +68,24 @@ public class NotificationService {
 	    }
 	    
 	    notificationRepository.saveAll(unreadNotifications);
+	}
+	
+	public void deleteNotificationIfUnread(Member receiver, Member sender, NotificationType type, Long targetId) {
+		Optional<Notification> existingNotification= notificationRepository
+			.findByReceiverAndSenderAndTypeAndTargetIdAndIsReadFalse(receiver, sender, type, targetId);
+		
+		if (existingNotification.isPresent()) {
+			Notification notification = existingNotification.get();
+			Long deletedId = notification.getId();
+			
+			notificationRepository.delete(notification);
+			
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+	            @Override
+	            public void afterCommit() {
+	                messagingTemplate.convertAndSend("/topic/notification/delete/" + receiver.getId(), deletedId);
+	            }
+	        });
+		}
 	}
 }
