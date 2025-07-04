@@ -53,9 +53,9 @@ public class CommentsService {
 		
 		Member receiver = board.getMember();
 		
-	    // 게시글 작성자가 댓글 작성자가 아닐 경우에만 알림 생성 (자기 알림 방지)
-	    if (!receiver.getId().equals(createdBy)) {
-	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, board.getId(), content);
+	    // 댓글이 자신이 작성한 게시글이 아닌 경우에만 알림 생성 (자기 알림 방지)
+	    if (!receiver.getId().equals(sender.getId())) {
+	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, boardId, content);
 	    }
 	}
 	
