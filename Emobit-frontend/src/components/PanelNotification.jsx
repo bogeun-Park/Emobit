@@ -41,7 +41,7 @@ function PanelNotification() {
     };
 
     const handleClick = (notification) => {
-        if (notification.type === 'COMMENT') {
+        if (notification.type == 'COMMENT' || notification.type == 'LIKE') {
             navigate(`/board/read/${notification.targetId}`);
         }
     };
