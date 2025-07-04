@@ -28,6 +28,7 @@ Emobit은 감정(Emotion)의 조각(Bit)들을 기록하고 공유하는 감성 
 ### Backend
 - Spring Boot
 - Spring Security + JWT
+- Spring Data JPA
 - RESTful API
 - Oracle DB
 - Redis
