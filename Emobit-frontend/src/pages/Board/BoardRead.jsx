@@ -19,9 +19,65 @@ function BoardRead() {
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState('');
     const [notFound, setNotFound] = useState(false);
-
     const [commentEditId, setCommentEditId] = useState(null);
     const [commentEditContent, setCommentEditContent] = useState('');
+    const [isLike, setIsLike] = useState(null);
+    const [senders, setSenders] = useState([]);
+
+    useEffect(() => {
+        fetchBoard();
+        fetchComment();
+        fetchLike();
+    }, [boardId]);
+
+    const fetchBoard = async () => {
+        try {
+            const response = await axios.get(`/board/read/${boardId}`);
+            setBoard(response.data);
+            setNotFound(false);
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                setNotFound(true);
+            } else {
+                alert('게시글 조회 중 오류가 발생했습니다.');
+                navigate('/board');
+            }
+        }
+    };
+
+    const fetchComment = async () => {
+        try {
+            const response = await axios.get(`/comments/${boardId}`);
+            setComments(response.data);
+        } catch (error) {
+            console.error('댓글을 가져오는 데 실패했습니다:', error);
+        }
+    };
+
+    const fetchLike = async () => {
+        axios.get('/likes/status', {
+            params: {
+                type: 'BOARD',
+                targetId: boardId
+            }
+        }).then((response) => {
+            setIsLike(response.data);
+        }).catch(error => {
+            console.error('에러 발생:', error);
+        });
+
+        axios.get('/likes/senders', {
+            params: {
+                type: 'BOARD',
+                targetId: boardId
+            }
+        }).then((response) => {
+            setSenders(response.data);
+        }).catch(error => {
+            console.error('에러 발생:', error);
+        });
+    };
+
     const startEditing = (comment) => {
         setCommentEditId(comment.id);
         setCommentEditContent(comment.content);
@@ -76,35 +132,6 @@ function BoardRead() {
                 }
             });
     }
-
-    const fetchBoard = async () => {
-        try {
-            const response = await axios.get(`/board/read/${boardId}`);
-            setBoard(response.data);
-            setNotFound(false);
-        } catch (error) {
-            if (error.response && error.response.status === 404) {
-                setNotFound(true);
-            } else {
-                alert('게시글 조회 중 오류가 발생했습니다.');
-                navigate('/board');
-              }
-        }
-    };
-
-    const fetchComment = async () => {
-        try {
-            const response = await axios.get(`/comments/${boardId}`);
-            setComments(response.data);
-        } catch (error) {
-            console.error('댓글을 가져오는 데 실패했습니다:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchBoard();
-        fetchComment();
-    }, [boardId]);
 
     const handleDelete = () => {
         const confirmed = window.confirm('게시글을 삭제하시겠습니까?');
@@ -207,6 +234,24 @@ function BoardRead() {
         })
     };
 
+    const handleToggleLike = () => {
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
+        axios.post('/likes/toggle', {
+            type: 'BOARD',
+            targetId: boardId
+        }).then((response) => {
+            setIsLike(response.data.isLike);
+            setSenders(response.data.senders);
+        }).catch(error => {
+            console.error('에러 발생:', error);
+        });
+    };
+
     if (notFound) {
         return <NotFoundPage />;
     }
@@ -303,7 +348,7 @@ function BoardRead() {
                 <div className="board-extra-info">
                     <div className="left-side">
                         <div className="like-send-buttons">
-                            <button type="button" className="like-button">
+                            <button type="button" className={`like-button ${isLike ? 'liked' : ''}`} onClick={handleToggleLike}>
                                 <Heart size={24} color="#000" />
                             </button>
                             {auth.id !== board.createdBy && (
@@ -312,6 +357,8 @@ function BoardRead() {
                                 </button>
                             )}
                         </div>
+                        
+                        <span className='like-count'>좋아요 {senders.length}개</span>
                         <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                     </div>
                     <div className="right-side">

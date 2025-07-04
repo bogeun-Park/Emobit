@@ -241,7 +241,7 @@
 .board-extra-info {
     display: flex;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 14px 16px;
     border-top: 1px solid #ddd;
     box-sizing: border-box;
     align-items: flex-start;
@@ -251,7 +251,7 @@
 .left-side {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.6rem;
 }
 
 .like-send-buttons {
@@ -264,11 +264,23 @@
     background: none;
     border: none;
     cursor: pointer;
+    line-height: 0;
 }
 
 .like-button:hover svg,
 .send-button:hover svg {
     stroke: #828282;
+}
+
+.like-button svg {
+    stroke: #000;
+    fill: none;
+    transition: all 0.2s ease;
+}
+
+.like-button.liked svg {
+    stroke: #ff3040;
+    fill: #ff3040;
 }
 
 @media (hover: none) {
@@ -298,4 +310,10 @@
     gap: 0.2rem;
     font-size: 0.85rem;
     user-select: none;
+}
+
+.like-count {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: -10px;
 }
