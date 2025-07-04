@@ -16,7 +16,7 @@ const messageSlice = createSlice({
         },
         addChatRoom: (state, action) => {
             const exists = state.chatRooms.some(chatRoom => chatRoom.id === action.payload.id);
-            if (!exists) state.chatRooms.push(action.payload);
+            if (!exists) state.chatRooms.unshift(action.payload);
         },
     }
 });
