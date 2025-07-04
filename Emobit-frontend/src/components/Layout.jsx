@@ -76,13 +76,25 @@ function Layout() {
                     });
                 });
 
-                // 알림 구독
-                client.subscribe(`/topic/notification/${auth.id}`, (message) => {
+                // 알림 생성 구독
+                client.subscribe(`/topic/notification/new/${auth.id}`, (message) => {
                     const newNotification = JSON.parse(message.body);
 
                     dispatch((dispatch, getState) => {
                         const prevNotifications = getState().notification.notifications;
                         const newNotifications = [newNotification, ...prevNotifications];
+
+                        dispatch(notificationAction.setNotifications(newNotifications));
+                    });
+                });
+
+                // 알림 삭제 구독
+                client.subscribe(`/topic/notification/delete/${auth.id}`, (message) => {
+                    const deletedId = JSON.parse(message.body);
+
+                    dispatch((dispatch, getState) => {
+                        const prevNotifications = getState().notification.notifications;
+                        const newNotifications = prevNotifications.filter(prevNotification => prevNotification.id !== deletedId);
 
                         dispatch(notificationAction.setNotifications(newNotifications));
                     });
