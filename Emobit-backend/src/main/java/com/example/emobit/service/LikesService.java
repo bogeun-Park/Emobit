@@ -44,6 +44,16 @@ public class LikesService {
         if (existingLike.isPresent()) {  // 좋아요가 있으면 삭제 (좋아요 취소)
             likesRepository.delete(existingLike.get());
             
+            if (type == LikeType.BOARD) {
+                Board board = boardService.getBoardById(targetId);
+                Member receiver = board.getMember();
+
+                // 상대방이 좋아요 알림을 읽지 않은 경우 알림 삭제
+                if (!receiver.getId().equals(sender.getId())) {
+                    notificationService.deleteNotificationIfUnread(receiver, sender, NotificationType.LIKE, targetId);
+                }
+            }
+            
             return false;
         } else {  // 없으면 좋아요 추가
             Likes like = new Likes();
