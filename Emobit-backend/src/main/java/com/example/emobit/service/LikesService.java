@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Likes;
 import com.example.emobit.domain.Member;
 import com.example.emobit.enums.LikeType;
+import com.example.emobit.enums.NotificationType;
 import com.example.emobit.repository.LikesRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class LikesService {
 	private final LikesRepository likesRepository;
 	private final MemberService memberService;
+	private final BoardService boardService;
+	private final NotificationService notificationService;
 	
 	public List<Member> getLikeSenders(LikeType type, Long targetId) {
 		List<Member> senders = likesRepository.findSendersByTypeAndTargetId(type, targetId);
@@ -31,6 +36,7 @@ public class LikesService {
 	    return isLike;
 	}
 	
+	@Transactional
 	public boolean toggleLike(Long senderId, LikeType type, Long targetId) {
         Member sender = memberService.getMemberById(senderId);
         Optional<Likes> existingLike = likesRepository.findBySenderAndTypeAndTargetId(sender, type, targetId);
@@ -46,6 +52,16 @@ public class LikesService {
             like.setTargetId(targetId);
             
             likesRepository.save(like);
+            
+            if (type == LikeType.BOARD) {
+                Board board = boardService.getBoardById(targetId);
+                Member receiver = board.getMember();
+                
+                // 좋아요가 자신이 작성한 게시글이 아닌 경우에만 알림 생성 (자기 알림 방지)
+                if (!receiver.getId().equals(sender.getId())) {
+                    notificationService.createNotification(receiver, sender, NotificationType.LIKE, targetId, null);
+                }
+            }
             
             return true;
         }
