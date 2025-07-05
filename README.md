@@ -41,11 +41,12 @@ Emobit은 감정(Emotion)의 조각(Bit)들을 기록하고 공유하는 감성 
 - PM2
 - Oracle Cloud Instance
 - Oracle Object Storage
+- Nginx
 
 
 
 ### 프로젝트 실행 방법
-- [Emobit 바로가기](http://140.245.66.171:3000)  
+- [Emobit 바로가기](http://140.245.66.171)  
 - **회원가입 후 이용 가능**  
   (※ *게시글 및 댓글 조회는 비회원도 가능*)
 
