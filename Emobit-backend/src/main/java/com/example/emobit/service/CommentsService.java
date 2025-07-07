@@ -54,7 +54,7 @@ public class CommentsService {
 	    	    
     	// 댓글이 자신이 작성한 게시글이 아닌 경우에만 알림 생성 (자기 알림 방지)
 	    if (!receiver.getId().equals(sender.getId())) {
-	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, comment.getId(), content, board.getImagePath());
+	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, comment.getId(), board, comment);
 	    }
         
 	}
