@@ -56,6 +56,13 @@
     object-fit: cover;
 }
 
+.notification-board {
+    width: 44px;
+    height: 44px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
 .notification-content {
     flex: 1;
     display: flex;

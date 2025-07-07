@@ -42,7 +42,7 @@ function PanelNotification() {
 
     const handleClick = (notification) => {
         if (notification.type == 'COMMENT' || notification.type == 'LIKE') {
-            navigate(`/board/read/${notification.targetId}`);
+            navigate(`/board/read/${notification.boardId}`);
         }
     };
 
@@ -65,15 +65,18 @@ function PanelNotification() {
                             onClick={() => handleClick(notification)}
                         >
                             <img className="notification-profile" src={notification.sender?.imageUrl} alt=""/>
+
                             <div className="notification-content">
                                 <div className="notification-text">
                                     <span className="notification-username">{notification.sender?.username || '알 수 없음'}</span>
                                     {notification.type === 'COMMENT' && `님이 댓글을 남겼습니다: ${notification.content} `}
-                                    {notification.type === 'LIKE' && '님이 좋아요를 눌렀습니다.'}
+                                    {notification.type === 'LIKE' && '님이 좋아요를 눌렀습니다. '}
 
                                     <span className="notification-time">{timeAgo(notification.createdAt)}</span>
                                 </div>
                             </div>
+
+                            <img className="notification-board" src={notification.imageUrl} alt="" />
                         </div>
                     ))
                 )}
