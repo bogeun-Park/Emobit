@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.example.emobit.domain.Notification;
 import com.example.emobit.enums.NotificationType;
+import com.example.emobit.util.Constant;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class NotificationDto {
 	private NotificationType type;
 	private Long targetId;
 	private String content;
+	private String imageUrl;
 	private boolean isRead;
     private Date createdAt;
     
@@ -27,6 +29,7 @@ public class NotificationDto {
     	this.type = notification.getType();
     	this.targetId = notification.getTargetId();
     	this.content = notification.getContent();
+    	this.imageUrl = Constant.Oracle_Storage_ORIGIN + notification.getImagePath();
     	this.isRead = notification.isRead();
     	this.createdAt = notification.getCreatedAt();
     }

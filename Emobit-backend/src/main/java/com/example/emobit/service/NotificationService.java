@@ -37,13 +37,14 @@ public class NotificationService {
 		return notification;
 	}
 	
-	public void createNotification(Member receiver, Member sender, NotificationType type, Long targetId, String content) {
+	public void createNotification(Member receiver, Member sender, NotificationType type, Long targetId, String content, String imagePath) {
         Notification notification = new Notification();
         notification.setReceiver(receiver);
         notification.setSender(sender);
         notification.setType(type);
         notification.setTargetId(targetId);
         notification.setContent(content);
+        notification.setImagePath(imagePath);
 
         notificationRepository.save(notification);
 

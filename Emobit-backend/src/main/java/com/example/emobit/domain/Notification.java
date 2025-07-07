@@ -52,6 +52,9 @@ public class Notification {
 	@Column(name = "CONTENT")
 	private String content;
 	
+	@Column(name = "IMAGE_PATH")
+	private String imagePath;
+	
 	@Column(name = "IS_READ", nullable = false)
 	private boolean isRead = false;
 	
