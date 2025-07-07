@@ -42,7 +42,7 @@ function PanelNotification() {
 
     const handleClick = (notification) => {
         if (notification.type == 'COMMENT' || notification.type == 'LIKE') {
-            navigate(`/board/read/${notification.targetId}`);
+            navigate(`/board/read/${notification.boardId}`);
         }
     };
 
