@@ -346,7 +346,6 @@ function BoardRead() {
                     )}
                 </ul>
 
-
                 <div className="board-extra-info">
                     <div className="left-side">
                         <div className="like-send-buttons">
@@ -360,15 +359,20 @@ function BoardRead() {
                             )}
                         </div>
                         
-                        <span className="like-count" onClick={() => setShowLikePopup(true)}>좋아요 {senders.length}개</span>
+                        {senders.length > 0 ? (
+                            <span className="like-count" onClick={() => setShowLikePopup(true)}>좋아요 {senders.length}개</span>
+                        ) : (
+                            <span className='like-zero'>가장 먼저 <span className='like-push' onClick={handleToggleLike}>좋아요</span>를 눌러보세요</span>
+                        )}
+                        
                         <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                     </div>
+
                     <div className="right-side">
                         <span className="view-count"><Eye size={13} />{board.viewCount}</span>
                     </div>
                 </div>
 
-                
                 <form className="comment-form" onSubmit={handleCreateComment}>
                     <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="댓글 달기..."/>
                     <button type="submit">등록</button>
