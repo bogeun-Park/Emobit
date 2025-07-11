@@ -5,7 +5,8 @@ import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector, useDispatch } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye } from 'lucide-react';
-import PopupButton from './PopupButton';
+import PopupEllipsis from './PopupEllipsis';
+import PopupLike from './PopupLike';
 import { messageAction } from '../../redux/Slice/messageSlice';
 
 function BoardRead() {
@@ -23,6 +24,7 @@ function BoardRead() {
     const [commentEditContent, setCommentEditContent] = useState('');
     const [isLike, setIsLike] = useState(null);
     const [senders, setSenders] = useState([]);
+    const [showLikePopup, setShowLikePopup] = useState(false);
 
     useEffect(() => {
         fetchBoard();
@@ -273,7 +275,7 @@ function BoardRead() {
 
                     {auth.id === board.createdBy && (
                         <div className="board-buttons">
-                            <PopupButton
+                            <PopupEllipsis
                                 onEdit={() => navigate(`/board/update/${boardId}`)}
                                 onDelete={handleDelete}
                             />
@@ -311,7 +313,7 @@ function BoardRead() {
                                             {auth.id === comment.createdBy && (
                                                 <div className="board-buttons">
                                                     {commentEditId !== comment.id && (
-                                                        <PopupButton
+                                                        <PopupEllipsis
                                                             onEdit={() => startEditing(comment)}
                                                             onDelete={() => handleDeleteComment(comment.id)}
                                                         />
@@ -358,7 +360,7 @@ function BoardRead() {
                             )}
                         </div>
                         
-                        <span className='like-count'>좋아요 {senders.length}개</span>
+                        <span className="like-count" onClick={() => setShowLikePopup(true)}>좋아요 {senders.length}개</span>
                         <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
                     </div>
                     <div className="right-side">
@@ -371,7 +373,11 @@ function BoardRead() {
                     <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="댓글 달기..."/>
                     <button type="submit">등록</button>
                 </form>
-            </div>
+
+                {showLikePopup && (
+                    <PopupLike senders={senders} handleMoveProfile={handleMoveProfile} setShowLikePopup={setShowLikePopup}/>
+                )}
+            </div>            
         </div>
     );
 }
