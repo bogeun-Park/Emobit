@@ -49,9 +49,6 @@ public class Notification {
 	@Column(name = "TARGET_ID", nullable = false)
 	private Long targetId;
 	
-	@Column(name = "CONTENT")
-	private String content;
-	
 	@Column(name = "IS_READ", nullable = false)
 	private boolean isRead = false;
 	

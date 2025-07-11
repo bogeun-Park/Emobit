@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.example.emobit.domain.Board;
+import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Member;
 import com.example.emobit.domain.Notification;
 import com.example.emobit.dto.NotificationDto;
@@ -37,13 +39,12 @@ public class NotificationService {
 		return notification;
 	}
 	
-	public void createNotification(Member receiver, Member sender, NotificationType type, Long targetId, String content) {
+	public void createNotification(Member receiver, Member sender, NotificationType type, Long targetId, Board board, Comments comment) {
         Notification notification = new Notification();
         notification.setReceiver(receiver);
         notification.setSender(sender);
         notification.setType(type);
         notification.setTargetId(targetId);
-        notification.setContent(content);
 
         notificationRepository.save(notification);
 
@@ -52,7 +53,7 @@ public class NotificationService {
             @Override
             public void afterCommit() {
             	Notification savedNotification = notificationRepository.findById(notification.getId()).orElseThrow();
-                NotificationDto notificationDto = new NotificationDto(savedNotification);
+                NotificationDto notificationDto = new NotificationDto(savedNotification, board, comment);
                 
                 messagingTemplate.convertAndSend("/topic/notification/new/" + receiver.getId(), notificationDto);
             }

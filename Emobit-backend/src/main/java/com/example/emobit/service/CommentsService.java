@@ -41,8 +41,9 @@ public class CommentsService {
 		String content = commentsCreateDto.getContent();
 		Long boardId = commentsCreateDto.getBoardId();
 		
-		Member sender = memberService.getMemberById(createdBy);
 		Board board = boardService.getBoardById(boardId);
+		Member receiver = board.getMember();
+		Member sender = memberService.getMemberById(createdBy);
 		
 		Comments comment = new Comments();
 		comment.setContent(content);
@@ -50,13 +51,12 @@ public class CommentsService {
 		comment.setBoard(board);
 		
 		commentsRepository.save(comment);
-		
-		Member receiver = board.getMember();
-		
-	    // 댓글이 자신이 작성한 게시글이 아닌 경우에만 알림 생성 (자기 알림 방지)
+	    	    
+    	// 댓글이 자신이 작성한 게시글이 아닌 경우에만 알림 생성 (자기 알림 방지)
 	    if (!receiver.getId().equals(sender.getId())) {
-	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, boardId, content);
+	    	notificationService.createNotification(receiver, sender, NotificationType.COMMENT, comment.getId(), board, comment);
 	    }
+        
 	}
 	
 	public void updateComment(Long id, CommentsUpdateDto commentsUpdateDto) {
@@ -74,13 +74,12 @@ public class CommentsService {
 		Board board = comment.getBoard();
         Member receiver = board.getMember();
         Member sender = memberService.getMemberById(senderId);
-        Long targetId = board.getId();
         
 		commentsRepository.delete(comment);
 		
 		// 상대방이 댓글 알림을 읽지 않은 경우 알림 삭제
         if (!receiver.getId().equals(sender.getId())) {
-            notificationService.deleteNotificationIfUnread(receiver, sender, NotificationType.COMMENT, targetId);
+            notificationService.deleteNotificationIfUnread(receiver, sender, NotificationType.COMMENT, id);
         }
 	}
 }
