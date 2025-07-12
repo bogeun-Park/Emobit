@@ -38,10 +38,10 @@ Emobit은 감정(Emotion)의 조각(Bit)들을 기록하고 공유하는 감성 
 
 ### DevOps
 - Git + GitHub
-- PM2
 - Oracle Cloud Instance
 - Oracle Object Storage
 - Nginx
+- Jenkins
 
 
 
