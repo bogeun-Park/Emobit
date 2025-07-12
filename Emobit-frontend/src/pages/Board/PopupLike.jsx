@@ -1,7 +1,25 @@
 import '../../styles/PopupLike.css';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { X } from 'lucide-react';
 
 function PopupLike({ senders, handleMoveProfile, setShowLikePopup }) {
+    const auth = useSelector(state => state.auth);
+
+    // ESC키 입력시 팝업 닫히게 하는 이벤트 리스너 설정
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setShowLikePopup(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [setShowLikePopup]);
+
     return (
         <div className="popup-like-overlay" onClick={() => setShowLikePopup(false)}>
             <div className="popup-like" onClick={e => e.stopPropagation()}>
@@ -24,7 +42,8 @@ function PopupLike({ senders, handleMoveProfile, setShowLikePopup }) {
                                     <span className="member-displayName">{member.displayName}</span>
                                 </div>
                             </div>
-                            <button className="follow-button">팔로우</button>
+
+                            {auth.username != member.username && <button className="follow-button">팔로우</button>}
                         </li>
                     ))}
                 </ul>
