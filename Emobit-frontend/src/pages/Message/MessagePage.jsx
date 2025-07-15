@@ -77,7 +77,7 @@ function MessagePage() {
             {(isMobile && chatRoomId) || !isMobile ? (
                 <ChatWindow
                     selectedChatRoomId={selectedChatRoomId}
-                    setSelectedChatRoomId={setSelectedChatRoomId}
+                    setshowNewChatPopup={setshowNewChatPopup}
                     navigate={navigate}
                 />
             ) : null}

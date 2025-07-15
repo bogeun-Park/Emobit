@@ -7,7 +7,7 @@ import SockJS from 'sockjs-client';
 import { MessageCirclePlus } from 'lucide-react';
 import { messageAction } from '../../redux/Slice/messageSlice';
 
-function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
+function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
     const auth = useSelector(state => state.auth);
     const chatRooms = useSelector(state => state.message.chatRooms);
     const axios = useAxios();
@@ -16,8 +16,6 @@ function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
-    const [targetUsername, setTargetUsername] = useState('');
-    const [showInputForm, setShowInputForm] = useState(false);
     const [targetMember, setTargetMember] = useState(null);
     const [chatWindowLoading, setChatWindowLoading] = useState(true);
     const messagesEndRef = useRef(null);
@@ -119,40 +117,6 @@ function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
         });
 
         setNewMessage('');
-    };
-
-    const handleCreateChatRoom = () => {
-        if (!targetUsername.trim()) return;
-
-        if (!auth.isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            navigate('/login');
-            return;
-        }
-
-        axios.post(`/chat/createRoom`, null, {
-            params: {
-                memberA: auth.username,
-                memberB: targetUsername
-            }
-        }).then(response => {
-            const newChatRoom = response.data;
-            setSelectedChatRoomId(newChatRoom.id);
-            
-            dispatch(messageAction.addChatRoom(newChatRoom));
-
-            setTargetUsername('');
-            setShowInputForm(false);
-            navigate(`/message/${newChatRoom.id}`);
-        }).catch(error => {
-            console.error('에러 발생', error);
-            if (error.response?.status === 401) {
-                alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-                navigate('/login');
-            } else {
-                alert('채팅방을 불러오는 중 오류가 발생했습니다.');
-            }
-        });
     };
 
     const handleExitChat = () => {
@@ -272,26 +236,14 @@ function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
                 </>
             ) : (
                 <div className="start-chat-container">
-                    {!showInputForm ? (
-                        <>
-                            <div className="chat-empty-icon">
-                                <div className="chat-icon-circle">
-                                    <MessageCirclePlus size={55} strokeWidth={1} />
-                                </div>
-                            </div>
-                            <h2 className="chat-empty-title">내 메시지</h2>
-                            <p className="chat-empty-subtitle">친구에게 나만의 메시지를 보내보세요</p>
-                            <button className="start-chat-button" onClick={() => setShowInputForm(true)}>메시지 보내기</button>
-                        </>
-                    ) : (
-                        <div className="start-chat-form">
-                            <input type="text" placeholder="대화할 상대 이름" value={targetUsername}
-                                onChange={e => setTargetUsername(e.target.value)}
-                            />
-
-                            <button onClick={handleCreateChatRoom}>채팅 시작</button>
+                    <div className="chat-empty-icon">
+                        <div className="chat-icon-circle">
+                            <MessageCirclePlus size={55} strokeWidth={1} />
                         </div>
-                    )}
+                    </div>
+                    <h2 className="chat-empty-title">내 메시지</h2>
+                    <p className="chat-empty-subtitle">친구에게 나만의 메시지를 보내보세요</p>
+                    <button className="start-chat-button" onClick={() => setshowNewChatPopup(true)}>메시지 보내기</button>
                 </div>
             )}
         </div>
