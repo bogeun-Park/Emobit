@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import ChatList from './ChatList';
 import ChatWindow from './ChatWindow';
+import PopupNewChat from './PopupNewChat';
 
 function MessagePage() {
     const axios = useAxios();    
@@ -17,6 +18,7 @@ function MessagePage() {
 
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [showNewChatPopup, setshowNewChatPopup] = useState(false);
 
     useEffect(() => {
         const handleResize = () => {
@@ -67,7 +69,7 @@ function MessagePage() {
             {(isMobile && !chatRoomId) || !isMobile ? (
                 <ChatList
                     selectedChatRoomId={selectedChatRoomId}
-                    setSelectedChatRoomId={setSelectedChatRoomId}
+                    setshowNewChatPopup={setshowNewChatPopup}
                     navigate={navigate}
                 />
             ) : null}
@@ -79,6 +81,10 @@ function MessagePage() {
                     navigate={navigate}
                 />
             ) : null}
+
+            {showNewChatPopup && (
+                <PopupNewChat setshowNewChatPopup={setshowNewChatPopup} navigate={navigate} />
+            )}
         </div>
     );
 }
