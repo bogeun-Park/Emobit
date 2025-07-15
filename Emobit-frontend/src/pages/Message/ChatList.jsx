@@ -35,10 +35,7 @@ function ChatList({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
                         const chatPartner = chatRoom.memberA.username === auth.username ? chatRoom.memberB : chatRoom.memberA;
                         return (
                             <li key={chatRoom.id} className={chatRoom.id === selectedChatRoomId ? 'active' : 'none'}
-                                onClick={() => {
-                                    setSelectedChatRoomId(chatRoom.id);
-                                    navigate(`/message/${chatRoom.id}`);
-                                }}
+                                onClick={() => navigate(`/message/${chatRoom.id}`)}
                             >
                                 <div className="chat-list-item">
                                     <img src={chatPartner.imageUrl} alt="" />
@@ -60,7 +57,7 @@ function ChatList({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
             )}
 
             {showNewChatPopup && (
-                <PopupNewChat setSelectedChatRoomId={setSelectedChatRoomId} setshowNewChatPopup={setshowNewChatPopup} navigate={navigate}/>
+                <PopupNewChat setshowNewChatPopup={setshowNewChatPopup} navigate={navigate}/>
             )}
         </div>
     );

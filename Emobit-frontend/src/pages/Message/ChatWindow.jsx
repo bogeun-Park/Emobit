@@ -162,7 +162,7 @@ function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
         axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
             .then(() => {                
                 dispatch(messageAction.exitChatRoom(selectedChatRoomId));
-                setSelectedChatRoomId(null);
+                navigate('/message');
             })
             .catch(error => {
                 console.error('에러 발생', error);
@@ -173,8 +173,6 @@ function ChatWindow({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
                     alert('채팅방 나가기 중 오류가 발생했습니다.');
                 }
             });
-
-        navigate('/message');
     };
 
     const showTime = (msg, idx) => {

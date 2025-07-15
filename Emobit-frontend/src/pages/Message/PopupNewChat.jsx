@@ -5,7 +5,7 @@ import { useAxios } from '../../contexts/AxiosContext';
 import { X } from 'lucide-react';
 import { messageAction } from '../../redux/Slice/messageSlice';
 
-function PopupNewChat({ setSelectedChatRoomId, setshowNewChatPopup, navigate }) {
+function PopupNewChat({ setshowNewChatPopup, navigate }) {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
