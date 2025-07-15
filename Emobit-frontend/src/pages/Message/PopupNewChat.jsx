@@ -74,11 +74,10 @@ function PopupNewChat({ setSelectedChatRoomId, setshowNewChatPopup, navigate }) 
             }
         }).then(response => {
             const newChatRoom = response.data;
-            setSelectedChatRoomId(newChatRoom.id);
             
             dispatch(messageAction.addChatRoom(newChatRoom));
-
             navigate(`/message/${newChatRoom.id}`);
+            setshowNewChatPopup(false);
         }).catch(error => {
             console.error('에러 발생', error);
             if (error.response?.status === 401) {
@@ -116,7 +115,7 @@ function PopupNewChat({ setSelectedChatRoomId, setshowNewChatPopup, navigate }) 
                                 <li className="new-chat-search-text">계정을 찾을 수 없습니다.</li>
                             ) : (
                                 searchList.map(member => (
-                                    <li key={member.id} className="new-chat-member-item">
+                                    <li key={member.id} className="new-chat-member-item" onClick={() => handleCreateChatRoom(member.username)}>
                                         <div className="member-info">
                                             <img
                                                 src={member.imageUrl}
