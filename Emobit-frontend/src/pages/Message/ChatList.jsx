@@ -1,11 +1,14 @@
 import '../../styles/ChatList.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { SquarePen } from 'lucide-react';
+import PopupNewChat from './PopupNewChat';
 
 function ChatList({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
     const auth = useSelector(state => state.auth);
     const chatRooms = useSelector(state => state.message.chatRooms);
+
+    const [showNewChatPopup, setshowNewChatPopup] = useState(false);
 
     const customMsgListDate = (dateString) => {
         const date = new Date(dateString);
@@ -21,7 +24,7 @@ function ChatList({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
         <div className="chat-list-container">
             <div className="chat-list-header">
                 <span>메시지</span>
-                <SquarePen className="send-message-search" />
+                <SquarePen className="send-message-search" onClick={() => setshowNewChatPopup(true)}/>
             </div>
 
             {chatRooms.length === 0 ? (
@@ -54,6 +57,10 @@ function ChatList({ selectedChatRoomId, setSelectedChatRoomId, navigate }) {
                         );
                     })}
                 </ul>
+            )}
+
+            {showNewChatPopup && (
+                <PopupNewChat setSelectedChatRoomId={setSelectedChatRoomId} setshowNewChatPopup={setshowNewChatPopup} navigate={navigate}/>
             )}
         </div>
     );
