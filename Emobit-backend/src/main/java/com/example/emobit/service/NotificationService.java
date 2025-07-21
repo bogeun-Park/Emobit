@@ -90,9 +90,9 @@ public class NotificationService {
 		}
 	}
 	
-	public void deleteNotification(Member receiver, Member sender, NotificationType type, Long targetId) {
+	public void deleteCommentNotification(Member receiver, Member sender, Long targetId) {
 		Optional<Notification> existingNotification= notificationRepository
-			.findByReceiverAndSenderAndTypeAndTargetId(receiver, sender, type, targetId);
+			.findByReceiverAndSenderAndTypeAndTargetId(receiver, sender, NotificationType.COMMENT, targetId);
 		
 		if (existingNotification.isPresent()) {
 			Notification notification = existingNotification.get();

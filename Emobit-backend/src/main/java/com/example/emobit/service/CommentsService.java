@@ -79,7 +79,7 @@ public class CommentsService {
 		
 		// 댓글 삭제시 해당 알림도 같이 삭제
         if (!receiver.getId().equals(sender.getId())) {
-            notificationService.deleteNotification(receiver, sender, NotificationType.COMMENT, id);
+            notificationService.deleteCommentNotification(receiver, sender, id);
         }
 	}
 }
