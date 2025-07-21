@@ -6,11 +6,13 @@
     height: 100dvh;
     border-right: 1px solid #ddd;
     background-color: #fff;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 25px rgba(0, 0, 0, 0.15);
     transform: translateX(-110%);
     transition: transform 0.3s ease-in-out;
     z-index: 999;
     padding-top: 8px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
 }
 
 .panel-search-container.open {
