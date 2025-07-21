@@ -89,4 +89,23 @@ public class NotificationService {
 	        });
 		}
 	}
+	
+	public void deleteNotification(Member receiver, Member sender, NotificationType type, Long targetId) {
+		Optional<Notification> existingNotification= notificationRepository
+			.findByReceiverAndSenderAndTypeAndTargetId(receiver, sender, type, targetId);
+		
+		if (existingNotification.isPresent()) {
+			Notification notification = existingNotification.get();
+			Long deletedId = notification.getId();
+			
+			notificationRepository.delete(notification);
+			
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+	            @Override
+	            public void afterCommit() {
+	                messagingTemplate.convertAndSend("/topic/notification/delete/" + receiver.getId(), deletedId);
+	            }
+	        });
+		}
+	}
 }
