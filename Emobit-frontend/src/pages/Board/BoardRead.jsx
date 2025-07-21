@@ -1,5 +1,5 @@
 import '../../styles/BoardReadPage.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +14,7 @@ function BoardRead() {
     const navigate = useNavigate();
     const auth = useSelector(state => state.auth);    
     const dispatch = useDispatch();
+    const textareaRef = useRef(null);
     
     const { boardId } = useParams();
     const [board, setBoard] = useState(null);
@@ -169,6 +170,11 @@ function BoardRead() {
             .then(() => {
                 alert('등록되었습니다.');
                 setContent('');
+
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = 'auto';
+                }
+
                 fetchComment();                
             })
             .catch(error => {
@@ -252,6 +258,17 @@ function BoardRead() {
         }).catch(error => {
             console.error('에러 발생:', error);
         });
+    };
+
+    const handleChangeComment = (e) => {
+        setContent(e.target.value);
+
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            const maxHeight = 20 * 4;
+            textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+        }
     };
 
     if (notFound) {
@@ -374,7 +391,7 @@ function BoardRead() {
                 </div>
 
                 <form className="comment-form" onSubmit={handleCreateComment}>
-                    <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={4} placeholder="댓글 달기..."/>
+                    <textarea value={content} onChange={handleChangeComment} rows={1} placeholder="댓글 달기..." ref={textareaRef} />
                     <button type="submit">등록</button>
                 </form>
 

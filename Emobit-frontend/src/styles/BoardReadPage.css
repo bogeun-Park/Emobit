@@ -180,6 +180,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-height: 40px;
 }
 
 .comment-form textarea {
@@ -190,16 +191,11 @@
     width: auto;
     resize: none;
     border: none;
-    box-sizing: border-box;
-    min-height: 40px;
-}
-
-.comment-form textarea:focus {
     outline: none;
+    line-height: 1.2;
 }
 
 .comment-form button {
-    margin-top: 0.5rem;
     background: none;
     border: none;
     color: #3897f0;

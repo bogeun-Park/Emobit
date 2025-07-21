@@ -12,13 +12,14 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
     const chatRooms = useSelector(state => state.message.chatRooms);
     const axios = useAxios();
     const dispatch = useDispatch();
+    const messagesEndRef = useRef(null);
+    const textareaRef = useRef(null);
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
     const [targetMember, setTargetMember] = useState(null);
     const [chatWindowLoading, setChatWindowLoading] = useState(true);
-    const messagesEndRef = useRef(null);
 
     // 메시지 불러오기
     useEffect(() => {
@@ -117,6 +118,10 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
         });
 
         setNewMessage('');
+
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+        }
     };
 
     const handleExitChat = () => {
@@ -174,6 +179,17 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
         return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
     }
 
+    const handleChangeMessage = (e) => {
+        setNewMessage(e.target.value);
+
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            const maxHeight = 20 * 4;
+            textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+        }
+    };
+
     return (
         <div className="chat-window-container">
             {chatWindowLoading ? null : selectedChatRoomId ? (
@@ -220,8 +236,8 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
 
                     <div className="chat-input-wrapper">
                         <div className="chat-input">
-                            <textarea value={newMessage} rows={1} placeholder="메시지를 입력하세요..."
-                                onChange={e => setNewMessage(e.target.value)}
+                            <textarea value={newMessage} rows={1} placeholder="메시지를 입력하세요..." ref={textareaRef}
+                                onChange={handleChangeMessage}
                                 onKeyDown={e => {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                         e.preventDefault();
