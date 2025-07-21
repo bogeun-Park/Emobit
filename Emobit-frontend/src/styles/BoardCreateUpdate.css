@@ -1,6 +1,6 @@
 .board-create-update-container {
     padding-top: 20px;
-    min-height: calc(100vh - 40px);
+    min-height: calc(100dvh - 40px);
     display: flex;
     margin: 0 auto;
     justify-content: center;
@@ -148,7 +148,12 @@
 }
 
 @media (max-width: 768px) {
+    .board-create-update-container {
+        align-items: stretch;
+    }
+
     .form-content-wrapper {
+        flex: 1;
         flex-direction: column;
     }
 
@@ -163,9 +168,5 @@
         width: 100%;
         height: auto;
         min-width: 0;
-    }
-
-    .input-content {
-        height: 250px;
     }
 }
