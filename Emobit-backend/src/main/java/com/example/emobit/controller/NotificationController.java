@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +56,7 @@ public class NotificationController {
 		return ResponseEntity.ok(notificationListDto);
 	}
 	
-	 @PostMapping("/notification/readAll")
+	@PostMapping("/notification/readAll")
     public ResponseEntity<?> readAllNotifications(@AuthenticationPrincipal CustomUser customUser) {
         if (customUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -65,4 +66,11 @@ public class NotificationController {
         
         return ResponseEntity.ok().build();
     }
+	
+	@DeleteMapping("/notification/delete_all_process")
+	public ResponseEntity<String> notificationDeleteAllProcess(@AuthenticationPrincipal CustomUser customUser) {
+		notificationService.notificationDeleteAllProcess(customUser.getId());
+		
+		return ResponseEntity.status(200).body("알림이 성공적으로 삭제되었습니다.");
+	}
 }

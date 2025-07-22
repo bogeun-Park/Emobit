@@ -28,4 +28,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 																	 Long targetId);
 	
 	List<Notification> findByBoardId(Long boardId);
+	
+	void deleteAllByReceiver(Member receiver);
 }
