@@ -20,7 +20,13 @@ const notificationSlice = createSlice({
             state.totalCount = 0;
             state.commentCount = 0;
             state.likeCount = 0;
-        }
+        },
+        clearNotifications: (state) => {
+            state.notifications = [];
+            state.totalCount = 0;
+            state.commentCount = 0;
+            state.likeCount = 0;
+        },
     },
 });
 
