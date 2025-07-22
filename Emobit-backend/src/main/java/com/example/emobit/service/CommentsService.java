@@ -77,9 +77,9 @@ public class CommentsService {
         
 		commentsRepository.delete(comment);
 		
-		// 상대방이 댓글 알림을 읽지 않은 경우 알림 삭제
+		// 댓글 삭제시 해당 알림도 같이 삭제
         if (!receiver.getId().equals(sender.getId())) {
-            notificationService.deleteNotificationIfUnread(receiver, sender, NotificationType.COMMENT, id);
+            notificationService.deleteCommentNotification(receiver, sender, id);
         }
 	}
 }

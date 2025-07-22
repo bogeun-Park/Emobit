@@ -32,8 +32,8 @@ public class NotificationDto {
     	this.type = notification.getType();
     	this.targetId = notification.getTargetId();
     	this.content = (comment != null) ? comment.getContent() : null;
-    	this.boardId = board.getId();
-    	this.imageUrl = Constant.Oracle_Storage_ORIGIN + board.getImagePath();
+    	this.boardId = (board != null) ? board.getId() : null;
+    	this.imageUrl = (board != null) ? Constant.Oracle_Storage_ORIGIN + board.getImagePath() : null;
     	this.isRead = notification.isRead();
     	this.createdAt = notification.getCreatedAt();
     }

@@ -28,6 +28,7 @@ public class BoardService {
 	private final MemberService memberService;
 	private final OracleStorageService oracleStorageService;
 	private final StringRedisTemplate redisTemplate;
+	private final NotificationService notificationService;
 	
 	public List<Board> getBoardAll() {
 		List<Board> boardList = boardRepository.findAll(Sort.by("id").descending());
@@ -98,7 +99,10 @@ public class BoardService {
         } catch (Exception e) {
             throw new RuntimeException("아이템 삭제 실패", e);
         }
-		
+        
+        // 게시글 삭제시 해당 게시글의 좋아요 알림 삭제
+        notificationService.deleteLikeNotification(id);
+        
         // 이미지 삭제 작업
         if (!imagePath.equals(Constant.BOARD_DEFAULT_IMAGE_PATH)) {
             boolean isImageDeleted = oracleStorageService.deleteObject(imagePath);

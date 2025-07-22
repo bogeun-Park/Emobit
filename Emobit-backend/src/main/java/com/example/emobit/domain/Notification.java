@@ -52,6 +52,9 @@ public class Notification {
 	@Column(name = "IS_READ", nullable = false)
 	private boolean isRead = false;
 	
+	@Column(name = "BOARD_ID", updatable = false)
+	private Long boardId;
+	
 	@CreationTimestamp
 	@Column(name = "CREATED_AT", nullable = false, updatable = false)
     private Date createdAt;
