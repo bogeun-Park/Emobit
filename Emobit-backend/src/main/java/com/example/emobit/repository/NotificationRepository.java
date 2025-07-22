@@ -22,9 +22,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 																				   NotificationType type, 
 																				   Long targetId);
 	
-	// 읽음 유무에 상관 없이 알림을 가져옴
 	Optional<Notification> findByReceiverAndSenderAndTypeAndTargetId(Member receiver, 
 																	 Member sender, 
 																	 NotificationType type, 
 																	 Long targetId);
+	
+	List<Notification> findByBoardId(Long boardId);
 }
