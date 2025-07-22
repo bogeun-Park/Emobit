@@ -12,6 +12,7 @@ import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Member;
 import com.example.emobit.domain.Notification;
+import com.example.emobit.dto.NotificationDeleteDto;
 import com.example.emobit.dto.NotificationDto;
 import com.example.emobit.enums.NotificationType;
 import com.example.emobit.repository.NotificationRepository;
@@ -45,6 +46,7 @@ public class NotificationService {
         notification.setSender(sender);
         notification.setType(type);
         notification.setTargetId(targetId);
+        notification.setBoardId(board.getId());
 
         notificationRepository.save(notification);
 
@@ -72,7 +74,7 @@ public class NotificationService {
 	}
 	
 	public void deleteNotificationIfUnread(Member receiver, Member sender, NotificationType type, Long targetId) {
-		Optional<Notification> existingNotification= notificationRepository
+		Optional<Notification> existingNotification = notificationRepository
 			.findByReceiverAndSenderAndTypeAndTargetIdAndIsReadFalse(receiver, sender, type, targetId);
 		
 		if (existingNotification.isPresent()) {
@@ -91,7 +93,7 @@ public class NotificationService {
 	}
 	
 	public void deleteCommentNotification(Member receiver, Member sender, Long targetId) {
-		Optional<Notification> existingNotification= notificationRepository
+		Optional<Notification> existingNotification = notificationRepository
 			.findByReceiverAndSenderAndTypeAndTargetId(receiver, sender, NotificationType.COMMENT, targetId);
 		
 		if (existingNotification.isPresent()) {
@@ -107,5 +109,25 @@ public class NotificationService {
 	            }
 	        });
 		}
+	}
+	
+	public void deleteLikeNotification(Long boardId) {
+		List<Notification> notifications = notificationRepository.findByBoardId(boardId);
+		
+		List<NotificationDeleteDto> notificationDeleteListDto = notifications.stream()
+			.map(notification -> new NotificationDeleteDto(notification.getReceiver().getId(), notification.getId()))
+			.toList();
+		
+		notificationRepository.deleteAll(notifications);
+		
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+            	notificationDeleteListDto.forEach((NotificationDeleteDto notificationDeleteDto) -> {
+            		messagingTemplate.convertAndSend("/topic/notification/delete/" + notificationDeleteDto.getReceiverId(),
+							 														 notificationDeleteDto.getDeletedId());
+            	});
+            }
+        });
 	}
 }
