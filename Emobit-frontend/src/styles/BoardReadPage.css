@@ -16,13 +16,40 @@
     max-height: 646px;
     overflow: hidden;
     height: 100%;
+    flex-direction: column;
 }
 
-.board-left img {
+.board-left-header {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.board-image {
     width: 100%;
     height: 100%;
     object-fit: contain;
     background-color: black;
+}
+
+.board-left-extra-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.board-left-header,
+.board-left-extra-info {
+    display: none;
 }
 
 .board-right {
@@ -217,20 +244,26 @@
         height: auto;
     }
 
-    .board-left, .board-right {
+    .board-left {
         width: 100%;
+        max-height: none;
         height: auto;
         min-width: 0;
     }
 
-    .board-left img {
+    .board-right {
+        display: none;
+    }
+
+    .board-image {
         width: 100%;
-        height: auto;
+        height: calc(100dvh - 208px);
         max-height: 500px;
     }
 
-    .board-right {
-        min-width: unset;
+    .board-left-header,
+    .board-left-extra-info {
+        display: flex;
     }
 }
 
@@ -255,7 +288,7 @@
     gap: 1rem;
 }
 
-.like-button, .send-button {
+.like-send-buttons button {
     padding: 0;
     background: none;
     border: none;
@@ -264,7 +297,8 @@
 }
 
 .like-button:hover svg,
-.send-button:hover svg {
+.send-button:hover svg,
+.comment-button:hover svg {
     stroke: #828282;
 }
 

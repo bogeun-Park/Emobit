@@ -4,7 +4,7 @@ import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector, useDispatch } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
-import { Heart, Send, Eye } from 'lucide-react';
+import { Heart, Send, Eye, MessageCircle } from 'lucide-react';
 import PopupEllipsis from './PopupEllipsis';
 import PopupLike from './PopupLike';
 import { messageAction } from '../../redux/Slice/messageSlice';
@@ -280,7 +280,55 @@ function BoardRead() {
     return (
         <div className="board-read-container">
             <div className="board-left">
-                <img src={board.imageUrl} alt={board.title} />
+                <div className="board-left-header">
+                    <div className="board-user-header">
+                        <img className="content-user-image" src={board.memberImageUrl} alt="" onClick={() => handleMoveProfile(board.memberUsername)} />
+                        <span className="content-username" onClick={() => handleMoveProfile(board.memberUsername)}>{board.memberUsername}</span>
+                    </div>
+
+                    {auth.id === board.createdBy && (
+                        <div className="board-buttons">
+                            <PopupEllipsis
+                                onEdit={() => navigate(`/board/update/${boardId}`)}
+                                onDelete={handleDelete}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                <img className='board-image' src={board.imageUrl} alt={board.title} />
+
+                <div className="board-left-extra-info">
+                    <div className="left-side">
+                        <div className="like-send-buttons">
+                            <button type="button" className={`like-button ${isLike ? 'liked' : ''}`} onClick={handleToggleLike}>
+                                <Heart size={24} color="#000" />
+                            </button>
+
+                            <button type="button" className='comment-button'>
+                                <MessageCircle size={24} color="#000" />
+                            </button>
+
+                            {auth.id !== board.createdBy && (
+                                <button type="button" className="send-button" onClick={handleSendMessageToAuthor}>
+                                    <Send size={24} color="#000" />
+                                </button>
+                            )}
+                        </div>
+
+                        {senders.length > 0 ? (
+                            <span className="like-count" onClick={() => setShowLikePopup(true)}>좋아요 {senders.length}개</span>
+                        ) : (
+                            <span className='like-zero'>가장 먼저 <span className='like-push' onClick={handleToggleLike}>좋아요</span>를 눌러보세요</span>
+                        )}
+
+                        <span className="created-at">{new Date(board.createdAt).toLocaleDateString().replace(/\.$/, '')}</span>
+                    </div>
+
+                    <div className="right-side">
+                        <span className="view-count"><Eye size={13} />{board.viewCount}</span>
+                    </div>
+                </div>
             </div>
 
             <div className="board-right">
