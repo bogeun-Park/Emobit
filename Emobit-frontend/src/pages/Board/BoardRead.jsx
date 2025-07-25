@@ -442,11 +442,11 @@ function BoardRead() {
                     <textarea value={content} onChange={handleChangeComment} rows={1} placeholder="댓글 달기..." ref={textareaRef} />
                     <button type="submit">등록</button>
                 </form>
+            </div>
 
-                {showLikePopup && (
-                    <PopupLike senders={senders} handleMoveProfile={handleMoveProfile} setShowLikePopup={setShowLikePopup}/>
-                )}
-            </div>            
+            {showLikePopup && (
+                <PopupLike senders={senders} handleMoveProfile={handleMoveProfile} setShowLikePopup={setShowLikePopup}/>
+            )}        
         </div>
     );
 }
