@@ -163,6 +163,12 @@ function BoardRead() {
         const confirmed = window.confirm('댓글을 등록하시겠습니까?');
         if (!confirmed) return;
 
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
         axios.post('/comments/create_process', {
             content,
             boardId,
