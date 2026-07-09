@@ -133,12 +133,12 @@ function Mobilebar() {
                     <Home size={menuImgSize} />
                 </button>
 
-                <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board')}>
-                    <BookOpen size={menuImgSize} />
-                </button>
-
                 <button className={active === 'search' ? 'active' : ''} onClick={() => handlePanelMenuClick('search')}>
                     <Search size={menuImgSize} />
+                </button>
+
+                <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board')}>
+                    <BookOpen size={menuImgSize} />
                 </button>
 
                 {auth.isAuthenticated && (

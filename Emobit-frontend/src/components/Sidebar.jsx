@@ -143,14 +143,6 @@ function Sidebar() {
 
                     {auth.isAuthenticated && 
                         <>
-                            <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
-                                <div className="menu-icon-wrapper">
-                                    <Send size={menuImgSize} />
-                                    {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
-                                </div>
-                                <span className="menu-label">메시지</span>
-                            </button>
-
                             <button className={active === 'notification' ? 'active' : ''} onClick={() => handlePanelMenuClick('notification')}>
                                 <div className="menu-icon-wrapper">
                                     <Bell size={menuImgSize} />
@@ -177,6 +169,14 @@ function Sidebar() {
                                     </div>
                                 </div>
                             )}
+
+                            <button className={active === 'message' ? 'active' : ''} onClick={() => handleMenuClick('/message')}>
+                                <div className="menu-icon-wrapper">
+                                    <Send size={menuImgSize} />
+                                    {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
+                                </div>
+                                <span className="menu-label">메시지</span>
+                            </button>
 
                             <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>
                                 <PlusCircle size={menuImgSize} />
