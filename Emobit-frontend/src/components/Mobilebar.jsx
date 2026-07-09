@@ -7,7 +7,7 @@ import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
-import { Home, Search, BookOpen, PlusCircle, User, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
+import { Home, Search, BookOpen, PlusCircle, User, Send, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
 
 function Mobilebar() {
     const axios = useAxios();
@@ -16,6 +16,7 @@ function Mobilebar() {
     const auth = useSelector(state => state.auth);
     const active = useSelector(state => state.menu.active);
     const panelMenu = useSelector(state => state.menu.panelMenu);
+    const senderCount = useSelector(state => state.message.senderCount);
     const notification = useSelector(state => state.notification);
 
     const menuImgSize = 26;
@@ -104,6 +105,15 @@ function Mobilebar() {
                                 </div>
                             )}
                         </div>
+                    )}
+
+                    {auth.isAuthenticated && (
+                        <button className="mobile-auth-button" onClick={() => handleMenuClick('/message')}>
+                            <div className="menu-icon-wrapper">
+                                <Send size={22} />
+                                {senderCount > 0 && <span className="bubble-badge">{senderCount}</span>}
+                            </div>
+                        </button>
                     )}
 
                     {!auth.isAuthenticated ? (
