@@ -7,7 +7,7 @@ import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
-import { Home, Search, BookOpen, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
+import { Home, Search, BookOpen, PlusCircle, User, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
 
 function Mobilebar() {
     const axios = useAxios();
@@ -123,13 +123,25 @@ function Mobilebar() {
                     <Home size={menuImgSize} />
                 </button>
 
+                <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board')}>
+                    <BookOpen size={menuImgSize} />
+                </button>
+
                 <button className={active === 'search' ? 'active' : ''} onClick={() => handlePanelMenuClick('search')}>
                     <Search size={menuImgSize} />
                 </button>
 
-                <button className={active === 'board' ? 'active' : ''} onClick={() => handleMenuClick('/board')}>
-                    <BookOpen size={menuImgSize} />
-                </button>
+                {auth.isAuthenticated && (
+                    <button className={active === 'create' ? 'active' : ''} onClick={() => handleMenuClick('/board/create')}>
+                        <PlusCircle size={menuImgSize} />
+                    </button>
+                )}
+
+                {auth.isAuthenticated && (
+                    <button className={active === 'profile' ? 'active' : ''} onClick={() => handleMenuClick(`/${auth.username}`)}>
+                        <User size={menuImgSize} />
+                    </button>
+                )}
             </nav>
         </div>
     );
