@@ -2,6 +2,7 @@ import '../styles/Layout.css'
 import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import Mobilebar from './Mobilebar';
 import PanelSearch from './PanelSearch';
 import PanelNotification from './PanelNotification';
 import { useDispatch, useSelector } from 'react-redux';
@@ -112,6 +113,7 @@ function Layout() {
     return (
         <div className="layout-container">
             <Sidebar />
+            <Mobilebar />
             <PanelSearch />
             <PanelNotification />
 

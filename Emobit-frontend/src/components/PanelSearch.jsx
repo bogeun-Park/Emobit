@@ -25,8 +25,11 @@ function PanelSearch() {
         const handleClickOutside = (event) => {
             const curPanel = panelRef.current;
             const sidebar = document.querySelector('.sidebar-container');
+            const mobileBottombar = document.querySelector('.mobile-bottombar');
 
-            if (curPanel && !curPanel.contains(event.target) && sidebar && !sidebar.contains(event.target)) {
+            if (curPanel && !curPanel.contains(event.target)
+                && sidebar && !sidebar.contains(event.target)
+                && (!mobileBottombar || !mobileBottombar.contains(event.target))) {
                 dispatch(menuAction.setPanelMenu(null));
 
                 setTimeout(() => {
