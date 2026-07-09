@@ -85,6 +85,12 @@
     }
 }
 
+@media (max-width: 768px) {
+    .sidebar-container {
+        display: none;
+    }
+}
+
 .menu-icon-wrapper {
     position: relative;
     display: inline-block;

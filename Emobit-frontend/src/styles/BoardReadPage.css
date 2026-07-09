@@ -242,6 +242,7 @@
     .board-read-container {
         flex-direction: column;
         height: auto;
+        padding-top: 0;
     }
 
     .board-left {
@@ -257,7 +258,7 @@
 
     .board-image {
         width: 100%;
-        height: calc(100dvh - 209px);
+        height: calc(100dvh - 281px);
     }
 
     .board-left-header,
