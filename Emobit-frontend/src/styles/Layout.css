@@ -5,7 +5,8 @@
 
 .main-content {
     flex: 1;
-    padding-left: calc(var(--sidebar-width, 245px) + 20px); /* Sidebar 너비만큼 여백 줌 */
+    padding-left: calc(var(--sidebar-width, 245px) + 20px);
+    /* Sidebar 너비만큼 여백 줌 */
     padding-right: 20px;
     padding-bottom: 20px;
     box-sizing: border-box;
@@ -13,17 +14,26 @@
 
 @media (max-width: 768px) {
     .main-content {
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 20px;
+        padding-right: 20px;
         padding-top: var(--mobile-topbar-height, 56px);
         padding-bottom: var(--mobile-bottombar-height, 56px);
         height: 100dvh;
     }
 
-    .main-content > .home-container,
-    .main-content > .board-read-container,
-    .main-content > .board-create-update-container,
-    .main-content > .message-container {
+    /* 화면 꽉 채우기(풀블리드)가 필요한 페이지만 여기서 좌우 패딩을 상쇄 */
+    .main-content>.board-read-container,
+    .main-content>.board-create-update-container,
+    .main-content>.board-container {
+        margin-left: -20px;
+        margin-right: -20px;
+        width: calc(100% + 40px);
+    }
+
+    .main-content>.home-container,
+    .main-content>.board-read-container,
+    .main-content>.board-create-update-container,
+    .main-content>.message-container {
         height: 100%;
         padding-top: 0;
     }
