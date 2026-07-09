@@ -19,8 +19,11 @@ function PanelNotification() {
         const handleClickOutside = (event) => {
             const curPanel = panelRef.current;
             const sidebar = document.querySelector('.sidebar-container');
+            const mobileTopbar = document.querySelector('.mobile-topbar');
 
-            if (curPanel && !curPanel.contains(event.target) && sidebar && !sidebar.contains(event.target)) {
+            if (curPanel && !curPanel.contains(event.target)
+                && sidebar && !sidebar.contains(event.target)
+                && (!mobileTopbar || !mobileTopbar.contains(event.target))) {
                 dispatch(menuAction.setPanelMenu(null));
             }
         };

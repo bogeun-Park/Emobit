@@ -28,6 +28,12 @@
         font-weight: 800;
     }
 
+    .mobile-topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
     .mobile-auth-button {
         display: flex;
         align-items: center;
@@ -37,6 +43,42 @@
         cursor: pointer;
         color: #000;
         padding: 8px;
+    }
+
+    .mobile-notification-wrapper {
+        position: relative;
+        display: flex;
+    }
+
+    .mobile-notification-bubble {
+        position: absolute;
+        top: 44px;
+        right: -4px;
+        display: inline-flex;
+        align-items: center;
+        background-color: #ff3040;
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+        white-space: nowrap;
+        gap: 8px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+
+    .mobile-notification-bubble::before {
+        content: "";
+        position: absolute;
+        top: -5px;
+        right: 18px;
+        transform: rotate(45deg);
+        width: 10px;
+        height: 10px;
+        background-color: #ff3040;
+        border-start-start-radius: 3px;
     }
 
     .mobile-bottombar {

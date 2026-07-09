@@ -6,7 +6,8 @@ import { useAxios } from '../contexts/AxiosContext';
 import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
-import { Home, Search, BookOpen, LogIn, LogOut } from 'lucide-react';
+import { notificationAction } from '../redux/Slice/notificationSlice';
+import { Home, Search, BookOpen, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
 
 function Mobilebar() {
     const axios = useAxios();
@@ -15,6 +16,7 @@ function Mobilebar() {
     const auth = useSelector(state => state.auth);
     const active = useSelector(state => state.menu.active);
     const panelMenu = useSelector(state => state.menu.panelMenu);
+    const notification = useSelector(state => state.notification);
 
     const menuImgSize = 26;
 
@@ -38,6 +40,16 @@ function Mobilebar() {
         }
 
         dispatch(menuAction.setPanelMenu(menuName));
+
+        if (menuName === 'notification' && notification.totalCount > 0) {
+            axios.post('/notification/readAll')
+                .then(() => {
+                    dispatch(notificationAction.readNotifications());
+                })
+                .catch(error => {
+                    console.error('Failed to fetch user data:', error);
+                });
+        }
     };
 
     const handlelogout = () => {
@@ -65,15 +77,45 @@ function Mobilebar() {
                     Emobit
                 </Link>
 
-                {!auth.isAuthenticated ? (
-                    <button className="mobile-auth-button" onClick={() => handleMenuClick('/login')}>
-                        <LogIn size={22} />
-                    </button>
-                ) : (
-                    <button className="mobile-auth-button" onClick={handlelogout}>
-                        <LogOut size={22} />
-                    </button>
-                )}
+                <div className="mobile-topbar-right">
+                    {auth.isAuthenticated && (
+                        <div className="mobile-notification-wrapper">
+                            <button className="mobile-auth-button" onClick={() => handlePanelMenuClick('notification')}>
+                                <div className="menu-icon-wrapper">
+                                    <Bell size={22} />
+                                    {notification.totalCount > 0 && <span className="dot-indicator" />}
+                                </div>
+                            </button>
+
+                            {notification.totalCount > 0 && (
+                                <div className="mobile-notification-bubble" onClick={() => handlePanelMenuClick('notification')}>
+                                    {notification.commentCount > 0 && (
+                                        <div className="bubble-content">
+                                            <MessageCircle className='notification-icon' size={18} />
+                                            <span className='notification-count'>{notification.commentCount}</span>
+                                        </div>
+                                    )}
+                                    {notification.likeCount > 0 && (
+                                        <div className="bubble-content">
+                                            <Heart className='notification-icon' size={18} />
+                                            <span className='notification-count'>{notification.likeCount}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {!auth.isAuthenticated ? (
+                        <button className="mobile-auth-button" onClick={() => handleMenuClick('/login')}>
+                            <LogIn size={22} />
+                        </button>
+                    ) : (
+                        <button className="mobile-auth-button" onClick={handlelogout}>
+                            <LogOut size={22} />
+                        </button>
+                    )}
+                </div>
             </header>
 
             <nav className="mobile-bottombar">
