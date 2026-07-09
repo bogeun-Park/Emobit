@@ -15,7 +15,27 @@
     .main-content {
         padding-left: 0;
         padding-right: 0;
-        padding-top: 56px; /* 모바일 상단바 높이 */
-        padding-bottom: 56px; /* 모바일 하단바 높이 */
+        padding-top: var(--mobile-topbar-height, 56px);
+        padding-bottom: var(--mobile-bottombar-height, 56px);
+        height: 100dvh;
+    }
+
+    .main-content > .home-container,
+    .main-content > .board-read-container,
+    .main-content > .board-create-update-container,
+    .main-content > .message-container {
+        height: 100%;
+        padding-top: 0;
+    }
+
+    .main-content .board-left {
+        flex: 1;
+        height: 100%;
+    }
+
+    .main-content .board-image {
+        height: auto;
+        flex: 1;
+        min-height: 0;
     }
 }
