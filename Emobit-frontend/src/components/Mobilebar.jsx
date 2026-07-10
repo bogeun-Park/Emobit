@@ -7,7 +7,7 @@ import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
-import { Home, Search, BookOpen, PlusCircle, User, Send, Bell, LogIn, LogOut, MessageCircle, Heart } from 'lucide-react';
+import { Home, Search, BookOpen, PlusCircle, User, Send, Bell, LogIn, LogOut, MessageCircle, Heart, UserRound } from 'lucide-react';
 
 function Mobilebar() {
     const axios = useAxios();
@@ -100,6 +100,12 @@ function Mobilebar() {
                                         <div className="bubble-content">
                                             <Heart className='notification-icon' size={18} />
                                             <span className='notification-count'>{notification.likeCount}</span>
+                                        </div>
+                                    )}
+                                    {notification.followCount > 0 && (
+                                        <div className="bubble-content">
+                                            <UserRound className='notification-icon' size={18} />
+                                            <span className='notification-count'>{notification.followCount}</span>
                                         </div>
                                     )}
                                 </div>

@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.emobit.domain.Board;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.BoardDto;
+import com.example.emobit.dto.FollowStatsDto;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberLoginDto;
 import com.example.emobit.dto.MemberProfileDto;
 import com.example.emobit.dto.MemberRegisterDto;
 import com.example.emobit.security.CustomUser;
 import com.example.emobit.security.Jwtutil;
+import com.example.emobit.service.FollowService;
 import com.example.emobit.service.MemberService;
 import com.example.emobit.service.OracleStorageService;
 
@@ -46,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberController {
 	private final MemberService memberService;
+	private final FollowService followService;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final OracleStorageService oracleStorageService;
 	
@@ -177,15 +180,19 @@ public class MemberController {
 	public ResponseEntity<?> getMyBoards(@PathVariable("username") String username,
 										 @AuthenticationPrincipal CustomUser customUser) {		
 		Member member = memberService.getMemberByUsername(username);
-		MemberAuthDto memberAuthDto = new MemberAuthDto(member);
-		
+
 		List<Board> boardList = member.getBoards();
 		List<BoardDto> boardListDto = boardList.stream()
 		    .map(BoardDto::new)
 		    .toList();
-		
-		MemberProfileDto memberProfileDto = new MemberProfileDto(memberAuthDto, boardListDto);
-		
+
+		long followerCount = followService.getFollowerCount(member.getId());
+		long followingCount = followService.getFollowingCount(member.getId());
+		boolean isFollow = customUser != null && followService.isFollowing(customUser.getId(), member.getId());
+
+		FollowStatsDto followStatsDto = new FollowStatsDto(followerCount, followingCount, isFollow);
+		MemberProfileDto memberProfileDto = new MemberProfileDto(member, boardListDto, followStatsDto);
+
 		return ResponseEntity.ok(memberProfileDto);
 	}
 	
