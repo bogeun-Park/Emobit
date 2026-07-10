@@ -134,7 +134,7 @@ function ProfilePage() {
 
                             <div className="profile-info-stat-item">
                                 <span className="stats-label">팔로잉</span>
-                                <span className="profile-info-board-count">{follow.isFollowCount}</span>
+                                <span className="profile-info-board-count">{follow.followingCount}</span>
                             </div>
                         </div>
 
