@@ -47,7 +47,7 @@ public class NotificationService {
         notification.setSender(sender);
         notification.setType(type);
         notification.setTargetId(targetId);
-        notification.setBoardId(board.getId());
+        notification.setBoardId(board != null ? board.getId() : null);
 
         notificationRepository.save(notification);
 

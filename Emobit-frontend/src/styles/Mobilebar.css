@@ -4,12 +4,17 @@
 }
 
 @media (max-width: 768px) {
+    :root {
+        --mobile-topbar-height: 56px;
+        --mobile-bottombar-height: 56px;
+    }
+
     .mobile-topbar {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        height: 56px;
+        height: var(--mobile-topbar-height);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -86,7 +91,7 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 56px;
+        height: var(--mobile-bottombar-height);
         display: flex;
         align-items: center;
         justify-content: space-around;

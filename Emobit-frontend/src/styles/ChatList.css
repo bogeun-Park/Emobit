@@ -35,7 +35,7 @@
 .chat-list-header {
     display: flex;
     justify-content: space-between;
-    padding: 44px 22px 30px 22px;
+    padding: 40px 22px 28px 22px;
 }
 
 .chat-list-header span {

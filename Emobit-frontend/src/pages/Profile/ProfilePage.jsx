@@ -4,6 +4,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
 import NotFoundPage from '../NotFound/NotFoundPage';
+import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
 
 function ProfilePage() {
@@ -14,14 +15,18 @@ function ProfilePage() {
     const { username } = useParams();
     const [member, setMember] = useState(null);
     const [boards, setBoards] = useState(null);
+    const [follow, setFollow] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [showFollowPopup, setShowFollowPopup] = useState(false);
+    const [followPopupMode, setFollowPopupMode] = useState('followers');
 
     useEffect(() => {
         axios.get(`/profile/${username}`)
             .then((response) => {
                 setMember(response.data.member);
                 setBoards(response.data.boards);
-                setNotFound(false);              
+                setFollow(response.data.follow);
+                setNotFound(false);
             })
             .catch((error) => {
                 if (error.response && error.response.status === 404) {
@@ -31,6 +36,22 @@ function ProfilePage() {
                 }
             });
     }, [username]);
+
+    const handleFollowToggle = () => {
+        axios.post('/follow/toggle', { targetId: member.id })
+            .then((response) => {
+                setFollow(response.data);
+            })
+            .catch((error) => {
+                console.error('에러 발생:', error);
+                if (error.response?.status === 401) {
+                    alert('로그인이 필요합니다.');
+                    navigate('/login');
+                } else {
+                    alert('팔로우 처리 중 오류가 발생했습니다.');
+                }
+            });
+    };
 
     const handleClickImage = () => {
         if (auth.username === username) {
@@ -75,7 +96,7 @@ function ProfilePage() {
         return <NotFoundPage />;
     }
 
-    if (!boards || !member) return null;
+    if (!boards || !member || !follow) return null;
 
     return (
         <div className="profile-container">
@@ -90,11 +111,34 @@ function ProfilePage() {
                     />                    
 
                     <div className="profile-info">
-                        <div className="profile-info-username">{member.username}</div>
+                        <div className="profile-info-top">
+                            <div className="profile-info-username">{member.username}</div>
+
+                            {auth.username !== member.username && (
+                                <button
+                                    className={`follow-button ${follow.isFollow ? 'following' : ''}`}
+                                    onClick={handleFollowToggle}
+                                >
+                                    {follow.isFollow ? '팔로잉' : '팔로우'}
+                                </button>
+                            )}
+                        </div>
 
                         <div className="profile-info-stats">
-                            <span className="stats-label">게시물</span>
-                            <span className="profile-info-board-count">{boards.length}</span>
+                            <div className="profile-info-stat-item">
+                                <span className="stats-label">게시물</span>
+                                <span className="profile-info-board-count">{boards.length}</span>
+                            </div>
+
+                            <div className="profile-info-stat-item clickable" onClick={() => { setFollowPopupMode('followers'); setShowFollowPopup(true); }}>
+                                <span className="stats-label">팔로워</span>
+                                <span className="profile-info-board-count">{follow.followerCount}</span>
+                            </div>
+
+                            <div className="profile-info-stat-item clickable" onClick={() => { setFollowPopupMode('following'); setShowFollowPopup(true); }}>
+                                <span className="stats-label">팔로잉</span>
+                                <span className="profile-info-board-count">{follow.followingCount}</span>
+                            </div>
                         </div>
 
                         <div className="profile-info-user-pc">
@@ -119,6 +163,16 @@ function ProfilePage() {
                     </Link>
                 ))}
             </div>
+
+            {showFollowPopup && (
+                <PopupFollow
+                    mode={followPopupMode}
+                    targetId={member.id}
+                    setShowFollowPopup={setShowFollowPopup}
+                    onFollowerCountChange={(followerCount) => setFollow(prev => ({ ...prev, followerCount }))}
+                    onFollowingCountChange={(delta) => setFollow(prev => ({ ...prev, followingCount: prev.followingCount + delta }))}
+                />
+            )}
         </div>
     );
 }

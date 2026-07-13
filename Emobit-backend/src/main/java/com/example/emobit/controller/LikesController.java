@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.emobit.domain.Member;
+import com.example.emobit.dto.FollowMemberDto;
 import com.example.emobit.dto.LikeRequestDto;
-import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.enums.LikeType;
 import com.example.emobit.security.CustomUser;
+import com.example.emobit.service.FollowService;
 import com.example.emobit.service.LikesService;
 
 import jakarta.validation.Valid;
@@ -29,15 +30,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LikesController {
 	private final LikesService likesService;
-	
+	private final FollowService followService;
+
 	@GetMapping("/likes/senders")
 	public ResponseEntity<?> getLikeSenders(@RequestParam("type") LikeType type,
-	                                        @RequestParam("targetId") Long targetId) {
+	                                        @RequestParam("targetId") Long targetId,
+	                                        @AuthenticationPrincipal CustomUser customUser) {
 		List<Member> senderList = likesService.getLikeSenders(type, targetId);
-		List<MemberAuthDto> senderListDto = senderList.stream()
-			.map(MemberAuthDto::new)
+		List<FollowMemberDto> senderListDto = senderList.stream()
+			.map(member -> new FollowMemberDto(member, customUser != null && followService.isFollowing(customUser.getId(), member.getId())))
 			.toList();
-		
+
 	    return ResponseEntity.ok(senderListDto);
 	}
 	
@@ -63,8 +66,8 @@ public class LikesController {
 		
 		boolean isLike = likesService.toggleLike(customUser.getId(), likeRequestDto.getType(), likeRequestDto.getTargetId());
 		List<Member> senderList = likesService.getLikeSenders(likeRequestDto.getType(), likeRequestDto.getTargetId());
-		List<MemberAuthDto> senderListDto = senderList.stream()
-			.map(MemberAuthDto::new)
+		List<FollowMemberDto> senderListDto = senderList.stream()
+			.map(member -> new FollowMemberDto(member, followService.isFollowing(customUser.getId(), member.getId())))
 			.toList();
 		
 		Map<String, Object> response = new HashMap<>();

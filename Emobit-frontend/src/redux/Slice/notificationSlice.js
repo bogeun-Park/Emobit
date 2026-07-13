@@ -6,6 +6,7 @@ const notificationSlice = createSlice({
         totalCount: 0,
         commentCount: 0,
         likeCount: 0,
+        followCount: 0,
         notifications: [],
     },
     reducers: {
@@ -14,18 +15,21 @@ const notificationSlice = createSlice({
             state.totalCount = action.payload.filter(notification => !notification.read).length;
             state.commentCount = action.payload.filter(notification => notification.type == "COMMENT" && !notification.read).length;
             state.likeCount = action.payload.filter(notification => notification.type == "LIKE" && !notification.read).length;
+            state.followCount = action.payload.filter(notification => notification.type == "FOLLOW" && !notification.read).length;
         },
         readNotifications: (state) => {
             state.notifications = state.notifications.map(notification => ({ ...notification, read: true }));
             state.totalCount = 0;
             state.commentCount = 0;
             state.likeCount = 0;
+            state.followCount = 0;
         },
         clearNotifications: (state) => {
             state.notifications = [];
             state.totalCount = 0;
             state.commentCount = 0;
             state.likeCount = 0;
+            state.followCount = 0;
         },
     },
 });

@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.example.emobit.domain.Member;
 import com.example.emobit.domain.Notification;
 import com.example.emobit.enums.NotificationType;
 
-@Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 	List<Notification> findByReceiverOrderByCreatedAtDesc(Member receiver);
 
