@@ -451,7 +451,7 @@ function BoardRead() {
             </div>
 
             {showLikePopup && (
-                <PopupLike senders={senders} handleMoveProfile={handleMoveProfile} setShowLikePopup={setShowLikePopup}/>
+                <PopupLike senders={senders} setSenders={setSenders} handleMoveProfile={handleMoveProfile} setShowLikePopup={setShowLikePopup}/>
             )}        
         </div>
     );

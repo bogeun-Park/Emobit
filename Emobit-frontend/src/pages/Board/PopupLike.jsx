@@ -1,9 +1,11 @@
 import '../../styles/PopupLike.css';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useAxios } from '../../contexts/AxiosContext';
 import { X } from 'lucide-react';
 
-function PopupLike({ senders, handleMoveProfile, setShowLikePopup }) {
+function PopupLike({ senders, setSenders, handleMoveProfile, setShowLikePopup }) {
+    const axios = useAxios();
     const auth = useSelector(state => state.auth);
 
     // ESC키 입력시 팝업 닫히게 하는 이벤트 리스너 설정
@@ -19,6 +21,18 @@ function PopupLike({ senders, handleMoveProfile, setShowLikePopup }) {
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [setShowLikePopup]);
+
+    const handleToggleFollow = (memberId) => {
+        axios.post('/follow/toggle', { targetId: memberId })
+            .then((response) => {
+                setSenders(prev => prev.map(member =>
+                    member.id === memberId ? { ...member, isFollow: response.data.isFollow } : member
+                ));
+            })
+            .catch((error) => {
+                console.error('에러 발생:', error);
+            });
+    };
 
     return (
         <div className="popup-like-overlay" onClick={() => setShowLikePopup(false)}>
@@ -43,7 +57,14 @@ function PopupLike({ senders, handleMoveProfile, setShowLikePopup }) {
                                 </div>
                             </div>
 
-                            {auth.username != member.username && <button className="follow-button">팔로우</button>}
+                            {auth.username != member.username && (
+                                <button
+                                    className={`follow-button ${member.isFollow ? 'following' : ''}`}
+                                    onClick={() => handleToggleFollow(member.id)}
+                                >
+                                    {member.isFollow ? '팔로잉' : '팔로우'}
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
