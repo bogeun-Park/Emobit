@@ -1,80 +1,213 @@
 .home-container {
-    height: calc(100dvh - 20px);
+    min-height: calc(100dvh - 20px);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    font-family: 'Cafe24 Ssurround', sans-serif;
     box-sizing: border-box;
-    padding-top: 20px;
+    background: #ffffff;
 }
 
-.intro-box {
+.home-hero {
     text-align: center;
-    background-color: #ffffffcc;
-    backdrop-filter: blur(10px);
-    padding: 40px 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    max-width: 520px;
-    width: 100%;
-    animation: fadeIn 1.2s ease forwards;
+    padding: 96px 20px 64px;
+    animation: fadeIn 0.8s ease forwards;
     opacity: 0;
 }
 
-.intro-box h1 {
-    font-size: 2.2rem;
-    margin: 20px 0 0 0;
-    color: #333;
+.home-logo {
+    font-family: 'Cafe24 Ssurround', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #262626;
+    margin: 0;
+    letter-spacing: -0.01em;
 }
 
-.intro-box p {
-    font-size: 1.2rem;
-    margin: 25px 0 50px 0;
-    color: #666;
+.home-tagline {
+    font-size: 1rem;
+    color: #8e8e8e;
+    margin: 14px 0 40px;
 }
 
-.intro-box button {
+.home-cta {
     display: inline-flex;
     align-items: center;
-    padding: 14px 28px;
-    font-size: 1rem;
-    background-color: #4A5DF9;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(85, 104, 254, 0.4);
+    gap: 6px;
+    padding: 12px 28px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #262626;
+    background: transparent;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-.intro-box button:hover {
-    background-color: #3F53F8;
-    transform: translateY(-1px);
+.home-cta:hover {
+    border-color: #262626;
+}
+
+.home-cta-icon {
+    transition: transform 0.2s ease;
+}
+
+.home-cta:hover .home-cta-icon {
+    transform: translateX(3px);
 }
 
 @keyframes fadeIn {
-    0% {
+    from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
 
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
+.home-features {
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+    padding: 56px 20px 0;
+    text-align: center;
+    border-top: 1px solid #efefef;
+}
+
+.home-features-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 80px;
+}
+
+.home-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    text-align: center;
+}
+
+.home-feature-heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.home-feature-icon {
+    color: #b0b0b0;
+}
+
+.home-feature-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #262626;
+}
+
+.home-feature-description {
+    font-size: 0.78rem;
+    color: #8e8e8e;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.home-recent {
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
+    padding: 56px 20px 0;
+    text-align: center;
+}
+
+.home-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #262626;
+    margin: 0 0 24px;
+}
+
+.home-recent-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.home-recent-item {
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.home-recent-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.home-recent-item:hover img {
+    transform: scale(1.05);
+}
+
+.home-footer {
+    width: 100%;
+    text-align: center;
+    padding: 48px 20px 32px;
+    margin-top: auto;
+    font-size: 0.75rem;
+    color: #b0b0b0;
+}
+
+@media (max-width: 700px) {
+    .home-features-list {
+        gap: 32px;
+    }
+}
+
 @media (max-width: 600px) {
-    .intro-box {
-        padding: 30px 24px;
+    .home-hero {
+        padding: 64px 20px 48px;
     }
 
-    .intro-box h1 {
-        font-size: 1.6rem;
+    .home-logo {
+        font-size: 2.1rem;
     }
 
-    .intro-box p {
-        font-size: 1rem;
+    .home-tagline {
+        font-size: 0.9rem;
+        margin-bottom: 32px;
+    }
+
+    .home-features {
+        padding: 40px 20px 0;
+    }
+
+    .home-features-list {
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+    }
+
+    .home-feature-title {
+        font-size: 0.82rem;
+    }
+
+    .home-feature-description {
+        font-size: 0.72rem;
+    }
+
+    .home-recent {
+        padding: 40px 20px 0;
+    }
+
+    .home-recent-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 }
