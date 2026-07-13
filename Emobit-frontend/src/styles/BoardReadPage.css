@@ -270,8 +270,8 @@
         top: auto;
         width: 100%;
         min-width: 0;
-        height: 75vh;
-        max-height: 75vh;
+        height: 60vh;
+        max-height: 60vh;
         border: none;
         border-radius: 16px 16px 0 0;
         box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
