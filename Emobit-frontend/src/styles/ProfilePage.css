@@ -71,6 +71,10 @@
     gap: 0.3rem;
 }
 
+.profile-info-stat-item.clickable {
+    cursor: pointer;
+}
+
 .stats-label {
     color: #737373;
 }

@@ -4,6 +4,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
 import NotFoundPage from '../NotFound/NotFoundPage';
+import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
 
 function ProfilePage() {
@@ -16,6 +17,8 @@ function ProfilePage() {
     const [boards, setBoards] = useState(null);
     const [follow, setFollow] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [showFollowPopup, setShowFollowPopup] = useState(false);
+    const [followPopupMode, setFollowPopupMode] = useState('followers');
 
     useEffect(() => {
         axios.get(`/profile/${username}`)
@@ -127,12 +130,12 @@ function ProfilePage() {
                                 <span className="profile-info-board-count">{boards.length}</span>
                             </div>
 
-                            <div className="profile-info-stat-item">
+                            <div className="profile-info-stat-item clickable" onClick={() => { setFollowPopupMode('followers'); setShowFollowPopup(true); }}>
                                 <span className="stats-label">팔로워</span>
                                 <span className="profile-info-board-count">{follow.followerCount}</span>
                             </div>
 
-                            <div className="profile-info-stat-item">
+                            <div className="profile-info-stat-item clickable" onClick={() => { setFollowPopupMode('following'); setShowFollowPopup(true); }}>
                                 <span className="stats-label">팔로잉</span>
                                 <span className="profile-info-board-count">{follow.followingCount}</span>
                             </div>
@@ -160,6 +163,16 @@ function ProfilePage() {
                     </Link>
                 ))}
             </div>
+
+            {showFollowPopup && (
+                <PopupFollow
+                    mode={followPopupMode}
+                    targetId={member.id}
+                    setShowFollowPopup={setShowFollowPopup}
+                    onFollowerCountChange={(followerCount) => setFollow(prev => ({ ...prev, followerCount }))}
+                    onFollowingCountChange={(delta) => setFollow(prev => ({ ...prev, followingCount: prev.followingCount + delta }))}
+                />
+            )}
         </div>
     );
 }

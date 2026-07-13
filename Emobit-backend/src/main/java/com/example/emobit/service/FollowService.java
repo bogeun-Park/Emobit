@@ -1,5 +1,6 @@
 package com.example.emobit.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -66,5 +67,28 @@ public class FollowService {
 		Member member = memberService.getMemberById(memberId);
 
 		return followRepository.countByFollower(member);
+	}
+
+	public List<Member> getFollowers(Long memberId) {
+		Member member = memberService.getMemberById(memberId);
+
+		return followRepository.findFollowersByMember(member);
+	}
+
+	public List<Member> getFollowings(Long memberId) {
+		Member member = memberService.getMemberById(memberId);
+
+		return followRepository.findFollowingsByMember(member);
+	}
+
+	@Transactional
+	public void removeFollower(Long ownerId, Long followerId) {
+		Member owner = memberService.getMemberById(ownerId);
+		Member follower = memberService.getMemberById(followerId);
+
+		followRepository.findByFollowerAndFollowing(follower, owner)
+			.ifPresent(followRepository::delete);
+
+		notificationService.deleteNotificationIfUnread(owner, follower, NotificationType.FOLLOW, owner.getId());
 	}
 }
