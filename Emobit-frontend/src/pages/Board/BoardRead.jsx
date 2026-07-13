@@ -4,7 +4,7 @@ import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { useSelector, useDispatch } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
-import { Heart, Send, Eye, MessageCircle } from 'lucide-react';
+import { Heart, Send, Eye, MessageCircle, X } from 'lucide-react';
 import PopupEllipsis from './PopupEllipsis';
 import PopupLike from './PopupLike';
 import { messageAction } from '../../redux/Slice/messageSlice';
@@ -26,12 +26,60 @@ function BoardRead() {
     const [isLike, setIsLike] = useState(null);
     const [senders, setSenders] = useState([]);
     const [showLikePopup, setShowLikePopup] = useState(false);
+    const [showCommentPopup, setShowCommentPopup] = useState(false);
+    const [isResizing, setIsResizing] = useState(false);
+    const resizeTimeoutRef = useRef(null);
 
     useEffect(() => {
         fetchBoard();
         fetchComment();
         fetchLike();
     }, [boardId]);
+
+    // ESC키 입력시 댓글 시트 닫히게 하는 이벤트 리스너 설정
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                setShowCommentPopup(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
+    // 데스크톱 크기로 넘어가면 댓글 시트 상태를 초기화 (다시 모바일로 줄여도 자동으로 열려있지 않도록)
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+
+        const handleChange = (e) => {
+            if (!e.matches) {
+                setShowCommentPopup(false);
+            }
+        };
+
+        mediaQuery.addEventListener('change', handleChange);
+        return () => {
+            mediaQuery.removeEventListener('change', handleChange);
+        };
+    }, []);
+
+    // 창 크기 조절로 모바일 기준선을 넘나들 때 댓글 시트가 애니메이션되며 움직이는 것을 방지
+    useEffect(() => {
+        const handleResize = () => {
+            setIsResizing(true);
+            clearTimeout(resizeTimeoutRef.current);
+            resizeTimeoutRef.current = setTimeout(() => setIsResizing(false), 200);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            clearTimeout(resizeTimeoutRef.current);
+        };
+    }, []);
 
     const fetchBoard = async () => {
         try {
@@ -311,7 +359,7 @@ function BoardRead() {
                                 <Heart size={24} color="#000" />
                             </button>
 
-                            <button type="button" className='comment-button'>
+                            <button type="button" className='comment-button' onClick={() => setShowCommentPopup(true)}>
                                 <MessageCircle size={24} color="#000" />
                             </button>
 
@@ -337,7 +385,18 @@ function BoardRead() {
                 </div>
             </div>
 
-            <div className="board-right">
+            {showCommentPopup && (
+                <div className="comment-sheet-overlay" onClick={() => setShowCommentPopup(false)} />
+            )}
+
+            <div className={`board-right ${showCommentPopup ? 'comment-sheet-open' : ''} ${isResizing ? 'comment-sheet-resizing' : ''}`}>
+                <div className="comment-sheet-handle" onClick={() => setShowCommentPopup(false)} />
+                <button type="button" className="comment-sheet-close" onClick={() => setShowCommentPopup(false)}>
+                    <X size={22} color="#000" />
+                </button>
+
+                <div className="comment-sheet-title">댓글</div>
+
                 <div className="board-header">
                     <div className="board-user-header">
                         <img className="content-user-image" src={board.memberImageUrl} alt="" onClick={() => handleMoveProfile(board.memberUsername)}/>
