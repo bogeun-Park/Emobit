@@ -16,7 +16,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -46,6 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		try {
 			claim = Jwtutil.extractToken(jwtCookie);
 		} catch(Exception e) {
+			log.debug("JWT 검증 실패 - 익명 요청으로 처리: {}", e.getMessage());
 			filterChain.doFilter(request, response);
 			return;
 		}
