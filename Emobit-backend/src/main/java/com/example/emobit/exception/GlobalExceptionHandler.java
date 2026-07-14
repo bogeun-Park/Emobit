@@ -3,6 +3,7 @@ package com.example.emobit.exception;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,5 +42,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleChatRoomException(ChatRoomException e) {
 		log.warn("ChatRoomException: {}", e.getMessage());
 	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
+	// 위에서 잡히지 않은, 예상치 못한 예외 처리
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<String> handleException(Exception e) {
+		log.error("처리되지 않은 예외 발생", e);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
 	}
 }
