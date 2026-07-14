@@ -207,9 +207,14 @@ public class MemberController {
 	}
 	
 	@GetMapping("/member/PresignedUrl")
-	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename) {
+	public ResponseEntity<?> getPresignedUrl(@RequestParam("filename") String filename,
+											 @AuthenticationPrincipal CustomUser customUser) {
+		if (customUser == null) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+	    }
+
 	    String presignedUrl = oracleStorageService.createPresignedUrl(filename, "member");
-	    
+
 	    if (presignedUrl != null) {
 	        return ResponseEntity.ok(presignedUrl);
 	    } else {
