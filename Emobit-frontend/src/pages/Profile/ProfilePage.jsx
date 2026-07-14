@@ -1,15 +1,17 @@
 import '../../styles/ProfilePage.css';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
+import { authAction } from '../../redux/Slice/authSlice';
 
 function ProfilePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const { username } = useParams();
@@ -80,6 +82,7 @@ function ProfilePage() {
 
                 let imageUrl = presignedUrl.replace(/\/p\/[^/]+\//, "/");
                 setMember(prev => ({ ...prev, imageUrl: imageUrl }));
+                dispatch(authAction.updateImage(imageUrl));
             }
         } catch (error) {
             console.error('에러 발생:', error);

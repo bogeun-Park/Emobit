@@ -27,6 +27,9 @@ const authSlice = createSlice({
       state.role = null;
       state.imageUrl = null;
     },
+    updateImage: (state, action) => {
+      state.imageUrl = action.payload;
+    },
   }
 });
 
