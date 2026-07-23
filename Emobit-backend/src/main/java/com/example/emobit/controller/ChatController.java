@@ -1,5 +1,6 @@
 package com.example.emobit.controller;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -147,9 +149,18 @@ public class ChatController {
     }
     
     @MessageMapping("/chat.send")  // 클라이언트에서 "/app/chat.send"로 보냄
-    public void sendMessage(ChatMessageCreateDto chatMessageCreateDto) {
+    public void sendMessage(ChatMessageCreateDto chatMessageCreateDto, Principal principal) {
     	ChatRoom chatRoom = chatRoomService.getChatRoomById(chatMessageCreateDto.getChatRoomId());
-    	ChatMessage chatMessage = chatMessageService.saveChatMessage(chatRoom, chatMessageCreateDto.getSender(), chatMessageCreateDto.getContent());
+    	String sender = principal.getName();  // 클라이언트가 보낸 sender는 신뢰하지 않고, 인증된 사용자로 대체
+
+    	boolean isParticipant = chatRoom.getMemberA().getUsername().equals(sender)
+    		|| chatRoom.getMemberB().getUsername().equals(sender);
+
+    	if (!isParticipant) {
+    		throw new AccessDeniedException("해당 채팅방에 접근할 수 없습니다.");
+    	}
+
+    	ChatMessage chatMessage = chatMessageService.saveChatMessage(chatRoom, sender, chatMessageCreateDto.getContent());
     	ChatMessageDto chatMessageDto = new ChatMessageDto(chatMessage);
     	
     	// 동적으로 대상 topic에 메시지 전송

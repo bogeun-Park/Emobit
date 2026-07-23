@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -13,11 +14,19 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class Jwtutil {
-	static final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(
-	          "jwtpassword123jwtpassword123jwtpassword123jwtpassword123jwtpassword"));
+	private static SecretKey key;
+
+	@Value("${jwt.secret}")
+	private String secret;
+
+	@PostConstruct
+	public void init() {
+		key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+	}
 
 	public static String createAccessToken(Authentication auth) {
 	    return createToken(auth, 30 * 60 * 1000); // 30분

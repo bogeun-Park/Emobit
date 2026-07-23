@@ -7,7 +7,9 @@ import com.example.emobit.domain.Comments;
 import com.example.emobit.domain.Notification;
 import com.example.emobit.enums.NotificationType;
 import com.example.emobit.util.Constant;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,9 +25,12 @@ public class NotificationDto {
 	private String content;
 	private Long boardId;
 	private String imageUrl;
+
+	@Getter(AccessLevel.NONE)
 	private boolean isRead;
-    private Date createdAt;
-    
+
+	private Date createdAt;
+
     public NotificationDto(Notification notification, Board board, Comments comment) {
     	this.id = notification.getId();
     	this.sender = new MemberAuthDto(notification.getSender());
@@ -36,5 +41,10 @@ public class NotificationDto {
     	this.imageUrl = (board != null) ? Constant.Oracle_Storage_ORIGIN + board.getImagePath() : null;
     	this.isRead = notification.isRead();
     	this.createdAt = notification.getCreatedAt();
+    }
+
+    @JsonProperty("isRead")
+    public boolean isRead() {
+    	return isRead;
     }
 }

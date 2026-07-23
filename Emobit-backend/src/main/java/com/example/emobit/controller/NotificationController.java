@@ -69,6 +69,10 @@ public class NotificationController {
 	
 	@DeleteMapping("/notification/delete_all_process")
 	public ResponseEntity<String> notificationDeleteAllProcess(@AuthenticationPrincipal CustomUser customUser) {
+		if (customUser == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+		}
+		
 		notificationService.notificationDeleteAllProcess(customUser.getId());
 		
 		return ResponseEntity.status(200).body("알림이 성공적으로 삭제되었습니다.");
