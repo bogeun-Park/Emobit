@@ -3,11 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import routes from "./routes";
 import Layout from './components/Layout';
 import NoLayout from './components/NoLayout';
+import TopLoadingBar from './components/TopLoadingBar';
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
     <AuthProvider>
+      <TopLoadingBar />
       <Routes>
         <Route element={<Layout />}>
           {routes

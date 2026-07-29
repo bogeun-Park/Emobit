@@ -2,6 +2,7 @@ import '../../styles/BoardPage.css';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { Eye } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
@@ -10,16 +11,24 @@ function SearchPage() {
     const { keyword } = useParams();
 
     const [boardList, setBoardList] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
+
         axios.get(`/board/search/${keyword}`)
             .then((response) => {
                 setBoardList(response.data);
+                loadingBar.waitForIdle().then(() => setLoading(false));
             })
             .catch((error) => {
                 console.error('검색 목록 불러오기 실패:', error);
+                alert('검색 중 오류가 발생했습니다.');
+                loadingBar.waitForIdle().then(() => setLoading(false));
             });
     }, [keyword]);
+
+    if (loading) return null;
 
     return (
         <div className="board-container">

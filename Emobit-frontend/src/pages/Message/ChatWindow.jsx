@@ -2,8 +2,8 @@ import '../../styles/ChatWindow.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { useWebSocket } from '../../contexts/WebSocketContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { MessageCirclePlus } from 'lucide-react';
 import { messageAction } from '../../redux/Slice/messageSlice';
 
@@ -12,31 +12,30 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
     const chatRooms = useSelector(state => state.message.chatRooms);
     const axios = useAxios();
     const dispatch = useDispatch();
+    const stompClient = useWebSocket();
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [stompClient, setStompClient] = useState(null);
     const [targetMember, setTargetMember] = useState(null);
-    const [chatWindowLoading, setChatWindowLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     // 메시지 불러오기
     useEffect(() => {
         if (!selectedChatRoomId || chatRooms.length === 0) {
-            setChatWindowLoading(false);
+            loadingBar.waitForIdle().then(() => setLoading(false));
             return;
         }
 
         const fetchData = async () => {
             try {
-                const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`);
+                const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`, { skipLoadingBar: true });
                 setMessages(messagesRes.data);
 
                 const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
                 if (!chatRoom) {
                     setTargetMember(null);
-                    setChatWindowLoading(false);
                     return;
                 }
 
@@ -50,7 +49,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
                     ? chatRoom.memberB.username
                     : chatRoom.memberA.username;
 
-                const profileRes = await axios.get(`/profile/${target}`);
+                const profileRes = await axios.get(`/profile/${target}`, { skipLoadingBar: true });
                 setTargetMember(profileRes.data.member);
             } catch (error) {
                 console.error('에러 발생:', error);
@@ -61,38 +60,30 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
                     alert('채팅을 불러오는 중 오류가 발생했습니다.');
                 }
             } finally {
-                setChatWindowLoading(false);
+                loadingBar.waitForIdle().then(() => setLoading(false));
             }
         };
 
-        setChatWindowLoading(true);
+        setLoading(true);
         fetchData();
     }, [selectedChatRoomId]);
 
-    // WebSocket 연결
+    // 채팅방 구독: 소켓은 WebSocketContext(WebSocketProvider)가 만든 공유 소켓을 그대로 쓰고,
+    // 방이 바뀔 때는 소켓을 껐다 켜는 대신 이전 방 구독만 해제하고 새 방을 구독한다.
     useEffect(() => {
-        const socket = new SockJS(process.env.REACT_APP_WEBSOCKET_URL);
-        const client = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                if (selectedChatRoomId) {
-                    client.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
-                        const receivedMessage = JSON.parse(message.body);
-                        
-                        // 대화창 세팅
-                        setMessages(prevMessages => [...prevMessages, receivedMessage]);
-                    });
-                }
-            }
+        if (!stompClient || !selectedChatRoomId) return;
+
+        const subscription = stompClient.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
+            const receivedMessage = JSON.parse(message.body);
+
+            // 대화창 세팅
+            setMessages(prevMessages => [...prevMessages, receivedMessage]);
         });
 
-        client.activate();
-        setStompClient(client);
-
         return () => {
-            client.deactivate();
+            subscription.unsubscribe();
         };
-    }, [selectedChatRoomId]);
+    }, [stompClient, selectedChatRoomId]);
 
     // 자동 스크롤
     useEffect(() => {
@@ -128,7 +119,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
         const confirmed = window.confirm('채팅방을 나가시겠습니까?');
         if (!confirmed || !selectedChatRoomId) return;
 
-        axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
+        axios.delete(`/chat/exitRoom/${selectedChatRoomId}`, { skipLoadingBar: true })
             .then(() => {                
                 dispatch(messageAction.exitChatRoom(selectedChatRoomId));
                 navigate('/message');
@@ -192,7 +183,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
 
     return (
         <div className="chat-window-container">
-            {chatWindowLoading ? null : selectedChatRoomId ? (
+            {loading ? null : selectedChatRoomId ? (
                 <>
                     {targetMember && (
                         <div className="chat-header">

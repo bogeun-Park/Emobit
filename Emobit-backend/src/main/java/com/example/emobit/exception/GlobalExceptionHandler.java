@@ -3,6 +3,7 @@ package com.example.emobit.exception;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,6 +43,26 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleChatRoomException(ChatRoomException e) {
 		log.warn("ChatRoomException: {}", e.getMessage());
 	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
+	@ExceptionHandler(CommentsException.class)
+	public ResponseEntity<String> handleCommentsException(CommentsException e) {
+		log.warn("CommentsException: {}", e.getMessage());
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
+	@ExceptionHandler(NotificationException.class)
+	public ResponseEntity<String> handleNotificationException(NotificationException e) {
+		log.warn("NotificationException: {}", e.getMessage());
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
+	// 사전 중복 체크를 통과했더라도, 동시 요청 레이스로 DB unique 제약조건을 위반한 경우
+	// (예: 회원가입 시 동시에 같은 username으로 요청) 500 대신 409로 응답
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+		log.warn("DataIntegrityViolationException: {}", e.getMessage());
+		return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 사용 중이거나 중복된 값입니다.");
 	}
 
 	// 위에서 잡히지 않은, 예상치 못한 예외 처리

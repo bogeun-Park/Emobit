@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AxiosProvider } from './contexts/AxiosContext';
+import { WebSocketProvider } from './contexts/WebSocketContext';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
@@ -13,9 +14,11 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <AxiosProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <WebSocketProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </WebSocketProvider>
       </AxiosProvider>
     </Provider>
   </React.StrictMode>

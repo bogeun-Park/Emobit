@@ -45,7 +45,7 @@ function PopupNewChat({ setshowNewChatPopup, navigate }) {
         setLoading(true);
 
         const delay = setTimeout(() => {
-            axios.get(`/member/search/${keyword}`)
+            axios.get(`/member/search/${keyword}`, { skipLoadingBar: true })
                 .then(response => {
                     setSearchList(response.data);
                 })

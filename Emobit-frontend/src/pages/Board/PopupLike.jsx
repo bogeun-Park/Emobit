@@ -23,7 +23,7 @@ function PopupLike({ senders, setSenders, handleMoveProfile, setShowLikePopup })
     }, [setShowLikePopup]);
 
     const handleToggleFollow = (memberId) => {
-        axios.post('/follow/toggle', { targetId: memberId })
+        axios.post('/follow/toggle', { targetId: memberId }, { skipLoadingBar: true })
             .then((response) => {
                 setSenders(prev => prev.map(member =>
                     member.id === memberId ? { ...member, isFollow: response.data.isFollow } : member
@@ -31,6 +31,7 @@ function PopupLike({ senders, setSenders, handleMoveProfile, setShowLikePopup })
             })
             .catch((error) => {
                 console.error('에러 발생:', error);
+                alert('팔로우 처리 중 오류가 발생했습니다.');
             });
     };
 

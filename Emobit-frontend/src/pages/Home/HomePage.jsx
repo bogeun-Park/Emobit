@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { ArrowRight, Camera, Users, MessageCircle } from 'lucide-react';
 import '../../styles/HomePage.css';
 
@@ -16,20 +17,25 @@ function HomePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
     const [recentBoards, setRecentBoards] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get('/board')
             .then((response) => {
                 setRecentBoards(response.data.slice(0, 4));
+                loadingBar.waitForIdle().then(() => setLoading(false));
             })
             .catch((error) => {
                 console.error('최근 게시글 불러오기 실패:', error);
+                loadingBar.waitForIdle().then(() => setLoading(false));
             });
     }, []);
 
     const handleCtaClick = () => {
         navigate(auth.isAuthenticated ? '/board/create' : '/board');
     };
+
+    if (loading) return null;
 
     return (
         <div className="home-container">

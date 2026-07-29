@@ -2,6 +2,7 @@ import axios from 'axios';
 import { createContext, useContext } from 'react';
 import { store } from '../redux/store';
 import { authAction } from '../redux/Slice/authSlice';
+import { loadingBar } from '../utils/loadingBar';
 
 const AxiosContext = createContext();
 
@@ -10,9 +11,24 @@ export const axiosInstance = axios.create({
     withCredentials: true,
 });
 
+axiosInstance.interceptors.request.use(
+    config => {
+        loadingBar.start({ skip: config.skipLoadingBar });
+        return config;
+    },
+    error => {
+        loadingBar.done({ skip: error.config?.skipLoadingBar });
+        return Promise.reject(error);
+    }
+);
+
 axiosInstance.interceptors.response.use(
-    response => response,
+    response => {
+        loadingBar.done({ skip: response.config?.skipLoadingBar });
+        return response;
+    },
     async error => {
+        loadingBar.done({ skip: error.config?.skipLoadingBar });
         const originalRequest = error.config;
 
         // /refresh 요청은 재시도하지 않음

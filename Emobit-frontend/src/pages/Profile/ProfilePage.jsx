@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
@@ -19,28 +20,35 @@ function ProfilePage() {
     const [boards, setBoards] = useState(null);
     const [follow, setFollow] = useState(null);
     const [notFound, setNotFound] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [showFollowPopup, setShowFollowPopup] = useState(false);
     const [followPopupMode, setFollowPopupMode] = useState('followers');
 
     useEffect(() => {
+        setLoading(true);
+        setNotFound(false);
+        setMember(null);
+        setBoards(null);
+        setFollow(null);
+
         axios.get(`/profile/${username}`)
             .then((response) => {
                 setMember(response.data.member);
                 setBoards(response.data.boards);
                 setFollow(response.data.follow);
                 setNotFound(false);
+                loadingBar.waitForIdle().then(() => setLoading(false));
             })
             .catch((error) => {
-                if (error.response && error.response.status === 404) {
-                    setNotFound(true);
-                } else {
-                    console.error('프로필 불러오기 실패:', error);
-                }
+                // member/boards/follow가 null인 채로 화면을 그리면 렌더링 중 에러가 나기 때문에,
+                // 404든 그 외 실패든 데이터를 못 채운 경우엔 전부 NotFoundPage로 보낸다.
+                console.error('프로필 불러오기 실패:', error);
+                setNotFound(true);
             });
     }, [username]);
 
     const handleFollowToggle = () => {
-        axios.post('/follow/toggle', { targetId: member.id })
+        axios.post('/follow/toggle', { targetId: member.id }, { skipLoadingBar: true })
             .then((response) => {
                 setFollow(response.data);
             })
@@ -99,7 +107,7 @@ function ProfilePage() {
         return <NotFoundPage />;
     }
 
-    if (!boards || !member || !follow) return null;
+    if (loading) return null;
 
     return (
         <div className="profile-container">

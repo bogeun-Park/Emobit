@@ -11,6 +11,7 @@ import com.example.emobit.domain.Member;
 import com.example.emobit.dto.CommentsCreateDto;
 import com.example.emobit.dto.CommentsUpdateDto;
 import com.example.emobit.enums.NotificationType;
+import com.example.emobit.exception.CommentsNotFoundException;
 import com.example.emobit.repository.CommentsRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class CommentsService {
 	
 	public Comments getCommentById(Long id) {
 		Comments comment = commentsRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+				.orElseThrow(() -> new CommentsNotFoundException("댓글을 찾을 수 없습니다."));
 		
 		return comment;
 	}

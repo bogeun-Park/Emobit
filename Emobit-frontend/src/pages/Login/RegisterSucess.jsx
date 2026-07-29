@@ -1,9 +1,17 @@
 import '../../styles/RegisterSucess.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loadingBar } from '../../utils/loadingBar';
 
 function RegisterSuccess() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
+
+    if (loading) return null;
 
     return (
         <div className="register-success-container">

@@ -1,7 +1,8 @@
 import '../../styles/BoardCreateUpdate.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { useSelector } from 'react-redux';
 import presignedUrlAxios from 'axios';
 
@@ -14,6 +15,11 @@ function BoardCreate() {
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -81,6 +87,8 @@ function BoardCreate() {
             }
         }
     };
+
+    if (loading) return null;
 
     return (
         <div className="board-create-update-container">

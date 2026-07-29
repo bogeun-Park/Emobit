@@ -42,7 +42,7 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
     };
 
     const handleToggleFollow = (memberId) => {
-        axios.post('/follow/toggle', { targetId: memberId })
+        axios.post('/follow/toggle', { targetId: memberId }, { skipLoadingBar: true })
             .then((response) => {
                 setMembers(prev => prev.map(member =>
                     member.id === memberId ? { ...member, isFollow: response.data.isFollow } : member
@@ -55,6 +55,7 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
             })
             .catch((error) => {
                 console.error('에러 발생:', error);
+                alert('팔로우 처리 중 오류가 발생했습니다.');
             });
     };
 
@@ -62,13 +63,14 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
         const confirmed = window.confirm('팔로워를 삭제하시겠습니까?');
         if (!confirmed) return;
 
-        axios.delete(`/follow/remove/${memberId}`)
+        axios.delete(`/follow/remove/${memberId}`, { skipLoadingBar: true })
             .then((response) => {
                 setMembers(prev => prev.filter(member => member.id !== memberId));
                 onFollowerCountChange?.(response.data);
             })
             .catch((error) => {
                 console.error('에러 발생:', error);
+                alert('팔로워 삭제 중 오류가 발생했습니다.');
             });
     };
 

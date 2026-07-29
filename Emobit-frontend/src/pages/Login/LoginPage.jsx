@@ -2,6 +2,7 @@ import '../../styles/LoginRegisterPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../../redux/Slice/authSlice';
 
@@ -13,6 +14,11 @@ function LoginPage() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
 
     useEffect(() => {
         if (auth.isAuthenticated) {
@@ -29,13 +35,13 @@ function LoginPage() {
         }
 
         axios.post('/login', { username, password })
-            .then(response => {
-                axios.get('/login/auth').then(authResponse => {
-                    const { id, displayName, role, imageUrl } = authResponse.data;
-                    dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
-                });
-
-                navigate('/');
+            .then(() => {
+                return axios.get('/login/auth');
+            })
+            .then(authResponse => {
+                const { id, displayName, role, imageUrl } = authResponse.data;
+                dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
+                // auth 상태가 실제로 반영된 뒤, 위쪽 useEffect가 navigate('/')를 실행함
             })
             .catch(error => {
                 console.error('로그인 실패:', error);
@@ -46,6 +52,8 @@ function LoginPage() {
     const handleRegisterClick = () => {
         navigate('/login/register');
     };
+
+    if (loading) return null;
 
     return (
         <div className="login-Register-container">
