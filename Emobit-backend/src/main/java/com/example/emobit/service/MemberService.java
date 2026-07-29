@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.emobit.domain.Member;
 import com.example.emobit.dto.MemberAuthDto;
 import com.example.emobit.dto.MemberRegisterDto;
+import com.example.emobit.exception.MemberDuplicateException;
 import com.example.emobit.exception.MemberNotFoundException;
 import com.example.emobit.repository.MemberRepository;
 import com.example.emobit.util.Constant;
@@ -46,7 +47,11 @@ public class MemberService {
 		String displayName = memberRegisterDto.getDisplayName();
 	    String username = memberRegisterDto.getUsername();
 	    String password = memberRegisterDto.getPassword();
-        
+
+	    if (memberRepository.existsByUsername(username)) {
+	    	throw new MemberDuplicateException("이미 사용 중인 아이디입니다.");
+	    }
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(password);
 
