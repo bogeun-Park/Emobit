@@ -26,6 +26,10 @@ function ProfilePage() {
 
     useEffect(() => {
         setLoading(true);
+        setNotFound(false);
+        setMember(null);
+        setBoards(null);
+        setFollow(null);
 
         axios.get(`/profile/${username}`)
             .then((response) => {

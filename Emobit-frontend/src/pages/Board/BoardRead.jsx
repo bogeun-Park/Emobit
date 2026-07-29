@@ -34,6 +34,11 @@ function BoardRead() {
 
     useEffect(() => {
         setLoading(true);
+        setNotFound(false);
+        setBoard(null);
+        setComments([]);
+        setIsLike(null);
+        setSenders([]);
         fetchBoard();
         fetchComment();
         fetchLike();
