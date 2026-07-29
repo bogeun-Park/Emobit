@@ -16,6 +16,7 @@ import com.example.emobit.domain.Notification;
 import com.example.emobit.dto.NotificationDeleteDto;
 import com.example.emobit.dto.NotificationDto;
 import com.example.emobit.enums.NotificationType;
+import com.example.emobit.exception.NotificationNotFoundException;
 import com.example.emobit.repository.NotificationRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class NotificationService {
 	
 	public Notification getNotificationById(Long id) {
 		Notification notification = notificationRepository.findById(id)
-										.orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
+										.orElseThrow(() -> new NotificationNotFoundException("알림을 찾을 수 없습니다."));
 		
 		return notification;
 	}

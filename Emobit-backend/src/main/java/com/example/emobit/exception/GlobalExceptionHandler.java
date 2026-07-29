@@ -44,6 +44,18 @@ public class GlobalExceptionHandler {
 	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
 	}
 
+	@ExceptionHandler(CommentsException.class)
+	public ResponseEntity<String> handleCommentsException(CommentsException e) {
+		log.warn("CommentsException: {}", e.getMessage());
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
+	@ExceptionHandler(NotificationException.class)
+	public ResponseEntity<String> handleNotificationException(NotificationException e) {
+		log.warn("NotificationException: {}", e.getMessage());
+	    return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+	}
+
 	// 위에서 잡히지 않은, 예상치 못한 예외 처리
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleException(Exception e) {
