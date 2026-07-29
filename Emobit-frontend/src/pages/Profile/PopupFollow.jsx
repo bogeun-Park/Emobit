@@ -55,6 +55,7 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
             })
             .catch((error) => {
                 console.error('에러 발생:', error);
+                alert('팔로우 처리 중 오류가 발생했습니다.');
             });
     };
 
@@ -69,6 +70,7 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
             })
             .catch((error) => {
                 console.error('에러 발생:', error);
+                alert('팔로워 삭제 중 오류가 발생했습니다.');
             });
     };
 

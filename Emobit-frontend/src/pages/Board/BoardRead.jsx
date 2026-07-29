@@ -115,27 +115,35 @@ function BoardRead() {
     };
 
     const fetchLike = async () => {
-        axios.get('/likes/status', {
+        const statusReq = axios.get('/likes/status', {
             params: {
                 type: 'BOARD',
                 targetId: boardId
             }
         }).then((response) => {
             setIsLike(response.data);
-        }).catch(error => {
-            console.error('에러 발생:', error);
         });
 
-        axios.get('/likes/senders', {
+        const sendersReq = axios.get('/likes/senders', {
             params: {
                 type: 'BOARD',
                 targetId: boardId
             }
         }).then((response) => {
             setSenders(response.data);
-        }).catch(error => {
-            console.error('에러 발생:', error);
         });
+
+        const results = await Promise.allSettled([statusReq, sendersReq]);
+        const failed = results.some(result => result.status === 'rejected');
+
+        if (failed) {
+            results.forEach(result => {
+                if (result.status === 'rejected') {
+                    console.error('에러 발생:', result.reason);
+                }
+            });
+            alert('좋아요 정보를 불러오는 중 오류가 발생했습니다.');
+        }
     };
 
     const startEditing = (comment) => {

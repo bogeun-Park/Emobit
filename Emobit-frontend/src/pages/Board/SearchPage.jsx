@@ -23,6 +23,7 @@ function SearchPage() {
             })
             .catch((error) => {
                 console.error('검색 목록 불러오기 실패:', error);
+                alert('검색 중 오류가 발생했습니다.');
                 loadingBar.waitForIdle().then(() => setLoading(false));
             });
     }, [keyword]);
