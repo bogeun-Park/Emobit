@@ -17,6 +17,9 @@ import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.GetNamespaceRequest;
 import com.oracle.bmc.objectstorage.responses.CreatePreauthenticatedRequestResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class OracleStorageService {
 	private final ObjectStorageClient objectStorageClient;
@@ -75,7 +78,7 @@ public class OracleStorageService {
             // 생성된 presigned URL 반환
             return fullUrl;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Presigned URL 생성 실패: dir={}, originalFilename={}", dir, originalFilename, e);
             return null;
         }
     }
@@ -95,7 +98,7 @@ public class OracleStorageService {
             objectStorageClient.deleteObject(request);
             return true; // 성공 시 true 반환
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Object Storage 파일 삭제 실패: filePath={}", filePath, e);
             return false; // 실패 시 false 반환
         }
     }
