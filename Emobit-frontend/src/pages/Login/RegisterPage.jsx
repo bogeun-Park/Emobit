@@ -1,6 +1,7 @@
 import '../../styles/LoginRegisterPage.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { useNavigate } from 'react-router-dom';
 
 function RegisterPage() {
@@ -14,6 +15,11 @@ function RegisterPage() {
 
     const [usernameError, setUsernameError] = useState('');
     const [passwordMatchMessage, setPasswordMatchMessage] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
 
     const checkUsernameAvailability = () => {
         if (!username.trim()) {
@@ -21,7 +27,7 @@ function RegisterPage() {
             return;
         }
 
-        axios.get(`/register/check_username/${username}`)
+        axios.get(`/register/check_username/${username}`, { skipLoadingBar: true })
             .then(response => {
                 if (response.data) {
                     setUsernameError('');
@@ -90,6 +96,8 @@ function RegisterPage() {
                 alert('회원가입에 실패했습니다.');
             });
     };
+
+    if (loading) return null;
 
     return (
         <div className="login-Register-container">

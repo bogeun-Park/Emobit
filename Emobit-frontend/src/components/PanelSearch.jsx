@@ -61,7 +61,7 @@ function PanelSearch() {
         const delay = setTimeout(() => {
             const encoded = encodeURIComponent(isHashtag ? trimmedKeyword.slice(1) : trimmedKeyword);
             const url = isHashtag ? `/board/search/${encoded}` : `/member/search/${encoded}`;
-            axios.get(url)
+            axios.get(url, { skipLoadingBar: true })
                 .then(response => {
                     dispatch(searchAction.setResultList(response.data))
                 })

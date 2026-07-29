@@ -23,7 +23,7 @@ function PopupLike({ senders, setSenders, handleMoveProfile, setShowLikePopup })
     }, [setShowLikePopup]);
 
     const handleToggleFollow = (memberId) => {
-        axios.post('/follow/toggle', { targetId: memberId })
+        axios.post('/follow/toggle', { targetId: memberId }, { skipLoadingBar: true })
             .then((response) => {
                 setSenders(prev => prev.map(member =>
                     member.id === memberId ? { ...member, isFollow: response.data.isFollow } : member

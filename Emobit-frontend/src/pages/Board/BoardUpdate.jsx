@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import presignedUrlAxios from 'axios';
 
 function BoardUpdate() {
@@ -14,12 +15,14 @@ function BoardUpdate() {
     const [board, setBoard] = useState({ title: '', content: '', imageUrl: '' });
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         axios.get(`/board/read/${boardId}`)
             .then((response) => {
                 setBoard(response.data);
                 setPreview(response.data.imageUrl); // 기존 이미지 미리보기 설정
+                loadingBar.waitForIdle().then(() => setLoading(false));
             })
             .catch((error) => {
                 console.error('게시글을 가져오는 데 실패했습니다:', error);
@@ -101,6 +104,8 @@ function BoardUpdate() {
             }
         }
     };
+
+    if (loading) return null;
 
     return (
         <div className="board-create-update-container">

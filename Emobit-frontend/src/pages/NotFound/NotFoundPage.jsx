@@ -1,17 +1,25 @@
 import '../../styles/NotFoundPage.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { menuAction } from '../../redux/Slice/menuSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { CircleAlert } from 'lucide-react';
+import { loadingBar } from '../../utils/loadingBar';
 
 function NotFoundPage() {
     const dispatch = useDispatch();
     const active = useSelector(state => state.menu.active);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         dispatch(menuAction.setActiveMenu(''));
     }, [active, dispatch]);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
+
+    if (loading) return null;
 
     return (
         <div className="notfound-container">

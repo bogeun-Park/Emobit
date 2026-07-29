@@ -2,6 +2,7 @@ import '../../styles/BoardReadPage.css';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { useSelector, useDispatch } from 'react-redux';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye, MessageCircle, X } from 'lucide-react';
@@ -28,9 +29,11 @@ function BoardRead() {
     const [showLikePopup, setShowLikePopup] = useState(false);
     const [showCommentPopup, setShowCommentPopup] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
+    const [loading, setLoading] = useState(true);
     const resizeTimeoutRef = useRef(null);
 
     useEffect(() => {
+        setLoading(true);
         fetchBoard();
         fetchComment();
         fetchLike();
@@ -86,6 +89,7 @@ function BoardRead() {
             const response = await axios.get(`/board/read/${boardId}`);
             setBoard(response.data);
             setNotFound(false);
+            loadingBar.waitForIdle().then(() => setLoading(false));
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 setNotFound(true);
@@ -98,7 +102,7 @@ function BoardRead() {
 
     const fetchComment = async () => {
         try {
-            const response = await axios.get(`/comments/${boardId}`);
+            const response = await axios.get(`/comments/${boardId}`, { skipLoadingBar: true });
             setComments(response.data);
         } catch (error) {
             console.error('댓글을 가져오는 데 실패했습니다:', error);
@@ -143,11 +147,10 @@ function BoardRead() {
         const confirmed = window.confirm('댓글을 수정하시겠습니까?');
         if (!confirmed) return;
 
-        axios.put(`/comments/update_process/${commentEditId}`, { 
+        axios.put(`/comments/update_process/${commentEditId}`, {
             content: commentEditContent,
-         })
+         }, { skipLoadingBar: true })
             .then(() => {
-                alert('댓글이 수정되었습니다!');
                 fetchComment();
                 cancelEditing();                
             })
@@ -167,9 +170,8 @@ function BoardRead() {
         const confirmed = window.confirm('댓글을 삭제하시겠습니까?');
         if (!confirmed) return;
 
-        axios.delete(`/comments/delete_process/${id}`)
+        axios.delete(`/comments/delete_process/${id}`, { skipLoadingBar: true })
             .then(() => {
-                alert('댓글이 삭제되었습니다!');
                 fetchComment();
             })
             .catch((error) => {
@@ -188,7 +190,7 @@ function BoardRead() {
         const confirmed = window.confirm('게시글을 삭제하시겠습니까?');
         if (!confirmed) return;
 
-        axios.delete(`/board/delete_process/${boardId}`)
+        axios.delete(`/board/delete_process/${boardId}`, { skipLoadingBar: true })
             .then(() => {
                 alert('게시글이 삭제되었습니다.');
                 navigate('/board');
@@ -220,9 +222,8 @@ function BoardRead() {
         axios.post('/comments/create_process', {
             content,
             boardId,
-        })
+        }, { skipLoadingBar: true })
             .then(() => {
-                alert('등록되었습니다.');
                 setContent('');
 
                 if (textareaRef.current) {
@@ -306,7 +307,7 @@ function BoardRead() {
         axios.post('/likes/toggle', {
             type: 'BOARD',
             targetId: boardId
-        }).then((response) => {
+        }, { skipLoadingBar: true }).then((response) => {
             setIsLike(response.data.isLike);
             setSenders(response.data.senders);
         }).catch(error => {
@@ -329,7 +330,7 @@ function BoardRead() {
         return <NotFoundPage />;
     }
 
-    if (!board) return null;
+    if (loading) return null;
 
     return (
         <div className="board-read-container">

@@ -58,7 +58,7 @@ function PanelNotification() {
         const confirmed = window.confirm('알림을 모두 삭제하시겠습니까?');
         if (!confirmed) return;
 
-        axios.delete('/notification/delete_all_process')
+        axios.delete('/notification/delete_all_process', { skipLoadingBar: true })
             .then(() => {
                 dispatch(notificationAction.clearNotifications());
             })

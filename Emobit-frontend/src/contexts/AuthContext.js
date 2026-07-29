@@ -32,6 +32,8 @@ export const AuthProvider = ({ children }) => {
         });
   }, [dispatch]);
 
+  if (loading) return null;
+
   return (
     <AuthContext.Provider value={{ loading }}>
       {children}

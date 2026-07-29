@@ -2,6 +2,7 @@ import '../../styles/LoginRegisterPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { authAction } from '../../redux/Slice/authSlice';
 
@@ -13,6 +14,11 @@ function LoginPage() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadingBar.waitForIdle().then(() => setLoading(false));
+    }, []);
 
     useEffect(() => {
         if (auth.isAuthenticated) {
@@ -46,6 +52,8 @@ function LoginPage() {
     const handleRegisterClick = () => {
         navigate('/login/register');
     };
+
+    if (loading) return null;
 
     return (
         <div className="login-Register-container">

@@ -2,6 +2,7 @@ import '../../styles/ChatWindow.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { loadingBar } from '../../utils/loadingBar';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { MessageCirclePlus } from 'lucide-react';
@@ -19,24 +20,23 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
     const [newMessage, setNewMessage] = useState('');
     const [stompClient, setStompClient] = useState(null);
     const [targetMember, setTargetMember] = useState(null);
-    const [chatWindowLoading, setChatWindowLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
     // 메시지 불러오기
     useEffect(() => {
         if (!selectedChatRoomId || chatRooms.length === 0) {
-            setChatWindowLoading(false);
+            loadingBar.waitForIdle().then(() => setLoading(false));
             return;
         }
 
         const fetchData = async () => {
             try {
-                const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`);
+                const messagesRes = await axios.get(`/chat/${selectedChatRoomId}/messages`, { skipLoadingBar: true });
                 setMessages(messagesRes.data);
 
                 const chatRoom = chatRooms.find(room => room.id === selectedChatRoomId);
                 if (!chatRoom) {
                     setTargetMember(null);
-                    setChatWindowLoading(false);
                     return;
                 }
 
@@ -50,7 +50,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
                     ? chatRoom.memberB.username
                     : chatRoom.memberA.username;
 
-                const profileRes = await axios.get(`/profile/${target}`);
+                const profileRes = await axios.get(`/profile/${target}`, { skipLoadingBar: true });
                 setTargetMember(profileRes.data.member);
             } catch (error) {
                 console.error('에러 발생:', error);
@@ -61,11 +61,11 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
                     alert('채팅을 불러오는 중 오류가 발생했습니다.');
                 }
             } finally {
-                setChatWindowLoading(false);
+                loadingBar.waitForIdle().then(() => setLoading(false));
             }
         };
 
-        setChatWindowLoading(true);
+        setLoading(true);
         fetchData();
     }, [selectedChatRoomId]);
 
@@ -128,7 +128,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
         const confirmed = window.confirm('채팅방을 나가시겠습니까?');
         if (!confirmed || !selectedChatRoomId) return;
 
-        axios.delete(`/chat/exitRoom/${selectedChatRoomId}`)
+        axios.delete(`/chat/exitRoom/${selectedChatRoomId}`, { skipLoadingBar: true })
             .then(() => {                
                 dispatch(messageAction.exitChatRoom(selectedChatRoomId));
                 navigate('/message');
@@ -192,7 +192,7 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
 
     return (
         <div className="chat-window-container">
-            {chatWindowLoading ? null : selectedChatRoomId ? (
+            {loading ? null : selectedChatRoomId ? (
                 <>
                     {targetMember && (
                         <div className="chat-header">

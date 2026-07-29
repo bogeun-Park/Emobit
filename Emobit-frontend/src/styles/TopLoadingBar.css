@@ -1,0 +1,46 @@
+.top-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1.5px;
+    z-index: 9999;
+    pointer-events: none;
+    background: transparent;
+}
+
+.top-loading-bar__fill {
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        #833ab4,
+        #e1306c,
+        #f77737,
+        #fcaf45,
+        #e1306c,
+        #833ab4
+    );
+    background-size: 200% 100%;
+    animation: top-loading-bar-shimmer 1.4s linear infinite;
+    box-shadow: 0 0 8px rgba(225, 48, 108, 0.6);
+    transition: width 200ms ease-out, opacity 120ms ease-in;
+}
+
+.top-loading-bar__fill--finishing {
+    transition: width 80ms linear, opacity 120ms ease-in;
+}
+
+@keyframes top-loading-bar-shimmer {
+    0% {
+        background-position: 0% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .top-loading-bar__fill {
+        animation: none;
+    }
+}

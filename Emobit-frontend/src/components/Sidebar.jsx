@@ -108,7 +108,7 @@ function Sidebar() {
         dispatch(menuAction.setPanelMenu(menuName));
 
         if (menuName === 'notification' && notification.totalCount > 0) {
-            axios.post('/notification/readAll')
+            axios.post('/notification/readAll', null, { skipLoadingBar: true })
                 .then(() => {
                     dispatch(notificationAction.readNotifications());
                 })

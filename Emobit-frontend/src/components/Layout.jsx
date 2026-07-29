@@ -1,5 +1,5 @@
 import '../styles/Layout.css'
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Mobilebar from './Mobilebar';
@@ -7,6 +7,7 @@ import PanelSearch from './PanelSearch';
 import PanelNotification from './PanelNotification';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAxios } from '../contexts/AxiosContext';
+import { loadingBar } from '../utils/loadingBar';
 import { messageAction } from '../redux/Slice/messageSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
 import { Client } from '@stomp/stompjs';
@@ -16,31 +17,42 @@ function Layout() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!auth.isAuthenticated) return;
+        setLoading(true);
 
-        axios.get(`/chat/getRooms`)
-            .then(response => {
-                const sortedChatRooms = [...response.data].sort((a, b) => {
-                    const timeA = new Date(a.lastMessageTime || 0).getTime();
-                    const timeB = new Date(b.lastMessageTime || 0).getTime();
-                    return timeB - timeA;
-                });
-                
-                dispatch(messageAction.setChatRooms(sortedChatRooms));
-            })
-            .catch(error => {
-                console.error('에러 발생:', error);
-            })
+        if (!auth.isAuthenticated) {
+            // 현재 페이지(Outlet)가 자체적으로 부르는 요청까지 포함해서 전역 바가 끝나길 기다림
+            loadingBar.waitForIdle().then(() => setLoading(false));
+            return;
+        }
 
-        axios.get('/notification')
-            .then(response => {
-                dispatch(notificationAction.setNotifications(response.data));
-            })
-            .catch(error => {
-                console.error('에러 발생:', error);
-            })
+        Promise.all([
+            axios.get(`/chat/getRooms`)
+                .then(response => {
+                    const sortedChatRooms = [...response.data].sort((a, b) => {
+                        const timeA = new Date(a.lastMessageTime || 0).getTime();
+                        const timeB = new Date(b.lastMessageTime || 0).getTime();
+                        return timeB - timeA;
+                    });
+
+                    dispatch(messageAction.setChatRooms(sortedChatRooms));
+                })
+                .catch(error => {
+                    console.error('에러 발생:', error);
+                }),
+            axios.get('/notification')
+                .then(response => {
+                    dispatch(notificationAction.setNotifications(response.data));
+                })
+                .catch(error => {
+                    console.error('에러 발생:', error);
+                }),
+        ]).then(() => {
+            // 사이드바용 데이터뿐 아니라, 같이 마운트된 현재 페이지의 요청까지 다 끝날 때까지 대기
+            loadingBar.waitForIdle().then(() => setLoading(false));
+        });
     }, [auth]);
 
     useEffect(() => {
@@ -112,12 +124,18 @@ function Layout() {
 
     return (
         <div className="layout-container">
-            <Sidebar />
-            <Mobilebar />
-            <PanelSearch />
-            <PanelNotification />
+            {!loading && (
+                <>
+                    <Sidebar />
+                    <Mobilebar />
+                    <PanelSearch />
+                    <PanelNotification />
+                </>
+            )}
 
             <main className="main-content">
+                {/* Outlet은 항상 마운트해서 현재 페이지가 자기 데이터를 바로 불러오게 두고,
+                    각 페이지는 이미 자체 loading 게이트로 스스로를 숨김 */}
                 <Outlet />
             </main>
         </div>
