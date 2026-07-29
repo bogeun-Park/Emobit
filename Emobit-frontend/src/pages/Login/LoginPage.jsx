@@ -35,13 +35,13 @@ function LoginPage() {
         }
 
         axios.post('/login', { username, password })
-            .then(response => {
-                axios.get('/login/auth').then(authResponse => {
-                    const { id, displayName, role, imageUrl } = authResponse.data;
-                    dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
-                });
-
-                navigate('/');
+            .then(() => {
+                return axios.get('/login/auth');
+            })
+            .then(authResponse => {
+                const { id, displayName, role, imageUrl } = authResponse.data;
+                dispatch(authAction.login({ username, id, displayName, role, imageUrl }));
+                // auth 상태가 실제로 반영된 뒤, 위쪽 useEffect가 navigate('/')를 실행함
             })
             .catch(error => {
                 console.error('로그인 실패:', error);
