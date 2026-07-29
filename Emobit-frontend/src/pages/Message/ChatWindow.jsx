@@ -2,9 +2,8 @@ import '../../styles/ChatWindow.css';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { useWebSocket } from '../../contexts/WebSocketContext';
 import { loadingBar } from '../../utils/loadingBar';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import { MessageCirclePlus } from 'lucide-react';
 import { messageAction } from '../../redux/Slice/messageSlice';
 
@@ -13,12 +12,12 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
     const chatRooms = useSelector(state => state.message.chatRooms);
     const axios = useAxios();
     const dispatch = useDispatch();
+    const stompClient = useWebSocket();
     const messagesEndRef = useRef(null);
     const textareaRef = useRef(null);
 
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [stompClient, setStompClient] = useState(null);
     const [targetMember, setTargetMember] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -69,30 +68,22 @@ function ChatWindow({ selectedChatRoomId, setshowNewChatPopup, navigate }) {
         fetchData();
     }, [selectedChatRoomId]);
 
-    // WebSocket 연결
+    // 채팅방 구독: 소켓은 WebSocketContext(WebSocketProvider)가 만든 공유 소켓을 그대로 쓰고,
+    // 방이 바뀔 때는 소켓을 껐다 켜는 대신 이전 방 구독만 해제하고 새 방을 구독한다.
     useEffect(() => {
-        const socket = new SockJS(process.env.REACT_APP_WEBSOCKET_URL);
-        const client = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                if (selectedChatRoomId) {
-                    client.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
-                        const receivedMessage = JSON.parse(message.body);
-                        
-                        // 대화창 세팅
-                        setMessages(prevMessages => [...prevMessages, receivedMessage]);
-                    });
-                }
-            }
+        if (!stompClient || !selectedChatRoomId) return;
+
+        const subscription = stompClient.subscribe(`/topic/chatRoom/${selectedChatRoomId}`, message => {
+            const receivedMessage = JSON.parse(message.body);
+
+            // 대화창 세팅
+            setMessages(prevMessages => [...prevMessages, receivedMessage]);
         });
 
-        client.activate();
-        setStompClient(client);
-
         return () => {
-            client.deactivate();
+            subscription.unsubscribe();
         };
-    }, [selectedChatRoomId]);
+    }, [stompClient, selectedChatRoomId]);
 
     // 자동 스크롤
     useEffect(() => {
