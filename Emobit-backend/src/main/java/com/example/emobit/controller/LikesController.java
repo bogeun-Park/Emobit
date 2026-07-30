@@ -48,12 +48,8 @@ public class LikesController {
 	public ResponseEntity<?> getLikeStatus(@RequestParam("type") LikeType type,
 	        							   @RequestParam("targetId") Long targetId,
 	                                       @AuthenticationPrincipal CustomUser customUser) {
-	    if (customUser == null) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-	    }
+	    boolean isLike = customUser != null && likesService.isLikeByUser(customUser.getId(), type, targetId);
 
-	    boolean isLike = likesService.isLikeByUser(customUser.getId(), type, targetId);
-	    
 	    return ResponseEntity.ok(isLike);
 	}
 	
