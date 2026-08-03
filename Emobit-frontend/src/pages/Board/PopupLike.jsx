@@ -1,26 +1,14 @@
 import '../../styles/PopupLike.css';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useAxios } from '../../contexts/AxiosContext';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { X } from 'lucide-react';
 
 function PopupLike({ senders, setSenders, handleMoveProfile, setShowLikePopup }) {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
 
-    // ESC키 입력시 팝업 닫히게 하는 이벤트 리스너 설정
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                setShowLikePopup(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [setShowLikePopup]);
+    useEscapeKey(() => setShowLikePopup(false));
 
     const handleToggleFollow = (memberId) => {
         axios.post('/follow/toggle', { targetId: memberId }, { skipLoadingBar: true })
