@@ -3,10 +3,10 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAxios } from '../contexts/AxiosContext';
-import { authAction } from '../redux/Slice/authSlice';
 import { menuAction } from '../redux/Slice/menuSlice';
 import { searchAction } from '../redux/Slice/searchSlice';
 import { notificationAction } from '../redux/Slice/notificationSlice';
+import { useLogout } from '../hooks/useLogout';
 import { Home, Search, BookOpen, PlusCircle, User, Send, Bell, LogIn, LogOut, MessageCircle, Heart, UserRound } from 'lucide-react';
 
 function Mobilebar() {
@@ -18,6 +18,7 @@ function Mobilebar() {
     const panelMenu = useSelector(state => state.menu.panelMenu);
     const senderCount = useSelector(state => state.message.senderCount);
     const notification = useSelector(state => state.notification);
+    const handlelogout = useLogout();
 
     const menuImgSize = 26;
 
@@ -51,25 +52,6 @@ function Mobilebar() {
                     console.error('Failed to fetch user data:', error);
                 });
         }
-    };
-
-    const handlelogout = () => {
-        axios.post('/logout')
-            .then(response => {
-                console.log(response);
-
-                dispatch(authAction.logout());
-
-                setTimeout(() => {
-                    dispatch(searchAction.clearSearchState())
-                }, 300);
-
-                navigate('/login');
-            })
-            .catch(error => {
-                console.error('로그아웃 실패:', error);
-                alert('로그아웃 중 오류가 발생했습니다.');
-            });
     };
 
     return (
