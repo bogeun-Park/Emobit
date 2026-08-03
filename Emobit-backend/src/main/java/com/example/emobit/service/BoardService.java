@@ -3,7 +3,6 @@ package com.example.emobit.service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +30,8 @@ public class BoardService {
 	private final NotificationService notificationService;
 	
 	public List<Board> getBoardAll() {
-		List<Board> boardList = boardRepository.findAll(Sort.by("id").descending());
-		
+		List<Board> boardList = boardRepository.findAllWithMember();
+
 		return boardList;
 	}
 	
