@@ -1,7 +1,10 @@
 package com.example.emobit.service;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,10 +38,15 @@ public class ChatMessageService {
         return chatMessageList;
     }
     
-    public ChatMessage getLastMessage(ChatRoom chatRoom) {
-    	ChatMessage chatMessage = chatMessageRepository.findTopByChatRoomOrderByCreatedAtDesc(chatRoom).orElse(null);
-    	
-        return chatMessage;
+    // 채팅방 목록에서 방마다 마지막 메시지를 개별 조회하지 않기 위한 일괄 조회
+    // chatRoomId -> 그 방의 마지막 메시지로 매핑해서 반환
+    public Map<Long, ChatMessage> getLastMessagesByRoomId(Collection<Long> chatRoomIds) {
+        if (chatRoomIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return chatMessageRepository.findLatestMessagesByChatRoomIds(chatRoomIds).stream()
+            .collect(Collectors.toMap(message -> message.getChatRoom().getId(), message -> message));
     }
 
     @Transactional
