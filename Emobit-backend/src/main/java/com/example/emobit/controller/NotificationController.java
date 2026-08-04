@@ -1,6 +1,9 @@
 package com.example.emobit.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,15 +41,33 @@ public class NotificationController {
 	    }
 		
 		List<Notification> notificationList = notificationService.getNotificationByReceiver(customUser.getId());
+
+		// 알림마다 댓글/게시글을 개별 조회하면 N+1이 나므로, 타입별로 id를 모아 한 번에 조회 후 메모리에서 매칭
+		Set<Long> commentIds = notificationList.stream()
+			.filter(notification -> notification.getType() == NotificationType.COMMENT)
+			.map(Notification::getTargetId)
+			.collect(Collectors.toSet());
+
+		Set<Long> boardIds = notificationList.stream()
+			.filter(notification -> notification.getType() == NotificationType.LIKE)
+			.map(Notification::getTargetId)
+			.collect(Collectors.toSet());
+
+		Map<Long, Comments> commentById = commentsService.getCommentsByIds(commentIds).stream()
+			.collect(Collectors.toMap(Comments::getId, comment -> comment));
+
+		Map<Long, Board> boardById = boardService.getBoardsByIds(boardIds).stream()
+			.collect(Collectors.toMap(Board::getId, board -> board));
+
 		List<NotificationDto> notificationListDto = notificationList.stream()
 	        .map(notification -> {
 	            Board board = null;
 	            Comments comment = null;
 	            if (notification.getType() == NotificationType.COMMENT) {
-	            	comment = commentsService.getCommentById(notification.getTargetId());
-	                board = comment.getBoard();
+	            	comment = commentById.get(notification.getTargetId());
+	                board = (comment != null) ? comment.getBoard() : null;
 	            } else if (notification.getType() == NotificationType.LIKE) {
-	                board = boardService.getBoardById(notification.getTargetId());
+	                board = boardById.get(notification.getTargetId());
 	            }
 
 	            return new NotificationDto(notification, board, comment);

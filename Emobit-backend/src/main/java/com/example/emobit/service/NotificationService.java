@@ -30,8 +30,8 @@ public class NotificationService {
 	
 	public List<Notification> getNotificationByReceiver(Long receiverId) {
 		Member receiver = memberService.getMemberById(receiverId);
-		List<Notification> notificationList = notificationRepository.findByReceiverOrderByCreatedAtDesc(receiver);
-		
+		List<Notification> notificationList = notificationRepository.findByReceiverOrderByCreatedAtDescWithSender(receiver);
+
 		return notificationList;
 	}
 	
