@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import { Search, UserPlus, X } from 'lucide-react';
 
 function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange, onFollowingCountChange }) {
@@ -22,19 +23,7 @@ function PopupFollow({ mode, targetId, setShowFollowPopup, onFollowerCountChange
             });
     }, [mode, targetId]);
 
-    // ESC키 입력시 팝업 닫히게 하는 이벤트 리스너 설정
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                setShowFollowPopup(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [setShowFollowPopup]);
+    useEscapeKey(() => setShowFollowPopup(false));
 
     const handleMoveProfile = (username) => {
         navigate(`/${username}`);

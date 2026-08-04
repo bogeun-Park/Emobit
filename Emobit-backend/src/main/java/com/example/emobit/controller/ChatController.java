@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,16 +49,21 @@ public class ChatController {
 	    }
     	
     	List<ChatRoom> chatRoomList = chatRoomService.getUserChatRoomAll(customUser.getUsername());
+
+        // 채팅방별 마지막 메시지 목록
+    	Map<Long, ChatMessage> lastMessagesByRoomId = chatMessageService.getLastMessagesByRoomId(
+    		chatRoomList.stream().map(ChatRoom::getId).toList());
+
     	List<ChatRoomDto> chatRoomDtoList = chatRoomList.stream()
     		.map(chatRoom -> {
-    			ChatMessage chatMessage = chatMessageService.getLastMessage(chatRoom);
-                String lastMessage = chatMessage != null ? chatMessage.getContent() : null;
-                Date lastMessageTime = chatMessage != null ? chatMessage.getCreatedAt() : null;
+    			ChatMessage lastMessage = lastMessagesByRoomId.get(chatRoom.getId());
+                String lastMessageContent = lastMessage != null ? lastMessage.getContent() : null;
+                Date lastMessageTime = lastMessage != null ? lastMessage.getCreatedAt() : null;
                 int unreadCount = chatMessageService.getUnreadCount(chatRoom.getId(), customUser.getId());
-                
-                ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, lastMessage, lastMessageTime, unreadCount);
-                
-                return chatRoomDto; 
+
+                ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, lastMessageContent, lastMessageTime, unreadCount);
+
+                return chatRoomDto;
     		})
     		.toList();
     	

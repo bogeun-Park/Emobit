@@ -1,9 +1,9 @@
 package com.example.emobit.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +31,16 @@ public class BoardService {
 	private final NotificationService notificationService;
 	
 	public List<Board> getBoardAll() {
-		List<Board> boardList = boardRepository.findAll(Sort.by("id").descending());
-		
+		List<Board> boardList = boardRepository.findAllWithMember();
+
 		return boardList;
 	}
 	
+	// 알림 목록처럼 여러 게시글을 한 번에 조회해야 할 때, id 하나당 쿼리 하나씩 나가는 걸 막기 위한 일괄 조회
+	public List<Board> getBoardsByIds(Collection<Long> ids) {
+		return boardRepository.findAllById(ids);
+	}
+
 	public Board getBoardById(Long id) {
 		Board board = boardRepository.findById(id)
 						.orElseThrow(() -> new BoardNotFoundException("게시글을 찾을 수 없습니다."));

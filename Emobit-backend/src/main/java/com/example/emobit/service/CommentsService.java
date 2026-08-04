@@ -1,5 +1,6 @@
 package com.example.emobit.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -30,6 +31,11 @@ public class CommentsService {
 		return comments;
 	}
 	
+	// 알림 목록처럼 여러 댓글을 한 번에 조회해야 할 때, id 하나당 쿼리 하나씩 나가는 걸 막기 위한 일괄 조회
+	public List<Comments> getCommentsByIds(Collection<Long> ids) {
+		return commentsRepository.findAllByIdInWithBoard(ids);
+	}
+
 	public Comments getCommentById(Long id) {
 		Comments comment = commentsRepository.findById(id)
 				.orElseThrow(() -> new CommentsNotFoundException("댓글을 찾을 수 없습니다."));

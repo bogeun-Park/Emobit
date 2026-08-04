@@ -4,6 +4,7 @@ import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { loadingBar } from '../../utils/loadingBar';
 import { useSelector, useDispatch } from 'react-redux';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye, MessageCircle, X } from 'lucide-react';
 import PopupEllipsis from './PopupEllipsis';
@@ -44,19 +45,7 @@ function BoardRead() {
         fetchLike();
     }, [boardId]);
 
-    // ESC키 입력시 댓글 시트 닫히게 하는 이벤트 리스너 설정
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                setShowCommentPopup(false);
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
+    useEscapeKey(() => setShowCommentPopup(false));
 
     // 데스크톱 크기로 넘어가면 댓글 시트 상태를 초기화 (다시 모바일로 줄여도 자동으로 열려있지 않도록)
     useEffect(() => {

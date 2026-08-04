@@ -16,10 +16,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 	@Query("SELECT cr FROM ChatRoom cr JOIN FETCH cr.memberA JOIN FETCH cr.memberB WHERE cr.id = :id")
 	Optional<ChatRoom> findByIdWithUsers(@Param("id") Long id);
 	
-	@Query("SELECT c FROM ChatRoom c " +
-	       "WHERE (c.memberA = :username AND c.memberAJoined = true) " +
-	       "OR (c.memberB = :username AND c.memberBJoined = true)")
-	List<ChatRoom> findByMember(@Param("username") Member member);
+	@Query("SELECT c FROM ChatRoom c JOIN FETCH c.memberA JOIN FETCH c.memberB " +
+	       "WHERE (c.memberA = :member AND c.memberAJoined = true) " +
+	       "OR (c.memberB = :member AND c.memberBJoined = true)")
+	List<ChatRoom> findByMember(@Param("member") Member member);
 
 	Optional<ChatRoom> findByMemberAAndMemberB(Member memberA, Member memberB);  // 두 사용자의 채팅방을 찾는다
 }

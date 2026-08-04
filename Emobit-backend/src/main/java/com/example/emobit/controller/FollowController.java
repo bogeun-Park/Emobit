@@ -1,6 +1,7 @@
 package com.example.emobit.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +50,16 @@ public class FollowController {
 	public ResponseEntity<?> getFollowers(@PathVariable("targetId") Long targetId,
 										  @AuthenticationPrincipal CustomUser customUser) {
 		List<Member> memberList = followService.getFollowers(targetId);
+
+		// 본인 팔로워 목록일 땐 프론트가 팔로우 버튼 대신 삭제 버튼을 쓰므로 isFollow가 안 쓰임 -> 조회 자체를 스킵
+		boolean isOwnFollowersList = customUser != null && customUser.getId().equals(targetId);
+		Set<Long> followedIds = isOwnFollowersList
+			? Set.of()
+			: followService.filterFollowedIds(customUser != null ? customUser.getId() : null,
+				memberList.stream().map(Member::getId).toList());
+
 		List<FollowMemberDto> memberListDto = memberList.stream()
-			.map(member -> new FollowMemberDto(member, customUser != null && followService.isFollowing(customUser.getId(), member.getId())))
+			.map(member -> new FollowMemberDto(member, followedIds.contains(member.getId())))
 			.toList();
 
 		return ResponseEntity.ok(memberListDto);
@@ -60,8 +69,11 @@ public class FollowController {
 	public ResponseEntity<?> getFollowings(@PathVariable("targetId") Long targetId,
 										   @AuthenticationPrincipal CustomUser customUser) {
 		List<Member> memberList = followService.getFollowings(targetId);
+		Set<Long> followedIds = followService.filterFollowedIds(customUser != null ? customUser.getId() : null,
+			memberList.stream().map(Member::getId).toList());
+
 		List<FollowMemberDto> memberListDto = memberList.stream()
-			.map(member -> new FollowMemberDto(member, customUser != null && followService.isFollowing(customUser.getId(), member.getId())))
+			.map(member -> new FollowMemberDto(member, followedIds.contains(member.getId())))
 			.toList();
 
 		return ResponseEntity.ok(memberListDto);

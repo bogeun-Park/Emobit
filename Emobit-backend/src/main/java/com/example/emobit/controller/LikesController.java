@@ -3,6 +3,7 @@ package com.example.emobit.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,11 @@ public class LikesController {
 	                                        @RequestParam("targetId") Long targetId,
 	                                        @AuthenticationPrincipal CustomUser customUser) {
 		List<Member> senderList = likesService.getLikeSenders(type, targetId);
+		Set<Long> followedIds = followService.filterFollowedIds(customUser != null ? customUser.getId() : null,
+			senderList.stream().map(Member::getId).toList());
+
 		List<FollowMemberDto> senderListDto = senderList.stream()
-			.map(member -> new FollowMemberDto(member, customUser != null && followService.isFollowing(customUser.getId(), member.getId())))
+			.map(member -> new FollowMemberDto(member, followedIds.contains(member.getId())))
 			.toList();
 
 	    return ResponseEntity.ok(senderListDto);
@@ -62,8 +66,11 @@ public class LikesController {
 		
 		boolean isLike = likesService.toggleLike(customUser.getId(), likeRequestDto.getType(), likeRequestDto.getTargetId());
 		List<Member> senderList = likesService.getLikeSenders(likeRequestDto.getType(), likeRequestDto.getTargetId());
+		Set<Long> followedIds = followService.filterFollowedIds(customUser.getId(),
+			senderList.stream().map(Member::getId).toList());
+
 		List<FollowMemberDto> senderListDto = senderList.stream()
-			.map(member -> new FollowMemberDto(member, followService.isFollowing(customUser.getId(), member.getId())))
+			.map(member -> new FollowMemberDto(member, followedIds.contains(member.getId())))
 			.toList();
 		
 		Map<String, Object> response = new HashMap<>();
