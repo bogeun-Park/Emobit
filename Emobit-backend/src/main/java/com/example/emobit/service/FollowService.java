@@ -1,7 +1,9 @@
 package com.example.emobit.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +57,16 @@ public class FollowService {
 		Member following = memberService.getMemberById(followingId);
 
 		return followRepository.existsByFollowerAndFollowing(follower, following);
+	}
+
+	// 목록(팔로워/팔로잉/좋아요한 사람 등)마다 isFollowing()을 개별 호출하지 않기 위한 일괄 조회
+	// candidateIds 중 followerId가 실제로 팔로우하는 것만 걸러서 반환
+	public Set<Long> filterFollowedIds(Long followerId, Collection<Long> candidateIds) {
+		if (followerId == null || candidateIds.isEmpty()) {
+			return Set.of();
+		}
+
+		return followRepository.findFollowingIdsIn(followerId, candidateIds);
 	}
 
 	public long getFollowerCount(Long memberId) {
