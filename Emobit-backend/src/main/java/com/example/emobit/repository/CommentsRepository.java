@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import com.example.emobit.domain.Comments;
 
 public interface CommentsRepository extends JpaRepository<Comments, Long> {
-	@Query("SELECT c FROM Comments c JOIN FETCH c.board WHERE c.board.id = :boardId ORDER BY c.id ASC")
+	@Query("SELECT c FROM Comments c JOIN FETCH c.member WHERE c.board.id = :boardId ORDER BY c.id ASC")
 	List<Comments> customFindAllByBoardId(@Param("boardId") Long boardId);
 }
