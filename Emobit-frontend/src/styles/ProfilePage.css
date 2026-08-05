@@ -5,10 +5,9 @@
 }
 
 .profile-header {
+    max-width: 680px;
     align-items: center;
-    margin-top: 2rem;
-    margin-left: clamp(0px, calc((100vw - 500px) * 0.1471), 64px);
-    margin-bottom: 1rem;
+    margin: 2rem auto 1rem;
 }
 
 .profile-header-wrapper {
@@ -45,6 +44,7 @@
 
 .profile-info-username {
     font-size: 24px;
+    font-weight: 600;
 }
 
 .follow-button.following {
@@ -99,9 +99,31 @@
     padding-top: 10px;
 }
 
+.profile-edit-button {
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    height: 44px;
+    margin: 1rem auto;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.profile-action-buttons {
+    display: flex;
+    gap: 8px;
+    max-width: 680px;
+    margin: 1.3rem auto;
+}
+
+.profile-action-buttons .profile-edit-button {
+    width: auto;
+    flex: 1;
+    margin: 0;
+}
+
 @media (max-width: 768px) {
     .profile-info {
-        margin-top: -40px;
         gap: 13px;
     }
 
@@ -111,9 +133,19 @@
         padding: 10px 0;
     }
 
+    .profile-info-username {
+        font-size: 18px;
+    }
+
     .profile-info-stats {
         font-size: 14px;
         gap: 1rem;
+    }
+
+    .profile-info-stat-item {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 0.1rem;
     }
 
     .stats-label {
@@ -128,16 +160,15 @@
         display: block;
     }
 
-    .profile-divider {
-        margin: 1.3rem 0 !important;
+    .post-grid {
+        margin-left: -20px;
+        margin-right: -20px;
+        width: calc(100% + 40px);
     }
-}
 
-.profile-divider {
-    border: none;
-    height: 1px;
-    background-color: #ccc;
-    margin: 3rem 0;
+    .profile-edit-button {
+        height: 32px;
+    }
 }
 
 .post-grid {

@@ -8,6 +8,7 @@ import NotFoundPage from '../NotFound/NotFoundPage';
 import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
 import { authAction } from '../../redux/Slice/authSlice';
+import { messageAction } from '../../redux/Slice/messageSlice';
 
 function ProfilePage() {
     const axios = useAxios();
@@ -61,6 +62,34 @@ function ProfilePage() {
                     alert('팔로우 처리 중 오류가 발생했습니다.');
                 }
             });
+    };
+
+    const handleSendMessage = () => {
+        if (!auth.isAuthenticated) {
+            alert('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
+        axios.post('/chat/createRoom', null, {
+            params: {
+                memberA: auth.username,
+                memberB: member.username,
+            },
+        }).then(response => {
+            const newChatRoom = response.data;
+
+            dispatch(messageAction.addChatRoom(newChatRoom));
+            navigate(`/message/${newChatRoom.id}`);
+        }).catch(error => {
+            console.error('에러 발생:', error);
+            if (error.response?.status === 401) {
+                alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+                navigate('/login');
+            } else {
+                alert('채팅방을 불러오는 중 오류가 발생했습니다.');
+            }
+        });
     };
 
     const handleClickImage = () => {
@@ -124,15 +153,6 @@ function ProfilePage() {
                     <div className="profile-info">
                         <div className="profile-info-top">
                             <div className="profile-info-username">{member.username}</div>
-
-                            {auth.username !== member.username && (
-                                <button
-                                    className={`follow-button ${follow.isFollow ? 'following' : ''}`}
-                                    onClick={handleFollowToggle}
-                                >
-                                    {follow.isFollow ? '팔로잉' : '팔로우'}
-                                </button>
-                            )}
                         </div>
 
                         <div className="profile-info-stats">
@@ -165,7 +185,21 @@ function ProfilePage() {
                 </div>
             </div>
 
-            <hr className="profile-divider" />
+            {auth.username === member.username ? (
+                <div className="profile-action-buttons">
+                    <button className="follow-button following profile-edit-button">프로필 편집</button>
+                </div>
+            ) : (
+                <div className="profile-action-buttons">
+                    <button
+                        className={`follow-button profile-edit-button ${follow.isFollow ? 'following' : ''}`}
+                        onClick={handleFollowToggle}
+                    >
+                        {follow.isFollow ? '팔로잉' : '팔로우'}
+                    </button>
+                    <button className="follow-button following profile-edit-button" onClick={handleSendMessage}>메시지 보내기</button>
+                </div>
+            )}
 
             <div className="post-grid">
                 {boards.map((board) => (
