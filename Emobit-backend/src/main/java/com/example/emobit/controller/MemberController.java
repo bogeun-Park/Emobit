@@ -63,7 +63,7 @@ public class MemberController {
 			.httpOnly(true)
 			.secure(cookieSecure)
 			.sameSite("Strict")
-			.path("/api")
+			.path("/")
 			.maxAge(maxAgeSeconds)
 			.build();
 	}
