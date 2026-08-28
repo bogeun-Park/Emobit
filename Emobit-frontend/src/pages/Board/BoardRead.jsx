@@ -3,19 +3,19 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams  } from 'react-router-dom';
 import { useAxios } from '../../contexts/AxiosContext';
 import { loadingBar } from '../../utils/loadingBar';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import { useSendMessage } from '../../hooks/useSendMessage';
 import NotFoundPage from '../NotFound/NotFoundPage';
 import { Heart, Send, Eye, MessageCircle, X } from 'lucide-react';
 import PopupEllipsis from './PopupEllipsis';
 import PopupLike from './PopupLike';
-import { messageAction } from '../../redux/Slice/messageSlice';
 
 function BoardRead() {
     const axios = useAxios();
     const navigate = useNavigate();
-    const auth = useSelector(state => state.auth);    
-    const dispatch = useDispatch();
+    const auth = useSelector(state => state.auth);
+    const sendMessage = useSendMessage();
     const textareaRef = useRef(null);
     
     const { boardId } = useParams();
@@ -267,38 +267,6 @@ function BoardRead() {
         navigate(`/${username}`);
     };
 
-    const handleSendMessageToAuthor = () => {
-        if (!auth.isAuthenticated) {
-            alert('로그인이 필요합니다.');
-            navigate('/login');
-            return;
-        }
-
-        if (auth.username === board.memberUsername) {
-            return;
-        }
-
-        axios.post('/chat/createRoom', null, {
-            params: {
-                memberA: auth.username,
-                memberB: board.memberUsername,
-            },
-        }).then(response => {
-            const newChatRoom = response.data;
-
-            dispatch(messageAction.addChatRoom(newChatRoom));
-            navigate(`/message/${newChatRoom.id}`);    
-        }).catch (error => {
-            console.error('에러 발생:', error);
-            if (error.response?.status === 401) {
-                alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-                navigate('/login');
-            } else {
-                alert('채팅방을 불러오는 중 오류가 발생했습니다.');
-            }
-        })
-    };
-
     const handleToggleLike = () => {
         if (!auth.isAuthenticated) {
             alert('로그인이 필요합니다.');
@@ -367,7 +335,7 @@ function BoardRead() {
                             </button>
 
                             {auth.id !== board.createdBy && (
-                                <button type="button" className="send-button" onClick={handleSendMessageToAuthor}>
+                                <button type="button" className="send-button" onClick={() => sendMessage(board.memberUsername)}>
                                     <Send size={24} color="#000" />
                                 </button>
                             )}
@@ -486,7 +454,7 @@ function BoardRead() {
                                 <Heart size={24} color="#000" />
                             </button>
                             {auth.id !== board.createdBy && (
-                                <button type="button" className="send-button" onClick={handleSendMessageToAuthor}>
+                                <button type="button" className="send-button" onClick={() => sendMessage(board.memberUsername)}>
                                     <Send size={24} color="#000" />
                                 </button>
                             )}

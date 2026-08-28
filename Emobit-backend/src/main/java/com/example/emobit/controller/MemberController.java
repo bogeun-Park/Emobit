@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -51,7 +54,20 @@ public class MemberController {
 	private final FollowService followService;
 	private final AuthenticationManagerBuilder authenticationManagerBuilder;
 	private final OracleStorageService oracleStorageService;
-	
+
+	@Value("${cookie.secure}")
+	private boolean cookieSecure;
+
+	private ResponseCookie buildCookie(String name, String value, long maxAgeSeconds) {
+		return ResponseCookie.from(name, value)
+			.httpOnly(true)
+			.secure(cookieSecure)
+			.sameSite("Strict")
+			.path("/")
+			.maxAge(maxAgeSeconds)
+			.build();
+	}
+
 	@PostMapping("/login")
 	public ResponseEntity<?> loginJwt(@RequestBody @Valid MemberLoginDto memberLoginDto, HttpServletResponse response) {
 		var authToken = new UsernamePasswordAuthenticationToken(memberLoginDto.getUsername(), memberLoginDto.getPassword());
@@ -61,19 +77,11 @@ public class MemberController {
 		String accessToken = Jwtutil.createAccessToken(SecurityContextHolder.getContext().getAuthentication());
 		String refreshToken = Jwtutil.createRefreshToken(auth);
 		
-		// Access Token 쿠키
-		Cookie accessCookie  = new Cookie("jwt", accessToken);
-		accessCookie.setMaxAge(30 * 60);  // 쿠키 유지 시간 30분
-		accessCookie.setHttpOnly(true);
-		accessCookie.setPath("/");
-		response.addCookie(accessCookie);
-		
-		// Refresh Token 쿠키
-	    Cookie refreshCookie = new Cookie("refresh", refreshToken);
-	    refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7일
-	    refreshCookie.setHttpOnly(true);
-	    refreshCookie.setPath("/");
-	    response.addCookie(refreshCookie);
+		// Access Token 쿠키 (30분)
+		response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("jwt", accessToken, 30 * 60).toString());
+
+		// Refresh Token 쿠키 (7일)
+		response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("refresh", refreshToken, 7 * 24 * 60 * 60).toString());
 		
 		Map<String, String> body = new HashMap<>();
         body.put("token", accessToken);
@@ -117,11 +125,8 @@ public class MemberController {
 	    Authentication newAuth = new UsernamePasswordAuthenticationToken(user, "", authorities);
 	    String newAccessToken = Jwtutil.createAccessToken(newAuth);
 
-	    Cookie newAccessCookie = new Cookie("jwt", newAccessToken);
-	    newAccessCookie.setMaxAge(30 * 60);
-	    newAccessCookie.setHttpOnly(true);
-	    newAccessCookie.setPath("/");
-	    response.addCookie(newAccessCookie);
+		// 재발급 Access Token 쿠키 (30분)
+	    response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("jwt", newAccessToken, 30 * 60).toString());
 
 	    Map<String, String> body = new HashMap<>();
         body.put("token", newAccessToken);
@@ -132,18 +137,10 @@ public class MemberController {
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
 		// Access Token 삭제
-		Cookie accessCookie = new Cookie("jwt", null);
-		accessCookie.setMaxAge(0);
-		accessCookie.setHttpOnly(true);
-		accessCookie.setPath("/");
-		response.addCookie(accessCookie);
-	    
-	    // Refresh Token 삭제
-	    Cookie refreshCookie = new Cookie("refresh", null);
-	    refreshCookie.setMaxAge(0);
-	    refreshCookie.setHttpOnly(true);
-	    refreshCookie.setPath("/");
-	    response.addCookie(refreshCookie);
+		response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("jwt", "", 0).toString());
+
+		// Refresh Token 삭제
+		response.addHeader(HttpHeaders.SET_COOKIE, buildCookie("refresh", "", 0).toString());
 	    
 	    SecurityContextHolder.clearContext();
 	    

@@ -8,12 +8,15 @@ import NotFoundPage from '../NotFound/NotFoundPage';
 import PopupFollow from './PopupFollow';
 import presignedUrlAxios from 'axios';
 import { authAction } from '../../redux/Slice/authSlice';
+import { useSendMessage } from '../../hooks/useSendMessage';
+import { Copy } from 'lucide-react';
 
 function ProfilePage() {
     const axios = useAxios();
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const sendMessage = useSendMessage();
 
     const { username } = useParams();
     const [member, setMember] = useState(null);
@@ -23,6 +26,7 @@ function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [showFollowPopup, setShowFollowPopup] = useState(false);
     const [followPopupMode, setFollowPopupMode] = useState('followers');
+    const [showCopyToast, setShowCopyToast] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -60,6 +64,25 @@ function ProfilePage() {
                 } else {
                     alert('팔로우 처리 중 오류가 발생했습니다.');
                 }
+            });
+    };
+
+    const handleShareProfile = () => {
+        const profileUrl = `${window.location.origin}/${member.username}`;
+
+        if (!navigator.clipboard) {
+            alert('클립보드 복사를 지원하지 않는 환경입니다.');
+            return;
+        }
+
+        navigator.clipboard.writeText(profileUrl)
+            .then(() => {
+                setShowCopyToast(true);
+                setTimeout(() => setShowCopyToast(false), 2000);
+            })
+            .catch((error) => {
+                console.error('에러 발생:', error);
+                alert('클립보드 복사 중 오류가 발생했습니다.');
             });
     };
 
@@ -124,15 +147,6 @@ function ProfilePage() {
                     <div className="profile-info">
                         <div className="profile-info-top">
                             <div className="profile-info-username">{member.username}</div>
-
-                            {auth.username !== member.username && (
-                                <button
-                                    className={`follow-button ${follow.isFollow ? 'following' : ''}`}
-                                    onClick={handleFollowToggle}
-                                >
-                                    {follow.isFollow ? '팔로잉' : '팔로우'}
-                                </button>
-                            )}
                         </div>
 
                         <div className="profile-info-stats">
@@ -165,7 +179,22 @@ function ProfilePage() {
                 </div>
             </div>
 
-            <hr className="profile-divider" />
+            {auth.username === member.username ? (
+                <div className="profile-action-buttons">
+                    <button className="follow-button following profile-edit-button">프로필 편집</button>
+                    <button className="follow-button following profile-edit-button" onClick={handleShareProfile}>프로필 공유</button>
+                </div>
+            ) : (
+                <div className="profile-action-buttons">
+                    <button
+                        className={`follow-button profile-edit-button ${follow.isFollow ? 'following' : ''}`}
+                        onClick={handleFollowToggle}
+                    >
+                        {follow.isFollow ? '팔로잉' : '팔로우'}
+                    </button>
+                    <button className="follow-button following profile-edit-button" onClick={() => sendMessage(member.username)}>메시지 보내기</button>
+                </div>
+            )}
 
             <div className="post-grid">
                 {boards.map((board) => (
@@ -183,6 +212,13 @@ function ProfilePage() {
                     onFollowerCountChange={(followerCount) => setFollow(prev => ({ ...prev, followerCount }))}
                     onFollowingCountChange={(delta) => setFollow(prev => ({ ...prev, followingCount: prev.followingCount + delta }))}
                 />
+            )}
+
+            {showCopyToast && (
+                <div className="copy-toast">
+                    <Copy size={20} strokeWidth={2.5} />
+                    <span>프로필 링크가 복사되었습니다.</span>
+                </div>
             )}
         </div>
     );

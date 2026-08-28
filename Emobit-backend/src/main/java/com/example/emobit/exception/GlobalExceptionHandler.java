@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +64,13 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
 		log.warn("DataIntegrityViolationException: {}", e.getMessage());
 		return ResponseEntity.status(HttpStatus.CONFLICT).body("이미 사용 중이거나 중복된 값입니다.");
+	}
+
+	// 매핑되지 않은 경로 요청 시 Spring이 자동으로 던지는 예외.
+	// catch-all(Exception.class)에 잡히면 500으로 나가버려서, 원래 의미에 맞는 404로 조용히 응답하도록 별도 처리
+	@ExceptionHandler(NoResourceFoundException.class)
+	public ResponseEntity<String> handleNoResourceFoundException(NoResourceFoundException e) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("요청한 리소스를 찾을 수 없습니다.");
 	}
 
 	// 위에서 잡히지 않은, 예상치 못한 예외 처리
